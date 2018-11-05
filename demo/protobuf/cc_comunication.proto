@@ -1,0 +1,15 @@
+// Protocol for cc messages.
+
+syntax = "proto2";
+
+//option optimize_for = LITE_RUNTIME;
+
+package ctp.c2c;
+
+// Defines a keyboard event.
+message Command {
+  required string cmd = 1;
+  optional string params = 2;
+};
+
+

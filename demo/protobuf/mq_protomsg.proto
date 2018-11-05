@@ -1,0 +1,172 @@
+// Protocol for cp messages.
+
+syntax = "proto2";
+
+//option optimize_for = LITE_RUNTIME;
+
+package ctp.mq;
+
+message BasicMQ {
+ 
+ required int64 time = 1;
+ required string time_string = 2;
+ ///交易日
+ required string tradingday = 3;
+ ///合约代码
+ required string type = 4;
+ ///交易所代码
+ required string exchangeid = 5;
+ ///合约在交易所的代码
+ required string exchangeinstid = 6;
+ ///最新价
+ required double lastprice = 7;
+ ///上次结算价
+ required double presettlementprice = 8;
+ ///昨收盘
+ required double precloseprice = 9;
+ ///昨持仓量
+ required double preopeninterest = 10;
+ ///今开盘
+ required double openprice = 11;
+ ///最高价
+ required double highestprice = 12;
+ ///最低价
+ required double lowestprice = 13;
+ ///数量
+ required int32	volume = 14;
+ ///成交金额
+ required double turnover = 15;
+ ///持仓量
+ required double openinterest = 16;
+ ///今收盘
+ required double closeprice = 17;
+ ///本次结算价
+ required double settlementprice = 18;
+ ///涨停板价
+ required double upperlimitprice = 19;
+ ///跌停板价
+ required double lowerlimitprice = 20;
+ ///昨虚实度
+ required double predelta = 21;
+ ///今虚实度
+ required double currdelta = 22;
+ ///最后修改时间
+ required string updatetime = 23;
+ ///最后修改毫秒
+ required int32	updatemillisec = 24;
+ ///申买价一
+ required double bidprice1 = 25;
+ ///申买量一
+ required int32	bidvolume1 = 26;
+ ///申卖价一
+ required double askprice1 = 27;
+ ///申卖量一
+ required int32	askvolume1 = 28;
+ ///申买价二
+ required double bidprice2 = 29;
+ ///申买量二
+ required int32	bidvolume2 = 30;
+ ///申卖价二
+ required double askprice2 = 31;
+ ///申卖量二
+ required int32	askvolume2 = 32;
+ ///申买价三
+ required double bidprice3 = 33;
+ ///申买量三
+ required int32	bidvolume3 = 34;
+ ///申卖价三
+ required double askprice3 = 35;
+ ///申卖量三
+ required int32	askvolume3 = 36;
+ ///申买价四
+ required double bidprice4 = 37;
+ ///申买量四
+ required int32	bidvolume4 = 38;
+ ///申卖价四
+ required double askprice4 = 39;
+ ///申卖量四
+ required int32	askvolume4 = 40;
+ ///申买价五
+ required double bidprice5 = 41;
+ ///申买量五
+ required int32	bidvolume5 = 42;
+ ///申卖价五
+ required double askprice5 = 43;
+ ///申卖量五
+ required int32	askvolume5 = 44;
+ ///当日均价
+ required double averageprice = 45;
+};
+
+
+message LevelMQ {
+  required int32 level = 1;
+  required int64 time = 2;
+  required string type = 3;
+  required double open = 4;
+  required double high = 5;
+  required double low = 6;
+  required double close = 7;
+  required double close_ask1 = 8;
+  required double close_bid1 = 9;
+  required int32 volumn = 10;
+  required int32 counter = 11;
+  required string time_string = 12;
+};
+
+
+message QueryLevelMQ {
+  required string table_name = 1;
+  required string type = 2;
+  required int64 start = 3;
+  required int64 end = 4;
+  required int32 level = 5;
+  required int32 number = 6;
+};
+
+message LevelMQTotal {
+  required string table_name = 1;
+  required string type = 2;
+  required int32 level = 3;
+  required int32 total = 4;
+};
+
+message BacktestingLevelMQ {
+  required int64 time = 1;
+  required string time_string = 2;
+  required double open = 3;
+  required double high = 4;
+  required double low = 5;
+  required double close = 6;
+};
+
+message BacktestingLevelMQList {
+  required string table_name = 1;
+  required string type = 2;
+  required int32 level = 3;
+  required int32 total = 4;
+  required int32 index = 5;
+  repeated BacktestingLevelMQ data = 6;
+};
+
+
+message BacktestingLevelMQ2 {
+  required int64 time = 1;
+  required string time_string = 2;
+  required double open = 3;
+  required double high = 4;
+  required double low = 5;
+  required double close = 6;
+  required int32 next_level_mq_index = 7;
+};
+
+message BacktestingLevelMQList2 {
+  required string table_name = 1;
+  required string type = 2;
+  required int32 level = 3;
+  required int32 total = 4;
+  required int32 index = 5;
+  repeated BacktestingLevelMQ2 data = 6;
+};
+
+

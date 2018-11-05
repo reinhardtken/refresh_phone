@@ -1,0 +1,22 @@
+// Protocol for cp messages.
+
+syntax = "proto2";
+
+//option optimize_for = LITE_RUNTIME;
+
+package ctp.guard;
+
+message ReportPid {
+  required int32 process_id = 1;
+};
+
+message CommonCmd {
+  required string str1 = 1;
+  required string str2 = 2;
+  required string str3 = 3;
+  required string str4 = 4;
+};
+
+
+
+

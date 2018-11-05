@@ -1,0 +1,28 @@
+K:\workspace\chromium\version24\src\ctp\python\ctp_py\main.py
+
+全目录文件强制编译
+.表示当前目录
+python -m compileall -f .
+
+
+
+编译
+C:\Python27-std\python -m compileall -f .
+打包
+C:\Python27-std\python ./tools/home_recursion_copy.py
+
+
+mac机器
+cd C:\workspace\chromium\version24\src\ctp\python\ctp_py
+C:\out\Python27\python -m compileall -f .
+打包
+C:\out\Python27\python ./tools/home_recursion_copy.py
+
+
+
+
+运行
+C:\Python27-std\python main.py afterhours ../prop
+C:\Python27-std\python main.py backtesting N:/workspace/chromium/version24/src/ctp/python/bt_prop
+
+py-out-1.0.1.11

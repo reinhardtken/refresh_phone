@@ -1,0 +1,6 @@
+{
+  "apkPath":"C:/workspace/code/chromium24/src/build/Debug/ctp_data/apk",
+  "localPath":"C:/workspace/code/chromium24/src/build/Debug/ctp_data/apk_local",
+  "logPath": "C:/workspace/code/chromium24/src/build/Debug/ctp_data/log",
+  "debugPath" :"C:/workspace/code/chromium24/src/build/Debug/ctp_data/log"
+}

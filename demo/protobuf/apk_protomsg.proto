@@ -1,0 +1,51 @@
+// Protocol for apk messages.
+
+syntax = "proto2";
+
+//option optimize_for = LITE_RUNTIME;
+
+package apk;
+
+//cmd -> multi progress -> rsp
+message Command {
+ required string cmd = 1;
+ required int32 cmd_no = 2;
+ repeated string param = 3;
+};
+
+message CommandProgress {
+  required string cmd = 1;
+  required int32 cmd_no = 2;
+  required int32 code = 3;
+  repeated string info = 4;
+};
+
+message CommandResponse {
+  required string cmd = 1;
+  required int32 cmd_no = 2;
+  required int32 code = 3;
+  repeated string info = 4;
+};
+
+
+message OneApk {
+  optional int32 id = 1;
+  optional string url = 2;
+  optional string md5 = 3;
+  required string name = 4;
+  optional string brief = 5;
+  optional int32 orderid = 6;
+  optional string update_time = 7;
+  optional string create_time = 8;
+  required string apk_name = 9;
+  required double price = 10;
+  required int32 type = 11;
+};
+
+message ApkList {
+  required CommandResponse head = 1;
+  repeated OneApk apk_list = 2;
+};
+
+
+

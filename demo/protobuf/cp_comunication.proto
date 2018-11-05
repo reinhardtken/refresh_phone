@@ -1,0 +1,251 @@
+// Protocol for cp messages. 
+
+syntax = "proto2";
+
+//option optimize_for = LITE_RUNTIME;
+
+package ctp.cp;
+
+message Command {
+  required string cmd = 1;
+  repeated string params = 2;
+};
+
+message MQLevel {
+  required string type = 1;
+  required int32 level = 2;
+  required string utc_string = 3;
+  required int64 utc = 4;
+  required double open_price = 5;
+  required double high_price = 6;
+  required double low_price = 7;
+  required double close_price = 8;
+  required int32 volumn = 9;
+  required int32 counter = 10;
+};
+
+
+message TradeResult {
+  required string user = 1;
+  required string type = 2;
+  required string ms_name = 3;
+  required string os_name = 4;
+  required string ms_id = 5;
+  required string os_id = 6;
+  required int64 ms_time = 7;
+  required double total_cash = 8;
+  required double average_price = 9;
+  required double ms_price = 10;
+  required int32 total_volumn = 11;
+  required int32 traded_volumn = 12;
+  required int32 oc = 13;
+  required int32 bs = 14;
+  required int64 start_time = 15;
+  required int64 over_time = 16;
+  required int64 cost_time = 17;
+  required string last_error = 18;
+  required int32 withdraw_times = 19;
+  required int32 level = 20;
+};
+
+message LoginStatus {
+  required int64 time = 1;
+  required string time_string = 2;
+  required string user = 3;
+  required int32 error_id = 4;
+  required string error_msg = 5;
+  required string ip = 6;
+};
+
+message Position {
+  required int64 time = 1;
+  required string time_string = 2;
+  required string user = 3;
+  required double price_index = 4;
+  required double stop_price = 5;//根据止损算出的stop价格
+  required string instrumentid = 6;
+	///经纪公司代码
+	required string brokerid = 7;
+	///投资者代码
+	required string investorid = 8;
+	///持仓多空方向
+	required int32 posidirection = 9;
+	///投机套保标志
+	required int32 hedgeflag = 10;
+	///持仓日期
+	required int32 positiondate = 11; 
+	///上日持仓
+	required int32 ydposition = 12;
+	///今日持仓
+	required int32 position = 13;
+	///多头冻结
+	required int32 longfrozen = 14;
+	///空头冻结
+	required int32 shortfrozen = 15;
+	///开仓冻结金额
+	required double longfrozenamount = 16;
+	///开仓冻结金额
+	required double shortfrozenamount = 17;
+	///开仓量
+	required int32 openvolume = 18;
+	///平仓量
+	required int32 closevolume = 19;
+	///开仓金额
+	required double openamount = 20;
+	///平仓金额
+	required double	closeamount = 21;
+	///持仓成本
+	required double	positioncost = 22;
+	///上次占用的保证金
+	required double	premargin = 23;
+	///占用的保证金
+	required double	usemargin = 24;
+	///冻结的保证金
+	required double	frozenmargin = 25;
+	///冻结的资金
+	required double	frozencash = 26;
+	///冻结的手续费
+	required double	frozencommission = 27;
+	///资金差额
+	required double	cashin = 28;
+	///手续费
+	required double	commission = 29;
+	///平仓盈亏
+	required double	closeprofit = 30;
+	///持仓盈亏
+	required double	positionprofit = 31;
+	///上次结算价
+	required double presettlementprice = 32;
+	///本次结算价
+	required double settlementprice = 33;
+	///交易日
+	required string tradingday = 34;
+	///结算编号
+	required int32 settlementid = 35;
+	///开仓成本
+	required double	opencost = 36;
+	///交易所保证金
+	required double	exchangemargin = 37;
+	///组合成交形成的持仓
+	required int32 combposition = 38;
+	///组合多头冻结
+	required int32 	comblongfrozen = 39;
+	///组合空头冻结
+	required int32 	combshortfrozen = 40;
+	///逐日盯市平仓盈亏
+	required double	closeprofitbydate = 41;
+	///逐笔对冲平仓盈亏
+	required double	closeprofitbytrade = 42;
+	///今日持仓
+	required int32 todayposition = 43;
+	///保证金率
+	required double marginratebymoney = 44;
+	///保证金率(按手数)
+	required double marginratebyvolume = 45;
+};
+
+
+message Account {
+  required int64 time = 1;
+  required string time_string = 2;
+  required string user = 3;
+  ///经纪公司代码
+  required string brokerid = 4;
+  ///投资者帐号
+  required string accountid = 5;
+  ///上次质押金额
+  required double premortgage = 6;
+  ///上次信用额度
+  required double precredit = 7;
+  ///上次存款额
+  required double predeposit = 8;
+  ///上次结算准备金
+  required double prebalance = 9;
+  ///上次占用的保证金
+  required double premargin = 10;
+  ///利息基数
+  required double interestbase = 11;
+  ///利息收入
+  required double interest = 12;
+  ///入金金额
+  required double deposit = 13;
+  ///出金金额
+  required double withdraw = 14;
+  ///冻结的保证金
+  required double frozenmargin = 15;
+  ///冻结的资金
+  required double frozencash = 16;
+  ///冻结的手续费
+  required double frozencommission = 17;
+  ///当前保证金总额
+  required double currmargin = 18;
+  ///资金差额
+  required double cashin = 19;
+  ///手续费
+  required double commission = 20;
+  ///平仓盈亏
+  required double closeprofit = 21;
+  ///持仓盈亏
+  required double positionprofit = 22;
+  ///期货结算准备金
+  required double balance = 23;
+  ///可用资金
+  required double available = 24;
+  ///可取资金
+  required double withdrawquota = 25;
+  ///基本准备金
+  required double reserve = 26;
+  ///交易日
+  required string tradingday = 27;
+  ///结算编号
+  required int32 settlementid = 28;
+  ///信用额度
+  required double credit = 29;
+  ///质押金额
+  required double mortgage = 30;
+  ///交易所保证金
+  required double exchangemargin = 31;
+};
+
+message BacktestingExpectAssetList {
+  required string table_name = 1;
+  required string type = 2;
+  required int32 level = 3;
+  required int32 total = 4;
+  repeated double data = 5;
+};
+
+message BacktestingExpectAssetQuery {
+  required string table_name = 1;
+  required string type = 2;
+  required int32 level = 3;
+};
+
+
+
+message BacktestingResultSave2DBRequery {
+  required string table_name = 1;
+  required int32 total = 2;
+  required int32 chart = 3;
+  message BacktestingResultItem {
+  required string time_string = 1;
+  required int64 time = 2;
+  required double money = 3;
+ };
+  repeated BacktestingResultItem data = 4;
+};
+
+message BacktestingResultSave2DBResponse {
+  required string table_name = 1;
+  required int32 progress = 2;
+};
+
+message test1 {
+  required string s = 1;
+};
+
+message test2 {
+  required string s2 = 1;
+  required test1 t2 = 2;
+};
+
