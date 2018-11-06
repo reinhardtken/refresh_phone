@@ -5,7 +5,7 @@ __MQ_PORT = 6788
 __TU_PORT = 6789
 __BT_PORT = 6791
 
-__CHECK_UPDATE_PORT = 7788
+__CHECK_UPDATE_PORT = 7900
 # __KEEPALIVE_CHECK_UPDATE_PORT = 6801
 # __KEEPALIVE_CHECK_UPDATE_SHAKEHAND = 'protobuf://python/update-apk-alive'
 __CHECK_UPDATE_SHAKEHAND = 'protobuf://python/update-apk'

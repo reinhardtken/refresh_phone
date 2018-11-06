@@ -174,6 +174,12 @@ namespace phone_module {
     g_pref_service = local_state();
 
 
+    if (PathService::Get(base::DIR_EXE, &exe_dir_)) {
+      apk_dir_ = exe_dir_.value();
+      apk_dir_.append(L"\\ctp_data\\apk\\");
+    } else {
+      DCHECK(false);
+    }
     
     //开启连接服务器================================
     channel_host_.reset(new channel::ChannelHost());
@@ -196,13 +202,7 @@ namespace phone_module {
           apk::Command * cmd = new apk::Command;
           cmd->set_cmd(command::kPYConfig);
           cmd->set_cmd_no(cmd_no());
-
-          FilePath cur;
-          if (PathService::Get(base::DIR_EXE, &cur)) {
-            cmd->add_param(WideToUTF8(cur.value()));
-          } else {
-            DCHECK(false);
-          }
+          cmd->add_param(WideToUTF8(exe_dir_.value()));
             
           codec::MessagePtr ptr(cmd);
           current_cmd_no_set_.insert(cmd->cmd_no());
@@ -609,7 +609,25 @@ namespace phone_module {
   
 
   void CTPModule::OnInstallApkList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
-	  adb_->InstallApk(L"E:\\workspace\\chromium24\\src\\build\\Debug\\apks\\AutoUnlock.apk");
+    std::vector<phone_module::ApkInstallInfo> & info = *p.get();
+    for (auto it = info.begin(); it != info.end(); ++it) {
+      std::wstring dir = apk_dir_;
+      std::wstring file = dir.append(it->package_name).append(L".apk");
+      std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
+
+      StatusInfo * data = new StatusInfo(adb_->GetSerialNo2());
+      data->op = StringPrintf(L"装包：%ls", it->package_name.c_str());
+
+      if (result.first == true) {
+        data->result = L"成功";
+      } else {
+        data->result = StringPrintf(L"失败：%ls", result.second.c_str());
+      }
+      PointerWrapper<StatusInfo> tmp(data);
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+        new L2U_StatusInfo(tmp));
+    }
+	  //adb_->InstallApk(L"E:\\workspace\\chromium24\\src\\build\\Debug\\apks\\AutoUnlock.apk");
   }
 
   void CTPModule::OnCheckUpdateApkList() {

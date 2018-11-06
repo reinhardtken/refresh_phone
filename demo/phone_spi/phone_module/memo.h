@@ -35,4 +35,31 @@ cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 she
 cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell pm list packages -f -U " > adb\result.echo12345678
 
 
+
+//20181106
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb version"
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb start-server"
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb devices -l"
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 get-serialno"
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 root"
+
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell getevent -p" > C:\workspace\code\chromium24\src\build\Debug\adb\74020625
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell getprop ro.build.version.release"
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell "echo 8 > /proc/sys/kernel/printk""
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell "cat /proc/sys/kernel/printk""
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell pm list packages -f " > C:\workspace\code\chromium24\src\build\Debug\adb\74094015
+
+cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell pm list packages -3 " > C:\workspace\code\chromium24\src\build\Debug\adb\74109906
+
+
 */

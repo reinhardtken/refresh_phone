@@ -3,6 +3,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <utility>
 using std::map;
 using std::set;
 using std::vector;
@@ -198,16 +199,16 @@ public:
 	BOOL SetPrintkLevel(int level);
 	int GetPrintkLevel();
 	//BOOL GetResolution(CPoint &resolution);
-	BOOL InstallApk(CString strApkPath);
+	std::pair<bool, std::wstring> InstallApk(CString strApkPath);
 
 	BOOL NeedAddSNo() const;
 
 	void VivoInit();
-	CString GetAdbLastError() { 
-		CString error = m_strError; 
-		m_strError = TEXT("");
-		return error;
-	}
+	//CString GetAdbLastError() { 
+	//	CString error = m_strError; 
+	//	m_strError = TEXT("");
+	//	return error;
+	//}
 
 	int GetPowerDev() const { return m_nPowerDevice; }
 	int GetTpDev() const { return m_nFtInputDevNo;}
@@ -225,7 +226,7 @@ private:
 	void GetInputDevices();
 	void GetOsInfo();
 	void AnalyseInputDevices(CString strDevices);
-	static BOOL m_bUseToolAdb;
+	//static BOOL m_bUseToolAdb;
 public:
 	static BOOL GetFileContents(CString path, CString &contents);
 	static void GetProcessIDs(CString strExe);
@@ -262,7 +263,7 @@ public:
 private:
 	ADB_DEVICE m_curDevice;
 
-	CString m_strError;
+	//CString m_strError;
 	BOOL m_bDevRooted;
 	BOOL m_bDevConnected;
 	BOOL m_bWifiConnected;

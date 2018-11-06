@@ -122,6 +122,8 @@ private:
 
     bool python_connected_;
 
+    FilePath exe_dir_;
+    std::wstring apk_dir_;
 
     //scoped_ptr<backtesting::BacktestingModule> backtesting_module_;
     

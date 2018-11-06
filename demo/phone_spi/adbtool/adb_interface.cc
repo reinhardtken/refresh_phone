@@ -19,7 +19,7 @@
 //extern HWND g_hwndDebug;
 
 vector<DWORD> CAdbInterface::s_vecAdbProcessIds;
-BOOL CAdbInterface::m_bUseToolAdb = FALSE;
+//BOOL CAdbInterface::m_bUseToolAdb = FALSE;
 
 map<CString, ANDROID_OS_INFO> CAdbInterface::s_mapAndroidOsInfos;
 //CString CAdbInterface::CMD_ECHO_FILE = TEXT("adb\\result.echo");
@@ -56,6 +56,13 @@ CAdbInterface::CAdbInterface(void)
 	m_nPowerDevice(0)
 {
 	m_curDevice.Reset();
+  FilePath cur;
+  if (PathService::Get(base::DIR_EXE, &cur)) {
+    cur = cur.Append(FILE_PATH_LITERAL("adb"));
+    //cur = cur.Append(FilePath::kSeparators);
+    adb_exe_path_ = cur.value();
+    adb_exe_path_.append(L"\\");
+  }
 }
 
 void CAdbInterface::StaticInit()
@@ -142,15 +149,17 @@ void CAdbInterface::Init()
 
 	if (para.strReturn.Find(TEXT("Android Debug Bridge")) == -1)
 	{
-		m_bUseToolAdb = TRUE;
-		//没有在环境里面找到adb，使用自带adb
-		FilePath cur;
-		if (PathService::Get(base::DIR_EXE, &cur)) {
-			cur = cur.Append(FILE_PATH_LITERAL("adb"));
-			//cur = cur.Append(FilePath::kSeparators);
-			adb_exe_path_ = cur.value();
-			adb_exe_path_.append(L"\\");
-		}
+    //强制使用自带adb，不应该存在找不到文件的问题
+    DCHECK(false);
+		//m_bUseToolAdb = TRUE;
+		////没有在环境里面找到adb，使用自带adb
+		//FilePath cur;
+		//if (PathService::Get(base::DIR_EXE, &cur)) {
+		//	cur = cur.Append(FILE_PATH_LITERAL("adb"));
+		//	//cur = cur.Append(FilePath::kSeparators);
+		//	adb_exe_path_ = cur.value();
+		//	adb_exe_path_.append(L"\\");
+		//}
 		
 
 	}
@@ -370,8 +379,9 @@ BOOL CAdbInterface::SetPrintkLevel(int level)
 //
 //}
 
-BOOL CAdbInterface::InstallApk(CString strApkPath) 
+std::pair<bool, std::wstring> CAdbInterface::InstallApk(CString strApkPath)
 {
+  std::pair<bool, std::wstring> result(false, std::wstring());
 	PARAM_T para;
 	para.strCmd = TEXT("adb install -r \"");
 	para.strCmd += strApkPath;
@@ -381,14 +391,14 @@ BOOL CAdbInterface::InstallApk(CString strApkPath)
 	para.bRet = CAdbInterface::CreateAdbProcess(&para);
 
 	para.strReturn.MakeLower();
-	if (para.strReturn.Find(TEXT("fail")) == -1) 
-	{
-		return TRUE;
+	if (para.strReturn.Find(TEXT("fail")) == -1) {
+    result.first = true;
+		return result;
 	}
-	else 
-	{
-		m_strError = para.strReturn;
-		return FALSE;
+	else {
+		result.second = para.strReturn.GetBuffer();
+    para.strReturn.ReleaseBuffer();
+		return result;
 	}
 }
 
@@ -794,12 +804,12 @@ CString CAdbInterface::AddAdbPrefix(CString strCmd)
 {
 	CString strRetCmd = TEXT("cmd.exe /c \"");
 
-	
-	if (m_bUseToolAdb)
-	{
-		//strRetCmd.Append(TEXT("adb\\")) ;
-		strRetCmd.Append(adb_exe_path_.c_str());
-	}
+  strRetCmd.Append(adb_exe_path_.c_str());
+	//if (m_bUseToolAdb)
+	//{
+	//	//strRetCmd.Append(TEXT("adb\\")) ;
+	//	strRetCmd.Append(adb_exe_path_.c_str());
+	//}
 
 	CString strNewCmd = strCmd;
 	if (ADB->NeedAddSNo())
@@ -872,12 +882,13 @@ BOOL CAdbInterface::CreateCmdWindow(P_PARAM_T para)
 
 	if (para->nType == CMD_DIR_ADB) 
 	{
-		if (m_bUseToolAdb) 
-		{
-			ShellExecute(NULL, TEXT("open"), TEXT("cmd.exe"), para->strCmd, TEXT("adb"), SW_SHOW);
-		} else {
-			ShellExecute(NULL, TEXT("open"), TEXT("cmd.exe"), NULL, NULL, SW_SHOW);
-		}
+    ShellExecute(NULL, TEXT("open"), TEXT("cmd.exe"), para->strCmd, TEXT("adb"), SW_SHOW);
+		//if (m_bUseToolAdb) 
+		//{
+		//	ShellExecute(NULL, TEXT("open"), TEXT("cmd.exe"), para->strCmd, TEXT("adb"), SW_SHOW);
+		//} else {
+		//	ShellExecute(NULL, TEXT("open"), TEXT("cmd.exe"), NULL, NULL, SW_SHOW);
+		//}
 	}
 	else 
 	{
@@ -1012,7 +1023,7 @@ BOOL CAdbInterface::_CreateAdbProcess(P_PARAM_T para)
 	// 线程不再被访问,关闭句柄,不影响句柄运行
 	CloseHandle(pi.hThread);	
 
-
+  //20181106这个地方无限等待肯定是有问题的。。。
 	if (para->nType & CMD_ABSOLUTE_INFINITE)
 	{
 		WaitForSingleObject(pi.hProcess,INFINITE);
