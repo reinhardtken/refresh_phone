@@ -59,7 +59,7 @@ namespace {
     void RegisterLocalState(PrefService* local_state) {
     //server
 
-  local_state->RegisterStringPref(prefs::kCheckUpdateApkList, "127.0.0.1:7904");
+  local_state->RegisterStringPref(prefs::kCheckUpdateApkList, "127.0.0.1:7789");
     
   }
 

@@ -16,6 +16,9 @@
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/tabbed_pane/tabbed_pane.h"
+
+
+#include "grit/theme_resources.h"
 /*
 #include "ui/views/examples/bubble_example.h"
 #include "ui/views/examples/button_example.h"
@@ -44,6 +47,8 @@
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/widget/widget.h"
 #include "ui/views/widget/widget_delegate.h"
+#include "ui/base/theme_provider.h"
+
 
 #include "tabbed_pane_example.h"
 #include "guard_view.h"
@@ -89,11 +94,13 @@ class CTPWindowContents : public WidgetDelegateView,
         example_shown_(new View),
         status_label_(new Label),
         command_(c),
+        icon_(NULL),
         operation_(operation) {
     instance_ = this;
     combobox_->set_listener(this);
     process_type_ = command_.GetSwitchValueASCII(switches::kProcessType);
     notification_service_on_ui_thread_.reset(new content::NotificationServiceImpl);
+    
   }
   virtual ~CTPWindowContents() {}
 
@@ -151,6 +158,15 @@ class CTPWindowContents : public WidgetDelegateView,
     if (is_add && child == this)
       InitExamplesWindow();
   }
+
+  virtual gfx::ImageSkia GetWindowIcon() OVERRIDE {
+    if (icon_ == NULL) {
+      ui::ThemeProvider* tp = GetThemeProvider();
+      icon_ = tp->GetImageSkiaNamed(IDR_FILE_MANAGER_IMG_FILETYPE_DRIVE);
+    } 
+    return gfx::ImageSkia(*icon_);
+  }
+
 
   // Overridden from ComboboxListener:
   virtual void OnSelectedIndexChanged(Combobox* combobox) OVERRIDE {
@@ -234,6 +250,7 @@ class CTPWindowContents : public WidgetDelegateView,
   scoped_ptr<content::NotificationServiceImpl> notification_service_on_ui_thread_;
   CommandLine const& command_;
   std::string process_type_;
+  gfx::ImageSkia* icon_;
 
   DISALLOW_COPY_AND_ASSIGN(CTPWindowContents);
 };

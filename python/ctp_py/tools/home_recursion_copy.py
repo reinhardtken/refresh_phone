@@ -4,8 +4,8 @@
 import os
 import shutil
 #=========================================
-IN_DIR = r"c:\workspace\chromium\version24\src\ctp\python\ctp_py"
-OUT_DIR = r"c:\workspace\chromium\version24\src\ctp\python\out"
+IN_DIR = r"E:\workspace\chromium24\src\phone\python\ctp_py"
+OUT_DIR = r"E:\workspace\chromium24\src\phone\python\python_code"
 EXT = '.pyc'
 #=========================================
 # 目录递归拷贝函数
@@ -45,4 +45,4 @@ def DeleteNoUsed(path):
 if __name__ == '__main__':
   dir_copyTree(IN_DIR, OUT_DIR)
   #cpy drawChart.py
-  shutil.copy2(r'c:\workspace\chromium\version24\src\ctp\python\chart_py\drawChart.py', OUT_DIR)
+  #shutil.copy2(r'c:\workspace\chromium\version24\src\ctp\python\chart_py\drawChart.py', OUT_DIR)

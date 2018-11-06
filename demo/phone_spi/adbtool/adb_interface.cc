@@ -1026,7 +1026,15 @@ BOOL CAdbInterface::_CreateAdbProcess(P_PARAM_T para)
   //20181106这个地方无限等待肯定是有问题的。。。
 	if (para->nType & CMD_ABSOLUTE_INFINITE)
 	{
-		WaitForSingleObject(pi.hProcess,INFINITE);
+    const DWORD MAX = 1000 * 60 * 3;
+		DWORD result = WaitForSingleObject(pi.hProcess, MAX);
+    LOG(INFO) << para->strCmd.GetBuffer() << L" " << " WaitForSingleObject result " << result;
+    if (result == WAIT_TIMEOUT || result == WAIT_FAILED) {
+      LOG(WARNING) << "wrong happen !!! " << result;
+    }
+
+    ;
+    //WaitForSingleObject(pi.hProcess, INFINITE);
 	}
 	else if (para->nType & CMD_JUST_RETURN)
 	{
