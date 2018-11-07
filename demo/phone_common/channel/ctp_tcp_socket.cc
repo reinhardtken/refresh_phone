@@ -201,7 +201,10 @@ int TCPSocket::Listen(const std::string& address, int port, int backlog,
   if (!server_socket_.get()) {
     server_socket_.reset(new net::TCPServerSocket(NULL,
                                                   net::NetLog::Source()));
-    server_socket_->AllowAddressReuse();
+    //20181107-经常发生listen没有任何报错，但是py甚至telnet无法成功连接的情况
+    //问题应该和下述文章有关，因为目前并不需要指定端口，去掉reuse
+    //https://blog.csdn.net/yaokai_assultmaster/article/details/68951150
+    //server_socket_->AllowAddressReuse();
   }
   int result = server_socket_->Listen(*bind_address, backlog);
   if (result)
