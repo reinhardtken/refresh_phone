@@ -95,4 +95,5 @@ namespace command {
   const char kCheckNetPackageList[] = "check_net_package_list";
   const char kGetLocalPackageList[] = "get_local_package_list";
   const char kPYConfig[] = "py_config";
+  const char kInstallApk[] = "install_apk";
 }

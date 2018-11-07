@@ -117,17 +117,6 @@ void MainView::OnSelectedIndexChanged(Combobox* combobox) {
 void MainView::CreateExampleView(View* container) {
 
 
-
-  clear_order_button_ = new TextButton(this, L"Clear Order");
-
-  cash_label_ = new Label(L"Available:");
-  cash_label_->SetHorizontalAlignment(Label::ALIGN_LEFT);
-  balance_label_ = new Label(L"Balance:");
-  balance_label_->SetHorizontalAlignment(Label::ALIGN_LEFT);
-  position_profit_label_ = new Label(L"PositionProfit:");
-  position_profit_label_->SetHorizontalAlignment(Label::ALIGN_LEFT);
-
-
   GridLayout* layout = new GridLayout(container);
   container->SetLayoutManager(layout);
 
@@ -156,39 +145,34 @@ void MainView::CreateExampleView(View* container) {
 
   //=========================================
  
-
-  ColumnSet* column_set = layout->AddColumnSet(0);
+  int index = 0;
+  ColumnSet* column_set = layout->AddColumnSet(index);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL, 1,
                         GridLayout::USE_PREF, 0, 0);
-  layout->StartRow(0.7f /* expand */, 0);
+  layout->StartRow(0.7f /* expand */, index);
   layout->AddView(table_order_->CreateParentIfNecessary());
 
-
-  column_set = layout->AddColumnSet(1);
+  //------------------------------------------------------
+  ++index;
+  column_set = layout->AddColumnSet(index);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL, 1,
     GridLayout::USE_PREF, 0, 0);
-  layout->StartRow(0.3f, 1);
+  layout->StartRow(0.3f, index);
   layout->AddView(table_position_->CreateParentIfNecessary());
   //=========================================
 
 
+  ++index;
 
-  column_set = layout->AddColumnSet(3);
-  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-    0.20f, GridLayout::USE_PREF, 0, 0);
-  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-    0.20f, GridLayout::USE_PREF, 0, 0);
-  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-    0.20f, GridLayout::USE_PREF, 0, 0);
-  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-    0.20f, GridLayout::USE_PREF, 0, 0);
-  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-    0.20f, GridLayout::USE_PREF, 0, 0);
-/*
-  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-    0.20f, GridLayout::USE_PREF, 0, 0);*/
+  clear_table_ = new TextButton(this, L"Çå³ýÏÔÊ¾");
+  clear_table_->set_alignment(TextButton::ALIGN_CENTER);
 
-  layout->StartRow(0 /* no expand */, 3);
+  column_set = layout->AddColumnSet(index);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+    1.0f, GridLayout::USE_PREF, 0, 0);
+
+  layout->StartRow(0 /* expand */, index);
+  layout->AddView(clear_table_);
 
 
 
@@ -286,7 +270,10 @@ void MainView::OnTableViewDelete(TableView* table_view) {}
 void MainView::OnTableView2Delete(TableView2* table_view) {}
 
 void MainView::ButtonPressed(Button* sender, const ui::Event& event) {
-
+  if (sender == clear_table_) {
+    status_info_data_.clear();
+    table_order_->OnModelChanged();
+  }
 }
 
 

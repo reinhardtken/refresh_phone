@@ -19,6 +19,7 @@ import tempfile
 import config
 import util.log
 import util.utility
+import adb_wrapper
 #=======================================================
 
 
@@ -93,6 +94,8 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     
     self.local_prop = None
     self.apk_dir = None
+    
+    self.device = adb_wrapper.ADBWrapper()
     
     
 
@@ -187,8 +190,23 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.ProcessRemoveLocalPackageList(msg)
         elif msg.cmd == 'get_local_package_list':
           self.ProcessGetLocalPackageList(msg)
+        elif msg.cmd == 'install_apk':
+          self.ProcessInstallApk(msg)
         
 
+  def GenInstallApkCallback(self, command):
+    def InstallApkCallback(apk, now, total):
+      progress = float(now) / total
+      if (progress - self.last_progress) > 0.05 or now == total:
+        self.last_progress = progress
+        self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK, [apk, str(progress), ])
+    
+    return InstallApkCallback
+
+  def ProcessInstallApk(self, command):
+    self.last_progress = 0
+    self.device.ConnectDevice()
+    self.device.Install(command.param[0], self.GenInstallApkCallback(command))
 
 
   def ProcessGetLocalPackageList(self, command):

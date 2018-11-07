@@ -233,6 +233,7 @@ class MainView : public CTPViewBase,
   //CCTableView* table_position_;
 
 
+  TextButton* clear_table_;
 
   TextButton * clear_order_button_;
   Label * cash_label_;

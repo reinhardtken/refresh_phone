@@ -48,7 +48,6 @@ cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 get
 
 cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 root"
 
-
 cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell getevent -p" > C:\workspace\code\chromium24\src\build\Debug\adb\74020625
 
 cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell getprop ro.build.version.release"
@@ -61,5 +60,19 @@ cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 she
 
 cmd.exe /c "C:\workspace\code\chromium24\src\build\Debug\adb\adb -s aa1ee7d1 shell pm list packages -3 " > C:\workspace\code\chromium24\src\build\Debug\adb\74109906
 
+https://github.com/google/python-adb/issues/93
+使用py-adb遇到
+usb1.USBErrorAccess: LIBUSB_ERROR_ACCESS [-3]
+
+
+
+环境=====
+libusb相关
+py地址
+https://pypi.org/simple/libusb1/
+so地址
+https://github.com/libusb/libusb/releases
+pyadb地址
+https://github.com/google/python-adb
 
 */

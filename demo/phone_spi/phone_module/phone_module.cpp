@@ -355,6 +355,20 @@ namespace phone_module {
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_ApkUpdateInfo(tmp));
         } else if (std::string(command::kRemoveLocalPackageList) == progress->cmd()) {
+        } else if (std::string(command::kInstallApk) == progress->cmd()) {
+          std::wstring apk = UTF8ToWide(progress->info(0));
+          std::wstring percent;
+          if (progress->info_size() > 1) {
+            percent = UTF8ToWide(progress->info(1));
+          }
+
+          StatusInfo * data = new StatusInfo(adb_->GetSerialNo2());
+          data->result = StringPrintf(L"进度：%ls 完成 %ls", apk.c_str(), percent.c_str());
+
+          PointerWrapper<StatusInfo> tmp(data);
+          ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+            new L2U_StatusInfo(tmp));
+
         }
       } else if (p->GetTypeName() == "apk.CommandResponse") {
         apk::CommandResponse const* response = static_cast<apk::CommandResponse const*>(p.get());
@@ -608,27 +622,48 @@ namespace phone_module {
   }
   
 
+  //void CTPModule::OnInstallApkList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
+  //  std::vector<phone_module::ApkInstallInfo> & info = *p.get();
+  //  for (auto it = info.begin(); it != info.end(); ++it) {
+  //    std::wstring dir = apk_dir_;
+  //    std::wstring file = dir.append(it->package_name).append(L".apk");
+  //    std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
+
+  //    StatusInfo * data = new StatusInfo(adb_->GetSerialNo2());
+  //    data->op = StringPrintf(L"装包：%ls", it->package_name.c_str());
+
+  //    if (result.first == true) {
+  //      data->result = L"成功";
+  //    } else {
+  //      data->result = StringPrintf(L"失败：%ls", result.second.c_str());
+  //    }
+  //    PointerWrapper<StatusInfo> tmp(data);
+  //    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+  //      new L2U_StatusInfo(tmp));
+  //  }
+	 // //adb_->InstallApk(L"E:\\workspace\\chromium24\\src\\build\\Debug\\apks\\AutoUnlock.apk");
+  //}
+
+
   void CTPModule::OnInstallApkList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
     std::vector<phone_module::ApkInstallInfo> & info = *p.get();
     for (auto it = info.begin(); it != info.end(); ++it) {
       std::wstring dir = apk_dir_;
       std::wstring file = dir.append(it->package_name).append(L".apk");
-      std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
+      //std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
 
-      StatusInfo * data = new StatusInfo(adb_->GetSerialNo2());
-      data->op = StringPrintf(L"装包：%ls", it->package_name.c_str());
-
-      if (result.first == true) {
-        data->result = L"成功";
-      } else {
-        data->result = StringPrintf(L"失败：%ls", result.second.c_str());
-      }
-      PointerWrapper<StatusInfo> tmp(data);
-      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-        new L2U_StatusInfo(tmp));
+      apk::Command * cmd = new apk::Command;
+      cmd->set_cmd(command::kInstallApk);
+      cmd->set_cmd_no(cmd_no());
+      cmd->add_param(WideToUTF8(file));
+      codec::MessagePtr ptr(cmd);
+      current_cmd_no_set_.insert(cmd->cmd_no());
+      channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+      break;
+      
     }
-	  //adb_->InstallApk(L"E:\\workspace\\chromium24\\src\\build\\Debug\\apks\\AutoUnlock.apk");
   }
+
 
   void CTPModule::OnCheckUpdateApkList() {
 	  "E:/workspace/python/Python27/python.exe E:/workspace/chromium24/src/phone/python/ctp_py/main.py check_update  E:/workspace/chromium24/src/phone/python/check_update_home_prop";
