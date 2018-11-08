@@ -42,9 +42,7 @@ void ComboboxExample::CreateExampleView(View* container) {
 }
 
 void ComboboxExample::OnSelectedIndexChanged(Combobox* combobox) {
-  DCHECK_EQ(combobox_, combobox);
-  PrintStatus("Selected: %s", UTF16ToUTF8(combobox_model_.GetItemAt(
-      combobox->selected_index())).c_str());
+
 }
 
 }  // namespace examples

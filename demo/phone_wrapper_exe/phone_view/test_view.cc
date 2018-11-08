@@ -93,129 +93,16 @@ void TestView::CreateExampleView(View* container) {
   container->AddChildView(label_);
 
   field_ = new Textfield();
-  /*ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
-  image_button_ = new ImageButton(this);
-  image_button_->set_focusable(true);
-  image_button_->SetImage(ImageButton::BS_NORMAL,
-                          rb.GetImageNamed(IDR_CLOSE).ToImageSkia());
-  image_button_->SetImage(ImageButton::BS_HOT,
-                          rb.GetImageNamed(IDR_CLOSE_H).ToImageSkia());
-  image_button_->SetImage(ImageButton::BS_PUSHED,
-                          rb.GetImageNamed(IDR_CLOSE_P).ToImageSkia());
-  image_button_->SetOverlayImage(rb.GetImageNamed(
-      IDR_MENU_CHECK).ToImageSkia());*/
+
   container->AddChildView(field_);
 }
 
 void TestView::TextButtonPressed(const ui::Event& event) {
-  /*PrintStatus("Text Button Pressed! count: %d", ++count_);
-  if (event.IsControlDown()) {
-    if (event.IsShiftDown()) {
-      if (event.IsAltDown()) {
-        text_button_->SetMultiLine(!text_button_->multi_line());
-        if (text_button_->multi_line()) {
-          text_button_->SetText(ASCIIToUTF16("Multi-line text\n") +
-                                ASCIIToUTF16("is here to stay all the way!\n") +
-                                ASCIIToUTF16("123"));
-        } else {
-          text_button_->SetText(ASCIIToUTF16("Text Button"));
-        }
-      } else {
-        switch (text_button_->icon_placement()) {
-          case TextButton::ICON_ON_LEFT:
-            text_button_->set_icon_placement(TextButton::ICON_ON_RIGHT);
-            break;
-          case TextButton::ICON_ON_RIGHT:
-            text_button_->set_icon_placement(TextButton::ICON_ON_LEFT);
-            break;
-          case TextButton::ICON_CENTERED:
-            // Do nothing.
-            break;
-        }
-      }
-    } else if (event.IsAltDown()) {
-      if (text_button_->HasIcon())
-        text_button_->SetIcon(gfx::ImageSkia());
-      else
-        text_button_->SetIcon(*icon_);
-    } else {
-      switch (alignment_) {
-        case TextButton::ALIGN_LEFT:
-          alignment_ = TextButton::ALIGN_CENTER;
-          break;
-        case TextButton::ALIGN_CENTER:
-          alignment_ = TextButton::ALIGN_RIGHT;
-          break;
-        case TextButton::ALIGN_RIGHT:
-          alignment_ = TextButton::ALIGN_LEFT;
-          break;
-      }
-      text_button_->set_alignment(alignment_);
-    }
-  } else if (event.IsShiftDown()) {
-    if (event.IsAltDown()) {
-      if (text_button_->text().length() < 20) {
-        text_button_->SetText(
-            ASCIIToUTF16("Startof") +
-            ASCIIToUTF16("ReallyReallyReallyReallyReallyReallyReally") +
-            ASCIIToUTF16("ReallyReallyReallyReallyReallyReallyReally") +
-            ASCIIToUTF16("ReallyReallyReallyReallyReallyReallyReally") +
-            ASCIIToUTF16("LongButtonText"));
-      } else {
-        text_button_->SetText(ASCIIToUTF16("Text Button"));
-      }
-    } else {
-      use_native_theme_border_ = !use_native_theme_border_;
-      if (use_native_theme_border_)
-        text_button_->set_border(new TextButtonNativeThemeBorder(text_button_));
-      else
-        text_button_->set_border(new TextButtonBorder());
-    }
-  } else if (event.IsAltDown()) {
-    text_button_->SetIsDefault(!text_button_->is_default());
-  } else {
-    text_button_->ClearMaxTextSize();
-  }
-  example_view()->GetLayoutManager()->Layout(example_view());*/
+  
 }
 
 void TestView::LabelButtonPressed(const ui::Event& event) {
-  /*PrintStatus("Label Button Pressed! count: %d", ++count_);
-  if (event.IsControlDown()) {
-    if (event.IsShiftDown()) {
-      if (event.IsAltDown()) {
-        label_button_->SetTextMultiLine(!label_button_->GetTextMultiLine());
-        label_button_->SetText(ASCIIToUTF16(label_button_->GetTextMultiLine() ?
-            "Multi-line text\nis here to stay all the way!\n123" :
-            "Label Button"));
-      } else {
-        label_button_->SetText(!label_button_->GetText().empty() ?
-            string16() : ASCIIToUTF16("Label Button"));
-      }
-    } else if (event.IsAltDown()) {
-      label_button_->SetImage(CustomButton::BS_NORMAL,
-          label_button_->GetImage(CustomButton::BS_NORMAL).isNull() ?
-          *icon_ : gfx::ImageSkia());
-    } else {
-      label_button_->SetHorizontalAlignment(static_cast<Label::Alignment>(
-          (label_button_->GetHorizontalAlignment() + 1) % 3));
-    }
-  } else if (event.IsShiftDown()) {
-    if (event.IsAltDown()) {
-      label_button_->SetText(ASCIIToUTF16(
-          label_button_->GetText().length() > 20 ? "Label Button" :
-          "StartofReallyReallyReallyReallyReallyReallyReally"
-          "ReallyReallyReallyReallyReallyReallyReally"
-          "ReallyReallyReallyReallyReallyReallyReallyLongButtonText"));
-    } else {
-      label_button_->SetNativeTheme(!label_button_->native_theme());
-    }
-  } else if (event.IsAltDown()) {
-    label_button_->SetDefaultButton(!label_button_->default_button());
-  } else {
-    label_button_->set_min_size(gfx::Size());
-  }
-  example_view()->GetLayoutManager()->Layout(example_view());*/
+ 
 }
 
 void TestView::ButtonPressed(Button* sender, const ui::Event& event) {

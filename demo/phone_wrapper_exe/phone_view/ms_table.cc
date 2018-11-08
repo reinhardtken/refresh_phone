@@ -459,17 +459,11 @@ gfx::ImageSkia MSTable::GetIcon(int row) {
 void MSTable::SetObserver(ui::TableModelObserver* observer) {}
 
 void MSTable::OnSelectionChanged() {
-  if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Selected: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }
+
 }
 
 void MSTable::OnDoubleClick() {
-  if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Double Click: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }
+
 }
 
 void MSTable::OnMiddleClick() {}

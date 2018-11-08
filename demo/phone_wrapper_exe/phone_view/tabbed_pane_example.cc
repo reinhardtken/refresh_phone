@@ -99,7 +99,7 @@ void CTPTabbedPane::ButtonPressed(Button* sender, const ui::Event& event) {
     if (tabbed_pane_->GetTabCount() > 1)
       tabbed_pane_->SelectTabAt(1);
   }
-  PrintStatus();
+
 }
 
 void CTPTabbedPane::TabSelectedAt(int index) {
@@ -109,13 +109,11 @@ void CTPTabbedPane::TabSelectedAt(int index) {
     DCHECK(false);
   }
   // Just print the status when selection changes.
-  PrintStatus();
+
 }
 
 void CTPTabbedPane::PrintStatus() {
-  CTPViewBase::PrintStatus("Tab Count:%d, Selected Tab:%d",
-                           tabbed_pane_->GetTabCount(),
-                           tabbed_pane_->GetSelectedTabIndex());
+
 }
 
 void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {

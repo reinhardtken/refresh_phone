@@ -113,8 +113,8 @@ class CTPWindowContents : public WidgetDelegateView,
   }
 
   // Prints a message in the status area, at the bottom of the window.
-  void SetStatus(const std::string& status) {
-    status_label_->SetText(UTF8ToUTF16(status));
+  void SetStatus(const std::wstring& status) {
+    status_label_->SetText(status);
   }
 
   static CTPWindowContents* instance() { return instance_; }
@@ -176,7 +176,7 @@ class CTPWindowContents : public WidgetDelegateView,
     example_shown_->AddChildView(combobox_model_.GetItemViewAt(
         combobox->selected_index()));
     example_shown_->RequestFocus();
-    SetStatus(std::string());
+    //SetStatus(std::string());
     Layout();
   }
 
@@ -279,7 +279,7 @@ CommandLine const & GetCommandLine() {
   return CTPWindowContents::instance()->Command();
 }
 
-void LogStatus(const std::string& string) {
+void LogStatus(const std::wstring& string) {
   CTPWindowContents::instance()->SetStatus(string);
 }
 

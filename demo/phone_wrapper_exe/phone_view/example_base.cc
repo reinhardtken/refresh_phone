@@ -15,7 +15,7 @@ namespace examples {
 
 // Logs the specified string to the status area of the examples window.
 // This function can only be called if there is a visible examples window.
-void LogStatus(const std::string& status);
+void LogStatus(const std::wstring& status);
 
 namespace {
 
@@ -58,10 +58,10 @@ CTPViewBase::CTPViewBase(const char* title) : example_title_(title) {
 }
 
 // Prints a message in the status area, at the bottom of the window.
-void CTPViewBase::PrintStatus(const char* format, ...) {
+void CTPViewBase::PrintStatus(const wchar_t* format, ...) {
   va_list ap;
   va_start(ap, format);
-  std::string msg;
+  std::wstring msg;
   base::StringAppendV(&msg, format, ap);
   LogStatus(msg);
 }

@@ -29,7 +29,7 @@ class CTPViewBase {
   explicit CTPViewBase(const char* title);
 
   // Prints a message in the status area, at the bottom of the window.
-  void PrintStatus(const char* format, ...);
+  void PrintStatus(const wchar_t* format, ...);
 
   // Converts an boolean value to "on" or "off".
   const char* BoolToOnOff(bool value) {

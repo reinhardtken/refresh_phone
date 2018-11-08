@@ -217,17 +217,11 @@ gfx::ImageSkia MarginRateTable::GetIcon(int row) {
 void MarginRateTable::SetObserver(ui::TableModelObserver* observer) {}
 
 void MarginRateTable::OnSelectionChanged() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Selected: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void MarginRateTable::OnDoubleClick() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Double Click: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void MarginRateTable::OnMiddleClick() {}

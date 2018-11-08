@@ -183,10 +183,7 @@ gfx::ImageSkia InstallApkListTable::GetIcon(int row) {
 void InstallApkListTable::SetObserver(ui::TableModelObserver* observer) {}
 
 void InstallApkListTable::OnSelectionChanged() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Selected: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void InstallApkListTable::OnDoubleClick() {

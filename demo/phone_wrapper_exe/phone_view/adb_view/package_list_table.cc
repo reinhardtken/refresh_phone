@@ -202,17 +202,11 @@ gfx::ImageSkia PackageListTable::GetIcon(int row) {
 void PackageListTable::SetObserver(ui::TableModelObserver* observer) {}
 
 void PackageListTable::OnSelectionChanged() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Selected: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void PackageListTable::OnDoubleClick() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Double Click: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void PackageListTable::OnMiddleClick() {}

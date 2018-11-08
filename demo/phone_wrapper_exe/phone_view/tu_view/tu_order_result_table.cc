@@ -549,17 +549,11 @@ gfx::ImageSkia OrderResultTable::GetIcon(int row) {
 void OrderResultTable::SetObserver(ui::TableModelObserver* observer) {}
 
 void OrderResultTable::OnSelectionChanged() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Selected: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void OrderResultTable::OnDoubleClick() {
-  /*if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Double Click: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }*/
+
 }
 
 void OrderResultTable::OnMiddleClick() {}

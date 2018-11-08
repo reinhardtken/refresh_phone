@@ -391,17 +391,14 @@ gfx::ImageSkia MQTable::GetIcon(int row) {
 void MQTable::SetObserver(ui::TableModelObserver* observer) {}
 
 void MQTable::OnSelectionChanged() {
-  if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Selected: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }
+  //if (table_->FirstSelectedRow() >= 0) {
+  //  PrintStatus("Selected: %s",
+  //              UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
+  //}
 }
 
 void MQTable::OnDoubleClick() {
-  if (table_->FirstSelectedRow() >= 0) {
-    PrintStatus("Double Click: %s",
-                UTF16ToASCII(GetText(table_->FirstSelectedRow(), 0)).c_str());
-  }
+
 }
 
 void MQTable::OnMiddleClick() {}
