@@ -56,6 +56,8 @@ namespace {
       ip_port = common_util::g_pref_service->GetString(prefs::kBacktestingServer);
     }  else if (name == prefs::kCheckUpdateApkList) {
       ip_port = common_util::g_pref_service->GetString(prefs::kCheckUpdateApkList);
+    } else if (name == prefs::kAdbServer) {
+      ip_port = common_util::g_pref_service->GetString(prefs::kAdbServer);
     } else {
       DCHECK(false);
       return false;

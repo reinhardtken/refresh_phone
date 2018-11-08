@@ -62,6 +62,7 @@ namespace prefs {
 
   //PHONE_COMMON_EXPORT extern const char kCheckUpdateApkListAlive[];
   PHONE_COMMON_EXPORT extern const char kCheckUpdateApkList[];
+  PHONE_COMMON_EXPORT extern const char kAdbServer[];
 
   PHONE_COMMON_EXPORT extern const char kTUPyPathAndCmd[];
   PHONE_COMMON_EXPORT extern const char kMQPyPathAndCmd[];

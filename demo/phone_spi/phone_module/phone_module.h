@@ -117,6 +117,7 @@ private:
 
     int32 server_port_;
     scoped_ptr<channel::ChannelHost> channel_host_;
+    scoped_ptr<channel::ChannelHost> adb_server_;
 
     scoped_ptr<VoidVoidCallback> keep_connect_rlang_;
 

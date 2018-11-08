@@ -60,6 +60,7 @@ namespace {
     //server
 
   local_state->RegisterStringPref(prefs::kCheckUpdateApkList, "127.0.0.1:7789");
+  local_state->RegisterStringPref(prefs::kAdbServer, "127.0.0.1:5037");
     
   }
 

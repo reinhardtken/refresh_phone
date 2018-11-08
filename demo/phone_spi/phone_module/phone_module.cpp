@@ -181,6 +181,8 @@ namespace phone_module {
       DCHECK(false);
     }
     
+    adb_server_.reset(new channel::ChannelHost());
+    channel::ServerResult result2 = adb_server_->InitializeServer(::prefs::kAdbServer);
     //开启连接服务器================================
     channel_host_.reset(new channel::ChannelHost());
     
