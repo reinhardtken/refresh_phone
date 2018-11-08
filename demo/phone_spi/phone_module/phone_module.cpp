@@ -687,6 +687,7 @@ namespace phone_module {
       apk::Command * cmd = new apk::Command;
       cmd->set_cmd(command::kPyAdbInstallApk);
       cmd->set_cmd_no(cmd_no());
+      cmd->add_param("all");
       cmd->add_param(WideToUTF8(file));
       codec::MessagePtr ptr(cmd);
       current_cmd_no_set_.insert(cmd->cmd_no());

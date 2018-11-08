@@ -187,7 +187,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.ProcessRemoveLocalPackageList(msg)
         elif msg.cmd == 'get_local_package_list':
           self.ProcessGetLocalPackageList(msg)
-        elif msg.cmd == 'install_apk':
+        elif msg.cmd == 'pyadb_install_apk':
           self.ProcessInstallApk(msg)
         elif msg.cmd == 'pyadb_scan_devices':
           self.ProcessScanDevices(msg)
@@ -205,23 +205,55 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         
       self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, out)
     else:
-      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
-      
+      #self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
+      pass
       
 
-  def GenInstallApkCallback(self, command):
-    def InstallApkCallback(apk, now, total):
-      progress = float(now) / total
-      if (progress - self.last_progress) > 0.05 or now == total:
-        self.last_progress = progress
-        self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK, [apk, str(progress), ])
-    
-    return InstallApkCallback
+  class CallbackObject():
+   def __init__(self, command, serial_no):
+     self.command = command
+     self.serial_no = serial_no
+     self.last_progress = 0
+
+
+
+
+   def Callback(self, apk, now, total):
+     progress = float(now) / total
+     if (progress - self.last_progress) > 0.05 or now == total:
+       self.last_progress = progress
+       self.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK, [self.serial_no.encode('utf-8'), apk, str(progress), ])
+
+  # def GenInstallApkCallback(self, command, serial_no):
+  #   def InstallApkCallback(apk, now, total):
+  #     progress = float(now) / total
+  #     if (progress - self.last_progress) > 0.05 or now == total:
+  #       self.last_progress = progress
+  #       self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK, [apk, str(progress), ])
+  #
+  #   return InstallApkCallback
 
   def ProcessInstallApk(self, command):
-    self.last_progress = 0
-    self.device.ConnectDevice()
-    self.device.Install(command.param[0], self.GenInstallApkCallback(command))
+    try:
+      if command.param[0] == 'all':
+        succ, device_list = self.device.ListDevices()
+        if succ:
+          for one in device_list:
+            self.device.ConnectDevice(one)
+            callback = CheckUpdateApkList.CallbackObject(command, one)
+            self.device.Install(command.param[1], callback.Callback)
+      elif command.param[0] == 'default':
+        self.device.ConnectDevice()
+        callback = CheckUpdateApkList.CallbackObject(command, 'default')
+        self.device.Install(command.param[1], callback.Callback)
+      else:
+        self.device.ConnectDevice(command.param[0])
+        callback = CheckUpdateApkList.CallbackObject(command, command.param[0])
+        self.device.Install(command.param[1], callback.Callback)
+
+    except Exception as e:
+      pass
+
 
 
   def ProcessGetLocalPackageList(self, command):

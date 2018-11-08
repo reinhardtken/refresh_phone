@@ -56,9 +56,9 @@ class ADBWrapper():
     
     
    
-  def ConnectDevice(self):
+  def ConnectDevice(self, serial=None):
     try:
-      self.device.ConnectDevice(
+      self.device.ConnectDevice(serial=serial,
         rsa_keys=[self.signer])
     except Exception as e:
       self.device = None
@@ -67,7 +67,10 @@ class ADBWrapper():
   
   def Install(self, apk, callback):
     try:
-      self.device.Install(r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk', transfer_progress_callback=callback)
+      self.device.Install(
+        r'E:\workspace\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk',
+        transfer_progress_callback=callback)
+      #self.device.Install(r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk', transfer_progress_callback=callback)
     except Exception as e:
       pass
     
