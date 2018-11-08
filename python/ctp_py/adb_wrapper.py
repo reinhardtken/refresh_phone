@@ -68,7 +68,8 @@ class ADBWrapper():
   def Install(self, apk, callback):
     try:
       self.device.Install(
-        r'E:\workspace\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk',
+        #r'E:\workspace\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk',
+        r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk',
         transfer_progress_callback=callback)
       #self.device.Install(r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk', transfer_progress_callback=callback)
     except Exception as e:

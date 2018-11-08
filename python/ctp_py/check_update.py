@@ -20,8 +20,31 @@ import config
 import util.log
 import util.utility
 import adb_wrapper
+import adb_wrapper2
 #=======================================================
 
+
+class CallbackObject():
+  def __init__(self, host, command, serial_no, apk):
+    self.host = host
+    self.command = command
+    self.serial_no = serial_no
+    self.last_progress = 0
+    self.apk = apk
+  
+  def Callback(self, apk, now, total):
+    
+    progress = float(now) / total
+    if (progress - self.last_progress) > 0.05 or now == total:
+      self.last_progress = progress
+      self.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK,
+                               [self.serial_no.encode('utf-8'), apk, str(progress), ])
+
+      
+  def Callback2(self, succ, progress):
+    self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK,
+                             [self.serial_no.encode('utf-8'), self.apk, progress, ])
+      
 
 
 #======================================================================
@@ -97,6 +120,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     self.apk_dir = None
     
     self.device = adb_wrapper.ADBWrapper()
+    self.device2 = adb_wrapper2.AdbInstall()
     
     
 
@@ -188,7 +212,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         elif msg.cmd == 'get_local_package_list':
           self.ProcessGetLocalPackageList(msg)
         elif msg.cmd == 'pyadb_install_apk':
-          self.ProcessInstallApk(msg)
+          self.ProcessInstallApk2(msg)
         elif msg.cmd == 'pyadb_scan_devices':
           self.ProcessScanDevices(msg)
         
@@ -209,21 +233,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       pass
       
 
-  class CallbackObject():
-   def __init__(self, command, serial_no):
-     self.command = command
-     self.serial_no = serial_no
-     self.last_progress = 0
-
-
-
-
-   def Callback(self, apk, now, total):
-     progress = float(now) / total
-     if (progress - self.last_progress) > 0.05 or now == total:
-       self.last_progress = progress
-       self.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK, [self.serial_no.encode('utf-8'), apk, str(progress), ])
-
+  
   # def GenInstallApkCallback(self, command, serial_no):
   #   def InstallApkCallback(apk, now, total):
   #     progress = float(now) / total
@@ -233,6 +243,21 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   #
   #   return InstallApkCallback
 
+  def ProcessInstallApk2(self, command):
+    try:
+      if command.param[0] == 'all':
+        pass
+      elif command.param[0] == 'default':
+        apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
+        callback = CallbackObject(self, command, 'default', apk)
+        self.device2.Install(None, apk, callback.Callback2)
+      else:
+        pass
+
+    except Exception as e:
+      pass
+    
+
   def ProcessInstallApk(self, command):
     try:
       if command.param[0] == 'all':
@@ -240,15 +265,15 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         if succ:
           for one in device_list:
             self.device.ConnectDevice(one)
-            callback = CheckUpdateApkList.CallbackObject(command, one)
+            callback = CallbackObject(command, one)
             self.device.Install(command.param[1], callback.Callback)
       elif command.param[0] == 'default':
         self.device.ConnectDevice()
-        callback = CheckUpdateApkList.CallbackObject(command, 'default')
+        callback = CallbackObject(command, 'default')
         self.device.Install(command.param[1], callback.Callback)
       else:
         self.device.ConnectDevice(command.param[0])
-        callback = CheckUpdateApkList.CallbackObject(command, command.param[0])
+        callback = CallbackObject(command, command.param[0])
         self.device.Install(command.param[1], callback.Callback)
 
     except Exception as e:

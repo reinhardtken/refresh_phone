@@ -27,8 +27,8 @@ namespace phone_module {
     :core_(p),
     keep_scan_(false) {
     adb_server_.reset(new channel::ChannelHost());
-    channel::ServerResult result = adb_server_->InitializeServer(::prefs::kAdbServer, false);
-    DCHECK(result.first == true && result.second == 5037);
+    //channel::ServerResult result = adb_server_->InitializeServer(::prefs::kAdbServer, false);
+    //DCHECK(result.first == true && result.second == 5037);
   }
 
   PythonAdbInterface::~PythonAdbInterface() {

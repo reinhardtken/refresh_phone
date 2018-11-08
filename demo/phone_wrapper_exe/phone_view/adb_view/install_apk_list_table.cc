@@ -394,7 +394,10 @@ void InstallApkListTable::OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIR
   } else {
     apk_ir_data_.push_back(status);
     apk_ir_data_map_.insert(std::make_pair(status.get_key(), apk_ir_data_.size() - 1));
-    table_apk_ir_->OnItemsChanged(apk_ir_data_.size() - 1, 1);
+    table_apk_ir_->OnItemsAdded(apk_ir_data_.size() - 1, 1);
+    if (apk_ir_data_.size()) {
+      table_apk_ir_->Select(apk_ir_data_.size() - 1);
+    }
   }
 }
 

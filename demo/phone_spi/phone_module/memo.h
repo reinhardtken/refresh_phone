@@ -64,7 +64,13 @@ https://github.com/google/python-adb/issues/93
 使用py-adb遇到
 usb1.USBErrorAccess: LIBUSB_ERROR_ACCESS [-3]
 
+Normally, the adb server is started by an adb command, or by some process like an emulator. If you switch to python-adb entirely (and don't use emulators), then the adb server shouldn't be running anymore.
 
+We can't be in charge of stopping adb servers, because if it's running, it's likely being used by another process, and we don't want to cause errors in other programs that become impossible to diagnose.
+
+If you manage to stop the adb server and stop it from coming back, python-adb can be useful to you, but until then only one process can 'own' a USB device and if the adb server is running it's 'owning' all android USB devices.
+
+从最后那句话看，此问题貌似现阶段无解
 
 环境=====
 libusb相关
