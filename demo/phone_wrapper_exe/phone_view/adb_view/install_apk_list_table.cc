@@ -17,6 +17,9 @@
 #include "ui/views/controls/button/checkbox.h"
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/controls/textfield/textfield.h"
+#include "ui/base/theme_provider.h"
+
+#include "grit/theme_resources.h"
 
 #include "../../../phone_common/include/ctp_notification_types.h"
 #include "../tabbed_pane_example.h"
@@ -29,11 +32,27 @@ namespace {
 namespace views {
 namespace examples {
 
+  int ApkIRStatusModel::RowCount() {
+    return table_->RowCount2();
+  }
 
+  string16 ApkIRStatusModel::GetText(int row, int column_id) {
+
+    return table_->GetText2(row, column_id);
+    return string16();
+  }
+
+
+  gfx::ImageSkia ApkIRStatusModel::GetIcon(int row) {
+    return table_->GetIcon2(row);
+  }
+
+  //=================================================
 InstallApkListTable::InstallApkListTable(CTPTabbedPane *p, std::wstring const &) 
   :CTPViewBase("Table"),
   pane_(p),
   table_(NULL),
+  ALLOW_THIS_IN_INITIALIZER_LIST(model_apk_ir_(this)),
   ThreadMessageFilter(true) {
 
 
@@ -51,6 +70,9 @@ InstallApkListTable::~InstallApkListTable() {
   delete table_;
   table_ = NULL;
 
+  delete table_apk_ir_;
+  table_apk_ir_ = NULL;
+
 }
 
 void InstallApkListTable::OnSelectedIndexChanged(Combobox* combobox) {
@@ -58,11 +80,16 @@ void InstallApkListTable::OnSelectedIndexChanged(Combobox* combobox) {
 }
 
 void InstallApkListTable::CreateExampleView(View* container) {
+  ui::ThemeProvider* tp = container->GetThemeProvider();
+  alive_ = tp->GetImageSkiaNamed(IDR_UPDATE_UPTODATE);
+  die_ = tp->GetImageSkiaNamed(IDR_UPDATE_FAIL);
+
+
 
   GridLayout* layout = new GridLayout(container);
   container->SetLayoutManager(layout);
 
-
+  int index = 0;
   //====================================
   std::vector<ui::TableColumn> columns2;
   columns2.push_back(ui::TableColumn(0, L"包名",
@@ -89,43 +116,79 @@ void InstallApkListTable::CreateExampleView(View* container) {
   table_->SetObserver(this);
 
 
-  ColumnSet* column_set = layout->AddColumnSet(0);
+  ColumnSet* column_set = layout->AddColumnSet(index);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL, 1,
 	  GridLayout::USE_PREF, 0, 0);
   
 
-  layout->StartRow(1 /* expand */, 0);
+  layout->StartRow(0.5 /* expand */, index);
   layout->AddView(table_->CreateParentIfNecessary());
-
   //=================================================
+  ++index;
+
+  std::vector<ui::TableColumn> columns;
+  columns.push_back(ui::TableColumn(0, L"时间",
+    ui::TableColumn::LEFT, 100));
+  columns.push_back(ui::TableColumn(1, L"设备ID",
+    ui::TableColumn::LEFT, 150));
+  columns.push_back(ui::TableColumn(2, L"包名",
+    ui::TableColumn::LEFT, 300));
+  columns.push_back(ui::TableColumn(3, L"操作",
+    ui::TableColumn::LEFT, 200));
+  columns.push_back(ui::TableColumn(4, L"进度",
+    ui::TableColumn::LEFT, 100));
+  columns.push_back(ui::TableColumn(5, L"结果",
+    ui::TableColumn::LEFT, 200));
+
+  table_apk_ir_ = new TableView(&model_apk_ir_, columns, ICON_AND_TEXT, true, true, true);
+  table_apk_ir_->SetObserver(&model_apk_ir_);
+
+
+  column_set = layout->AddColumnSet(index);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL, 1,
+    GridLayout::USE_PREF, 0, 0);
+
+
+  layout->StartRow(0.5 /* expand */, index);
+  layout->AddView(table_apk_ir_->CreateParentIfNecessary());
+  //=================================================
+  ++index;
   //check_update_apk_list_ = new TextButton(this, L" 检查网络包列表");
   //check_update_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
   get_apk_list_ = new TextButton(this, L" 获取本地包列表");
   get_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
   install_apk_list_ = new TextButton(this, L" 安装/删除包列表");
   install_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
-  clear_table_ = new TextButton(this, L"清除显示");
+  clear_table_ = new TextButton(this, L"清除包列表显示");
   clear_table_->set_alignment(TextButton::ALIGN_CENTER);
+  clear_apk_ir_table_ = new TextButton(this, L"清除安装进度显示");
+  clear_apk_ir_table_->set_alignment(TextButton::ALIGN_CENTER);
 
-
-  column_set = layout->AddColumnSet(1);
+  column_set = layout->AddColumnSet(index);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
 	  1.0f, GridLayout::USE_PREF, 0, 0);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
 	  1.0f, GridLayout::USE_PREF, 0, 0);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
     1.0f, GridLayout::USE_PREF, 0, 0);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+    1.0f, GridLayout::USE_PREF, 0, 0);
 
 
-  layout->StartRow(0 /* expand */, 1);
+  layout->StartRow(0 /* expand */, index);
 
   layout->AddView(get_apk_list_);
   layout->AddView(install_apk_list_);
   layout->AddView(clear_table_);
+  layout->AddView(clear_apk_ir_table_);
 }
 
 int InstallApkListTable::RowCount() {
   return data_.size();
+}
+
+int InstallApkListTable::RowCount2() {
+  return apk_ir_data_.size();
 }
 
 string16 InstallApkListTable::GetText(int row, int column_id) {
@@ -173,12 +236,60 @@ string16 InstallApkListTable::GetText(int row, int column_id) {
 }
 
 
+string16 InstallApkListTable::GetText2(int row, int column_id) {
+
+  if ((uint32)row >= apk_ir_data_.size()) {
+    return string16();
+  }
+  switch (column_id) {
+  case 0: {
+    return apk_ir_data_[row].time_string;
+    break;
+  }
+  case 1: {
+    return apk_ir_data_[row].serial_no;
+    break;
+  }
+  case 2: {
+    return apk_ir_data_[row].package_name;
+    break;
+  }
+  case 3: {
+    return apk_ir_data_[row].op;
+    break;
+  }
+  case 4: {
+    /*return ASCIIToUTF16(base::DoubleToString(apk_ir_data_[row].percent));*/
+    return apk_ir_data_[row].percent;
+    break;
+  }
+  case 5: {
+    return apk_ir_data_[row].result;
+    break;
+  }
+  default: {
+    //DCHECK(false);
+  }
+  }
+
+
+  return string16();
+}
+
 
 gfx::ImageSkia InstallApkListTable::GetIcon(int row) {
   DCHECK(false);
   return gfx::ImageSkia();
   //return row % 2 ? gfx::ImageSkia(icon1_) : gfx::ImageSkia(icon2_);
 }
+
+gfx::ImageSkia InstallApkListTable::GetIcon2(int row) {
+  if ((uint32)row < data_.size()) {
+    return apk_ir_data_[row].error_code == 0 ? *alive_ : *die_;
+  }
+  return gfx::ImageSkia();
+}
+
 
 void InstallApkListTable::SetObserver(ui::TableModelObserver* observer) {}
 
@@ -212,6 +323,10 @@ void InstallApkListTable::ButtonPressed(Button* sender, const ui::Event& event) 
 	} else if (sender == clear_table_) {
     data_.clear();
     table_->OnModelChanged();
+  } else if (sender == clear_apk_ir_table_) {
+    apk_ir_data_.clear();
+    apk_ir_data_map_.clear();
+    table_apk_ir_->OnModelChanged();
   }
 }
 
@@ -231,6 +346,8 @@ bool InstallApkListTable::OnMessageReceived(IPC::Message const & msg) {
 		IPC_BEGIN_MESSAGE_MAP_EX(InstallApkListTable, msg, msg_is_ok)
 
 			IPC_MESSAGE_HANDLER(L2U_ApkInstallInfo, OnUpdatePackageList)
+      IPC_MESSAGE_HANDLER(L2U_ApkIRStatus, OnUpdateApkIRStatus)
+      
 
 			//IPC_MESSAGE_UNHANDLED_ERROR()
 			IPC_END_MESSAGE_MAP_EX()
@@ -260,26 +377,25 @@ void InstallApkListTable::Selected() {
 }
 
 void InstallApkListTable::OnMarginRate(PointerWrapper<CThostFtdcInstrumentMarginRateField> const & p) {
-  
-  uint32 const old_size = map_.size();
-  std::shared_ptr<CThostFtdcInstrumentMarginRateField> sp(new CThostFtdcInstrumentMarginRateField(*p.get()));
-  map_[p.get()->InstrumentID] = sp;
-  uint32 const new_size = map_.size();
-  if (old_size != new_size) {
-    list_.push_back(sp);
-  }
-  
 
-  if (old_size == new_size) {
-    table_->OnItemsChanged(0, map_.size());
-  } else {
-    table_->OnModelChanged();
-  }
 }
 
 void InstallApkListTable::OnUpdatePackageList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
 	data_.swap(*p.get());
 	table_->OnModelChanged();
+}
+
+void InstallApkListTable::OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIRStatus> const & p) {
+  phone_module::ApkIRStatus & status = *p.get();
+  auto it = apk_ir_data_map_.find(status.get_key());
+  if (it != apk_ir_data_map_.end()) {
+    apk_ir_data_[it->second] = status;
+    table_apk_ir_->OnItemsChanged(it->second, 1);
+  } else {
+    apk_ir_data_.push_back(status);
+    apk_ir_data_map_.insert(std::make_pair(status.get_key(), apk_ir_data_.size() - 1));
+    table_apk_ir_->OnItemsChanged(apk_ir_data_.size() - 1, 1);
+  }
 }
 
 }  // namespace examples

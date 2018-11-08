@@ -373,16 +373,16 @@ namespace phone_module {
             new L2U_ApkUpdateInfo(tmp));
         } else if (std::string(command::kRemoveLocalPackageList) == progress->cmd()) {
         } else if (std::string(command::kPyAdbInstallApk) == progress->cmd()) {
-          std::wstring device = UTF8ToWide(progress->info(0));
-          std::wstring apk = UTF8ToWide(progress->info(1));
-          std::wstring percent = UTF8ToWide(progress->info(2));
+          ApkIRStatus * data = new ApkIRStatus(UTF8ToWide(progress->info(0)));
+          data->error_code = progress->code();
+          data->package_name = UTF8ToWide(progress->info(1));
+          data->percent = UTF8ToWide(progress->info(2));
+          data->op = L"全新/覆盖安装";
+          data->result = L"成功";
 
-          StatusInfo * data = new StatusInfo(device);
-          data->result = StringPrintf(L"进度：%ls 完成 %ls", apk.c_str(), percent.c_str());
-
-          PointerWrapper<StatusInfo> tmp(data);
+          PointerWrapper<ApkIRStatus> tmp(data);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-            new L2U_StatusInfo(tmp));
+            new L2U_ApkIRStatus(tmp));
 
         }
       } else if (p->GetTypeName() == "apk.CommandResponse") {

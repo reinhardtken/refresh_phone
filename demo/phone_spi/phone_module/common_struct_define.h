@@ -443,6 +443,45 @@ struct StatusInfo {
 
 
 
+struct ApkIRStatus {
+  ApkIRStatus(std::wstring const & sn)
+    :serial_no(sn),
+    time(base::Time::Now()) {
+    Init();
+  }
+
+  ApkIRStatus()
+    :serial_no(L"无"),
+    time(base::Time::Now()) {
+    Init();
+  }
+
+  void Init() {
+    if (serial_no.size() == 0) {
+      serial_no = L"无";
+    }
+    base::Time::Exploded e;
+    time.LocalExplode(&e);
+    time_string = base::StringPrintf(L"%d:%d:%d", e.hour, e.minute, e.second);
+  }
+  std::wstring serial_no;
+  base::Time time;//时间=
+  std::wstring time_string;//用于显示=
+  std::wstring op;
+  std::wstring package_name;
+  std::wstring percent;
+  std::wstring result;
+  int error_code;
+  std::wstring key;
+  std::wstring get_key() {
+    if (key.size() == 0) {
+      key = serial_no + L"-" + package_name;
+    }
+    return key;
+  }
+};
+
+
 struct ApkUpdateInfo {
   ApkUpdateInfo(int const s)
     :time(base::Time::Now()),

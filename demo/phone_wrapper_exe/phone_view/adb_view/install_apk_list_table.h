@@ -63,6 +63,29 @@ class Event;
 class TableView;
 
 namespace examples {
+  class InstallApkListTable;
+  class ApkIRStatusModel : public ui::TableModel,
+    public TableViewObserver {
+  public:
+    ApkIRStatusModel(InstallApkListTable *p)
+      :table_(p) {}
+    // ui::TableModel:
+    virtual int RowCount() OVERRIDE;
+    virtual string16 GetText(int row, int column_id) OVERRIDE;
+    virtual gfx::ImageSkia GetIcon(int row) OVERRIDE;
+    virtual void SetObserver(ui::TableModelObserver* observer) OVERRIDE {}
+
+    // TableViewObserver:
+    virtual void OnSelectionChanged() OVERRIDE {}
+    virtual void OnDoubleClick() OVERRIDE {}
+    virtual void OnMiddleClick() OVERRIDE {}
+    virtual void OnKeyDown(ui::KeyboardCode virtual_keycode) OVERRIDE {}
+    virtual void OnTableViewDelete(TableView* table_view) OVERRIDE {}
+    virtual void OnTableView2Delete(TableView2* table_view) OVERRIDE {}
+
+  private:
+    InstallApkListTable *table_;
+  };
 
 class CTPTabbedPane;
 
@@ -75,10 +98,6 @@ class InstallApkListTable : public CTPViewBase,
                      //public CCTableView::Delegate,
                      public ComboboxListener {
  public:
-  
-   typedef std::vector<std::shared_ptr<CThostFtdcInstrumentMarginRateField>> MarginRateList;
-   typedef std::map<std::string, std::shared_ptr<CThostFtdcInstrumentMarginRateField>> MarginRateMap;
-   
 
 
   InstallApkListTable(CTPTabbedPane *p, std::wstring const &);
@@ -127,18 +146,35 @@ class InstallApkListTable : public CTPViewBase,
   
   void OnMarginRate(PointerWrapper<CThostFtdcInstrumentMarginRateField> const & p);
   void OnUpdatePackageList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p);
+  void OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIRStatus> const & p);
+
+
+  gfx::ImageSkia GetIcon2(int row);
+  string16 GetText2(int row, int column_id);
+  int RowCount2();
   
  private:
-   MarginRateList list_;
-   MarginRateMap map_;
 
-   std::vector<phone_module::ApkInstallInfo> data_;
+  
+   ApkIRStatusModel model_apk_ir_;
+   std::vector<phone_module::ApkIRStatus> apk_ir_data_;
+   std::map<std::wstring, int> apk_ir_data_map_;
+   TableView* table_apk_ir_;
 
   TableView* table_;
+  std::vector<phone_module::ApkInstallInfo> data_;
+  
+  
+
   TextButton* get_apk_list_;
   TextButton* check_update_apk_list_;
   TextButton* install_apk_list_;
   TextButton* clear_table_;
+  TextButton* clear_apk_ir_table_;
+
+  gfx::ImageSkia* alive_;
+  gfx::ImageSkia* die_;
+
 
   content::NotificationRegistrar registrar_;
   CTPTabbedPane* pane_;
