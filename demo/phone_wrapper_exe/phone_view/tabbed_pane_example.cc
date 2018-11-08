@@ -112,9 +112,7 @@ void CTPTabbedPane::TabSelectedAt(int index) {
 
 }
 
-void CTPTabbedPane::PrintStatus() {
 
-}
 
 void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
   if (type == MQ_TAB) {
@@ -239,7 +237,7 @@ bool CTPTabbedPane::OnMessageReceived(IPC::Message const & msg) {
       //IPC_MESSAGE_HANDLER(CTP_CONSOLE_CommandProtoBuf, OnConsoleCommandProtoBuf)
       //IPC_MESSAGE_HANDLER(CTP_TradeUnitCreated, OnTradeUnitCreated)
       IPC_MESSAGE_HANDLER(L2U_AdbInfo, OnAdbInfo)
-
+      IPC_MESSAGE_HANDLER(L2U_DevicesList, OnUpdateDevicesList)
 
       //IPC_MESSAGE_UNHANDLED_ERROR()
       IPC_END_MESSAGE_MAP_EX()
@@ -319,6 +317,15 @@ void CTPTabbedPane::OnAdbInfo(std::string const & id, std::wstring const & info)
   RefreshView * p = (RefreshView*)tabs_[2];
 	p->UpdateAdbInfo(info);
 	//L"恢复出厂设置"
+}
+
+void CTPTabbedPane::OnUpdateDevicesList(PointerWrapper< phone_module::DevicesList> const & p) {
+  std::wstring device(L"当前设备ID: ");
+  phone_module::DevicesList & list = *p.get();
+  for (auto it = list.begin(); it != list.end(); ++it) {
+    device.append(it->serial_no).append(L", ");
+  }
+  this->PrintStatus(L"%ls", device.c_str());
 }
 
 

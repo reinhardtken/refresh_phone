@@ -75,4 +75,15 @@ https://github.com/libusb/libusb/releases
 pyadb地址
 https://github.com/google/python-adb
 
+adb kill-server
+
+netstat -ano | findstr "5037"
+
+
+device.ConnectDevice(
+    rsa_keys=[signer])
+
+    xxx操作
+device.Close()
+
 */

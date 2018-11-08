@@ -481,6 +481,16 @@ struct ApkInstallInfo {
   PACKAGE_TYPE type;
 };
 
+struct AdbDevice {
+  std::wstring serial_no;
+  std::wstring state;
+  std::wstring model;
+  std::wstring product;
+  std::wstring device;
+};
+
+typedef std::vector<AdbDevice> DevicesList;
+
 
 
 

@@ -47,7 +47,7 @@ class PHONE_COMMON_EXPORT ChannelHost : public CompleteHandler {
   // };
   ChannelHost();
   
-  ServerResult InitializeServer(std::string const &name);
+  ServerResult InitializeServer(std::string const &name, bool const retry=true);
   void InitializeClient(std::string const &name, std::string const &server_name);
   void SendProtobufMsg(std::string const& name, codec::MessagePtr const &);
   void SendTLVMsg(std::string const& name, codec::TLVMessagePtr const &);

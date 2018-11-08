@@ -38,6 +38,8 @@ class CommandProgress;
 class CommandResponse;
 class OneApk;
 class ApkList;
+class AdbDevice;
+class DevicesList;
 
 // ===================================================================
 
@@ -714,6 +716,250 @@ class ApkList : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static ApkList* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class AdbDevice : public ::google::protobuf::Message {
+ public:
+  AdbDevice();
+  virtual ~AdbDevice();
+
+  AdbDevice(const AdbDevice& from);
+
+  inline AdbDevice& operator=(const AdbDevice& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const AdbDevice& default_instance();
+
+  void Swap(AdbDevice* other);
+
+  // implements Message ----------------------------------------------
+
+  AdbDevice* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const AdbDevice& from);
+  void MergeFrom(const AdbDevice& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string serial_no = 1;
+  inline bool has_serial_no() const;
+  inline void clear_serial_no();
+  static const int kSerialNoFieldNumber = 1;
+  inline const ::std::string& serial_no() const;
+  inline void set_serial_no(const ::std::string& value);
+  inline void set_serial_no(const char* value);
+  inline void set_serial_no(const char* value, size_t size);
+  inline ::std::string* mutable_serial_no();
+  inline ::std::string* release_serial_no();
+  inline void set_allocated_serial_no(::std::string* serial_no);
+
+  // optional string state = 2;
+  inline bool has_state() const;
+  inline void clear_state();
+  static const int kStateFieldNumber = 2;
+  inline const ::std::string& state() const;
+  inline void set_state(const ::std::string& value);
+  inline void set_state(const char* value);
+  inline void set_state(const char* value, size_t size);
+  inline ::std::string* mutable_state();
+  inline ::std::string* release_state();
+  inline void set_allocated_state(::std::string* state);
+
+  // optional string model = 3;
+  inline bool has_model() const;
+  inline void clear_model();
+  static const int kModelFieldNumber = 3;
+  inline const ::std::string& model() const;
+  inline void set_model(const ::std::string& value);
+  inline void set_model(const char* value);
+  inline void set_model(const char* value, size_t size);
+  inline ::std::string* mutable_model();
+  inline ::std::string* release_model();
+  inline void set_allocated_model(::std::string* model);
+
+  // optional string product = 4;
+  inline bool has_product() const;
+  inline void clear_product();
+  static const int kProductFieldNumber = 4;
+  inline const ::std::string& product() const;
+  inline void set_product(const ::std::string& value);
+  inline void set_product(const char* value);
+  inline void set_product(const char* value, size_t size);
+  inline ::std::string* mutable_product();
+  inline ::std::string* release_product();
+  inline void set_allocated_product(::std::string* product);
+
+  // optional string device = 5;
+  inline bool has_device() const;
+  inline void clear_device();
+  static const int kDeviceFieldNumber = 5;
+  inline const ::std::string& device() const;
+  inline void set_device(const ::std::string& value);
+  inline void set_device(const char* value);
+  inline void set_device(const char* value, size_t size);
+  inline ::std::string* mutable_device();
+  inline ::std::string* release_device();
+  inline void set_allocated_device(::std::string* device);
+
+  // @@protoc_insertion_point(class_scope:apk.AdbDevice)
+ private:
+  inline void set_has_serial_no();
+  inline void clear_has_serial_no();
+  inline void set_has_state();
+  inline void clear_has_state();
+  inline void set_has_model();
+  inline void clear_has_model();
+  inline void set_has_product();
+  inline void clear_has_product();
+  inline void set_has_device();
+  inline void clear_has_device();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* serial_no_;
+  ::std::string* state_;
+  ::std::string* model_;
+  ::std::string* product_;
+  ::std::string* device_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
+
+  friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_ShutdownFile_apk_5fprotomsg_2eproto();
+
+  void InitAsDefaultInstance();
+  static AdbDevice* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class DevicesList : public ::google::protobuf::Message {
+ public:
+  DevicesList();
+  virtual ~DevicesList();
+
+  DevicesList(const DevicesList& from);
+
+  inline DevicesList& operator=(const DevicesList& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const DevicesList& default_instance();
+
+  void Swap(DevicesList* other);
+
+  // implements Message ----------------------------------------------
+
+  DevicesList* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const DevicesList& from);
+  void MergeFrom(const DevicesList& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required .apk.CommandResponse head = 1;
+  inline bool has_head() const;
+  inline void clear_head();
+  static const int kHeadFieldNumber = 1;
+  inline const ::apk::CommandResponse& head() const;
+  inline ::apk::CommandResponse* mutable_head();
+  inline ::apk::CommandResponse* release_head();
+  inline void set_allocated_head(::apk::CommandResponse* head);
+
+  // repeated .apk.AdbDevice devices_list = 2;
+  inline int devices_list_size() const;
+  inline void clear_devices_list();
+  static const int kDevicesListFieldNumber = 2;
+  inline const ::apk::AdbDevice& devices_list(int index) const;
+  inline ::apk::AdbDevice* mutable_devices_list(int index);
+  inline ::apk::AdbDevice* add_devices_list();
+  inline const ::google::protobuf::RepeatedPtrField< ::apk::AdbDevice >&
+      devices_list() const;
+  inline ::google::protobuf::RepeatedPtrField< ::apk::AdbDevice >*
+      mutable_devices_list();
+
+  // @@protoc_insertion_point(class_scope:apk.DevicesList)
+ private:
+  inline void set_has_head();
+  inline void clear_has_head();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::apk::CommandResponse* head_;
+  ::google::protobuf::RepeatedPtrField< ::apk::AdbDevice > devices_list_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_ShutdownFile_apk_5fprotomsg_2eproto();
+
+  void InitAsDefaultInstance();
+  static DevicesList* default_instance_;
 };
 // ===================================================================
 
@@ -1829,6 +2075,427 @@ ApkList::apk_list() const {
 inline ::google::protobuf::RepeatedPtrField< ::apk::OneApk >*
 ApkList::mutable_apk_list() {
   return &apk_list_;
+}
+
+// -------------------------------------------------------------------
+
+// AdbDevice
+
+// required string serial_no = 1;
+inline bool AdbDevice::has_serial_no() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void AdbDevice::set_has_serial_no() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void AdbDevice::clear_has_serial_no() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void AdbDevice::clear_serial_no() {
+  if (serial_no_ != &::google::protobuf::internal::kEmptyString) {
+    serial_no_->clear();
+  }
+  clear_has_serial_no();
+}
+inline const ::std::string& AdbDevice::serial_no() const {
+  return *serial_no_;
+}
+inline void AdbDevice::set_serial_no(const ::std::string& value) {
+  set_has_serial_no();
+  if (serial_no_ == &::google::protobuf::internal::kEmptyString) {
+    serial_no_ = new ::std::string;
+  }
+  serial_no_->assign(value);
+}
+inline void AdbDevice::set_serial_no(const char* value) {
+  set_has_serial_no();
+  if (serial_no_ == &::google::protobuf::internal::kEmptyString) {
+    serial_no_ = new ::std::string;
+  }
+  serial_no_->assign(value);
+}
+inline void AdbDevice::set_serial_no(const char* value, size_t size) {
+  set_has_serial_no();
+  if (serial_no_ == &::google::protobuf::internal::kEmptyString) {
+    serial_no_ = new ::std::string;
+  }
+  serial_no_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AdbDevice::mutable_serial_no() {
+  set_has_serial_no();
+  if (serial_no_ == &::google::protobuf::internal::kEmptyString) {
+    serial_no_ = new ::std::string;
+  }
+  return serial_no_;
+}
+inline ::std::string* AdbDevice::release_serial_no() {
+  clear_has_serial_no();
+  if (serial_no_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = serial_no_;
+    serial_no_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void AdbDevice::set_allocated_serial_no(::std::string* serial_no) {
+  if (serial_no_ != &::google::protobuf::internal::kEmptyString) {
+    delete serial_no_;
+  }
+  if (serial_no) {
+    set_has_serial_no();
+    serial_no_ = serial_no;
+  } else {
+    clear_has_serial_no();
+    serial_no_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string state = 2;
+inline bool AdbDevice::has_state() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void AdbDevice::set_has_state() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void AdbDevice::clear_has_state() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void AdbDevice::clear_state() {
+  if (state_ != &::google::protobuf::internal::kEmptyString) {
+    state_->clear();
+  }
+  clear_has_state();
+}
+inline const ::std::string& AdbDevice::state() const {
+  return *state_;
+}
+inline void AdbDevice::set_state(const ::std::string& value) {
+  set_has_state();
+  if (state_ == &::google::protobuf::internal::kEmptyString) {
+    state_ = new ::std::string;
+  }
+  state_->assign(value);
+}
+inline void AdbDevice::set_state(const char* value) {
+  set_has_state();
+  if (state_ == &::google::protobuf::internal::kEmptyString) {
+    state_ = new ::std::string;
+  }
+  state_->assign(value);
+}
+inline void AdbDevice::set_state(const char* value, size_t size) {
+  set_has_state();
+  if (state_ == &::google::protobuf::internal::kEmptyString) {
+    state_ = new ::std::string;
+  }
+  state_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AdbDevice::mutable_state() {
+  set_has_state();
+  if (state_ == &::google::protobuf::internal::kEmptyString) {
+    state_ = new ::std::string;
+  }
+  return state_;
+}
+inline ::std::string* AdbDevice::release_state() {
+  clear_has_state();
+  if (state_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = state_;
+    state_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void AdbDevice::set_allocated_state(::std::string* state) {
+  if (state_ != &::google::protobuf::internal::kEmptyString) {
+    delete state_;
+  }
+  if (state) {
+    set_has_state();
+    state_ = state;
+  } else {
+    clear_has_state();
+    state_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string model = 3;
+inline bool AdbDevice::has_model() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void AdbDevice::set_has_model() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void AdbDevice::clear_has_model() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void AdbDevice::clear_model() {
+  if (model_ != &::google::protobuf::internal::kEmptyString) {
+    model_->clear();
+  }
+  clear_has_model();
+}
+inline const ::std::string& AdbDevice::model() const {
+  return *model_;
+}
+inline void AdbDevice::set_model(const ::std::string& value) {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  model_->assign(value);
+}
+inline void AdbDevice::set_model(const char* value) {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  model_->assign(value);
+}
+inline void AdbDevice::set_model(const char* value, size_t size) {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  model_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AdbDevice::mutable_model() {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  return model_;
+}
+inline ::std::string* AdbDevice::release_model() {
+  clear_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = model_;
+    model_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void AdbDevice::set_allocated_model(::std::string* model) {
+  if (model_ != &::google::protobuf::internal::kEmptyString) {
+    delete model_;
+  }
+  if (model) {
+    set_has_model();
+    model_ = model;
+  } else {
+    clear_has_model();
+    model_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string product = 4;
+inline bool AdbDevice::has_product() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void AdbDevice::set_has_product() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void AdbDevice::clear_has_product() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void AdbDevice::clear_product() {
+  if (product_ != &::google::protobuf::internal::kEmptyString) {
+    product_->clear();
+  }
+  clear_has_product();
+}
+inline const ::std::string& AdbDevice::product() const {
+  return *product_;
+}
+inline void AdbDevice::set_product(const ::std::string& value) {
+  set_has_product();
+  if (product_ == &::google::protobuf::internal::kEmptyString) {
+    product_ = new ::std::string;
+  }
+  product_->assign(value);
+}
+inline void AdbDevice::set_product(const char* value) {
+  set_has_product();
+  if (product_ == &::google::protobuf::internal::kEmptyString) {
+    product_ = new ::std::string;
+  }
+  product_->assign(value);
+}
+inline void AdbDevice::set_product(const char* value, size_t size) {
+  set_has_product();
+  if (product_ == &::google::protobuf::internal::kEmptyString) {
+    product_ = new ::std::string;
+  }
+  product_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AdbDevice::mutable_product() {
+  set_has_product();
+  if (product_ == &::google::protobuf::internal::kEmptyString) {
+    product_ = new ::std::string;
+  }
+  return product_;
+}
+inline ::std::string* AdbDevice::release_product() {
+  clear_has_product();
+  if (product_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = product_;
+    product_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void AdbDevice::set_allocated_product(::std::string* product) {
+  if (product_ != &::google::protobuf::internal::kEmptyString) {
+    delete product_;
+  }
+  if (product) {
+    set_has_product();
+    product_ = product;
+  } else {
+    clear_has_product();
+    product_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// optional string device = 5;
+inline bool AdbDevice::has_device() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void AdbDevice::set_has_device() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void AdbDevice::clear_has_device() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void AdbDevice::clear_device() {
+  if (device_ != &::google::protobuf::internal::kEmptyString) {
+    device_->clear();
+  }
+  clear_has_device();
+}
+inline const ::std::string& AdbDevice::device() const {
+  return *device_;
+}
+inline void AdbDevice::set_device(const ::std::string& value) {
+  set_has_device();
+  if (device_ == &::google::protobuf::internal::kEmptyString) {
+    device_ = new ::std::string;
+  }
+  device_->assign(value);
+}
+inline void AdbDevice::set_device(const char* value) {
+  set_has_device();
+  if (device_ == &::google::protobuf::internal::kEmptyString) {
+    device_ = new ::std::string;
+  }
+  device_->assign(value);
+}
+inline void AdbDevice::set_device(const char* value, size_t size) {
+  set_has_device();
+  if (device_ == &::google::protobuf::internal::kEmptyString) {
+    device_ = new ::std::string;
+  }
+  device_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* AdbDevice::mutable_device() {
+  set_has_device();
+  if (device_ == &::google::protobuf::internal::kEmptyString) {
+    device_ = new ::std::string;
+  }
+  return device_;
+}
+inline ::std::string* AdbDevice::release_device() {
+  clear_has_device();
+  if (device_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = device_;
+    device_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void AdbDevice::set_allocated_device(::std::string* device) {
+  if (device_ != &::google::protobuf::internal::kEmptyString) {
+    delete device_;
+  }
+  if (device) {
+    set_has_device();
+    device_ = device;
+  } else {
+    clear_has_device();
+    device_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// -------------------------------------------------------------------
+
+// DevicesList
+
+// required .apk.CommandResponse head = 1;
+inline bool DevicesList::has_head() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void DevicesList::set_has_head() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void DevicesList::clear_has_head() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void DevicesList::clear_head() {
+  if (head_ != NULL) head_->::apk::CommandResponse::Clear();
+  clear_has_head();
+}
+inline const ::apk::CommandResponse& DevicesList::head() const {
+  return head_ != NULL ? *head_ : *default_instance_->head_;
+}
+inline ::apk::CommandResponse* DevicesList::mutable_head() {
+  set_has_head();
+  if (head_ == NULL) head_ = new ::apk::CommandResponse;
+  return head_;
+}
+inline ::apk::CommandResponse* DevicesList::release_head() {
+  clear_has_head();
+  ::apk::CommandResponse* temp = head_;
+  head_ = NULL;
+  return temp;
+}
+inline void DevicesList::set_allocated_head(::apk::CommandResponse* head) {
+  delete head_;
+  head_ = head;
+  if (head) {
+    set_has_head();
+  } else {
+    clear_has_head();
+  }
+}
+
+// repeated .apk.AdbDevice devices_list = 2;
+inline int DevicesList::devices_list_size() const {
+  return devices_list_.size();
+}
+inline void DevicesList::clear_devices_list() {
+  devices_list_.Clear();
+}
+inline const ::apk::AdbDevice& DevicesList::devices_list(int index) const {
+  return devices_list_.Get(index);
+}
+inline ::apk::AdbDevice* DevicesList::mutable_devices_list(int index) {
+  return devices_list_.Mutable(index);
+}
+inline ::apk::AdbDevice* DevicesList::add_devices_list() {
+  return devices_list_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::apk::AdbDevice >&
+DevicesList::devices_list() const {
+  return devices_list_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::apk::AdbDevice >*
+DevicesList::mutable_devices_list() {
+  return &devices_list_;
 }
 
 

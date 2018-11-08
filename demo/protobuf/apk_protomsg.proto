@@ -47,5 +47,18 @@ message ApkList {
   repeated OneApk apk_list = 2;
 };
 
+message AdbDevice {
+	required string serial_no=1;
+	optional string state=2;
+	optional string model=3;
+	optional string product=4;
+	optional string device=5;
+};
+
+
+message DevicesList {
+  required CommandResponse head = 1;
+  repeated AdbDevice devices_list = 2;
+};
 
 

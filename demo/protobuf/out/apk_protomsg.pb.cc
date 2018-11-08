@@ -35,6 +35,12 @@ const ::google::protobuf::internal::GeneratedMessageReflection*
 const ::google::protobuf::Descriptor* ApkList_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   ApkList_reflection_ = NULL;
+const ::google::protobuf::Descriptor* AdbDevice_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  AdbDevice_reflection_ = NULL;
+const ::google::protobuf::Descriptor* DevicesList_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  DevicesList_reflection_ = NULL;
 
 }  // namespace
 
@@ -139,6 +145,41 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(ApkList));
+  AdbDevice_descriptor_ = file->message_type(5);
+  static const int AdbDevice_offsets_[5] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, serial_no_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, state_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, model_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, product_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, device_),
+  };
+  AdbDevice_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      AdbDevice_descriptor_,
+      AdbDevice::default_instance_,
+      AdbDevice_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(AdbDevice, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(AdbDevice));
+  DevicesList_descriptor_ = file->message_type(6);
+  static const int DevicesList_offsets_[2] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DevicesList, head_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DevicesList, devices_list_),
+  };
+  DevicesList_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      DevicesList_descriptor_,
+      DevicesList::default_instance_,
+      DevicesList_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DevicesList, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(DevicesList, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(DevicesList));
 }
 
 namespace {
@@ -161,6 +202,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
     OneApk_descriptor_, &OneApk::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     ApkList_descriptor_, &ApkList::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    AdbDevice_descriptor_, &AdbDevice::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    DevicesList_descriptor_, &DevicesList::default_instance());
 }
 
 }  // namespace
@@ -176,6 +221,10 @@ void protobuf_ShutdownFile_apk_5fprotomsg_2eproto() {
   delete OneApk_reflection_;
   delete ApkList::default_instance_;
   delete ApkList_reflection_;
+  delete AdbDevice::default_instance_;
+  delete AdbDevice_reflection_;
+  delete DevicesList::default_instance_;
+  delete DevicesList_reflection_;
 }
 
 void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
@@ -197,7 +246,11 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
     "ime\030\010 \001(\t\022\020\n\010apk_name\030\t \002(\t\022\r\n\005price\030\n \002"
     "(\001\022\014\n\004type\030\013 \002(\005\"L\n\007ApkList\022\"\n\004head\030\001 \002("
     "\0132\024.apk.CommandResponse\022\035\n\010apk_list\030\002 \003("
-    "\0132\013.apk.OneApk", 494);
+    "\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial_no"
+    "\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022\017\n\007"
+    "product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013Devices"
+    "List\022\"\n\004head\030\001 \002(\0132\024.apk.CommandResponse"
+    "\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevice", 678);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -205,11 +258,15 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
   CommandResponse::default_instance_ = new CommandResponse();
   OneApk::default_instance_ = new OneApk();
   ApkList::default_instance_ = new ApkList();
+  AdbDevice::default_instance_ = new AdbDevice();
+  DevicesList::default_instance_ = new DevicesList();
   Command::default_instance_->InitAsDefaultInstance();
   CommandProgress::default_instance_->InitAsDefaultInstance();
   CommandResponse::default_instance_->InitAsDefaultInstance();
   OneApk::default_instance_->InitAsDefaultInstance();
   ApkList::default_instance_->InitAsDefaultInstance();
+  AdbDevice::default_instance_->InitAsDefaultInstance();
+  DevicesList::default_instance_->InitAsDefaultInstance();
   ::google::protobuf::internal::OnShutdown(&protobuf_ShutdownFile_apk_5fprotomsg_2eproto);
 }
 
@@ -2230,6 +2287,720 @@ void ApkList::Swap(ApkList* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = ApkList_descriptor_;
   metadata.reflection = ApkList_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int AdbDevice::kSerialNoFieldNumber;
+const int AdbDevice::kStateFieldNumber;
+const int AdbDevice::kModelFieldNumber;
+const int AdbDevice::kProductFieldNumber;
+const int AdbDevice::kDeviceFieldNumber;
+#endif  // !_MSC_VER
+
+AdbDevice::AdbDevice()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void AdbDevice::InitAsDefaultInstance() {
+}
+
+AdbDevice::AdbDevice(const AdbDevice& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void AdbDevice::SharedCtor() {
+  _cached_size_ = 0;
+  serial_no_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  state_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  model_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  product_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  device_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+AdbDevice::~AdbDevice() {
+  SharedDtor();
+}
+
+void AdbDevice::SharedDtor() {
+  if (serial_no_ != &::google::protobuf::internal::kEmptyString) {
+    delete serial_no_;
+  }
+  if (state_ != &::google::protobuf::internal::kEmptyString) {
+    delete state_;
+  }
+  if (model_ != &::google::protobuf::internal::kEmptyString) {
+    delete model_;
+  }
+  if (product_ != &::google::protobuf::internal::kEmptyString) {
+    delete product_;
+  }
+  if (device_ != &::google::protobuf::internal::kEmptyString) {
+    delete device_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void AdbDevice::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* AdbDevice::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return AdbDevice_descriptor_;
+}
+
+const AdbDevice& AdbDevice::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  return *default_instance_;
+}
+
+AdbDevice* AdbDevice::default_instance_ = NULL;
+
+AdbDevice* AdbDevice::New() const {
+  return new AdbDevice;
+}
+
+void AdbDevice::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_serial_no()) {
+      if (serial_no_ != &::google::protobuf::internal::kEmptyString) {
+        serial_no_->clear();
+      }
+    }
+    if (has_state()) {
+      if (state_ != &::google::protobuf::internal::kEmptyString) {
+        state_->clear();
+      }
+    }
+    if (has_model()) {
+      if (model_ != &::google::protobuf::internal::kEmptyString) {
+        model_->clear();
+      }
+    }
+    if (has_product()) {
+      if (product_ != &::google::protobuf::internal::kEmptyString) {
+        product_->clear();
+      }
+    }
+    if (has_device()) {
+      if (device_ != &::google::protobuf::internal::kEmptyString) {
+        device_->clear();
+      }
+    }
+  }
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool AdbDevice::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string serial_no = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_serial_no()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->serial_no().data(), this->serial_no().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_state;
+        break;
+      }
+
+      // optional string state = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_state:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_state()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->state().data(), this->state().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_model;
+        break;
+      }
+
+      // optional string model = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_model:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_model()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->model().data(), this->model().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_product;
+        break;
+      }
+
+      // optional string product = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_product:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_product()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->product().data(), this->product().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_device;
+        break;
+      }
+
+      // optional string device = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_device:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_device()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->device().data(), this->device().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void AdbDevice::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string serial_no = 1;
+  if (has_serial_no()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->serial_no().data(), this->serial_no().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->serial_no(), output);
+  }
+
+  // optional string state = 2;
+  if (has_state()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->state().data(), this->state().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->state(), output);
+  }
+
+  // optional string model = 3;
+  if (has_model()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->model().data(), this->model().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->model(), output);
+  }
+
+  // optional string product = 4;
+  if (has_product()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->product().data(), this->product().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      4, this->product(), output);
+  }
+
+  // optional string device = 5;
+  if (has_device()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->device().data(), this->device().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      5, this->device(), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* AdbDevice::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required string serial_no = 1;
+  if (has_serial_no()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->serial_no().data(), this->serial_no().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->serial_no(), target);
+  }
+
+  // optional string state = 2;
+  if (has_state()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->state().data(), this->state().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->state(), target);
+  }
+
+  // optional string model = 3;
+  if (has_model()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->model().data(), this->model().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->model(), target);
+  }
+
+  // optional string product = 4;
+  if (has_product()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->product().data(), this->product().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        4, this->product(), target);
+  }
+
+  // optional string device = 5;
+  if (has_device()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->device().data(), this->device().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        5, this->device(), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int AdbDevice::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string serial_no = 1;
+    if (has_serial_no()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->serial_no());
+    }
+
+    // optional string state = 2;
+    if (has_state()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->state());
+    }
+
+    // optional string model = 3;
+    if (has_model()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->model());
+    }
+
+    // optional string product = 4;
+    if (has_product()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->product());
+    }
+
+    // optional string device = 5;
+    if (has_device()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->device());
+    }
+
+  }
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void AdbDevice::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const AdbDevice* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const AdbDevice*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void AdbDevice::MergeFrom(const AdbDevice& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_serial_no()) {
+      set_serial_no(from.serial_no());
+    }
+    if (from.has_state()) {
+      set_state(from.state());
+    }
+    if (from.has_model()) {
+      set_model(from.model());
+    }
+    if (from.has_product()) {
+      set_product(from.product());
+    }
+    if (from.has_device()) {
+      set_device(from.device());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void AdbDevice::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void AdbDevice::CopyFrom(const AdbDevice& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool AdbDevice::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+
+  return true;
+}
+
+void AdbDevice::Swap(AdbDevice* other) {
+  if (other != this) {
+    std::swap(serial_no_, other->serial_no_);
+    std::swap(state_, other->state_);
+    std::swap(model_, other->model_);
+    std::swap(product_, other->product_);
+    std::swap(device_, other->device_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata AdbDevice::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = AdbDevice_descriptor_;
+  metadata.reflection = AdbDevice_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int DevicesList::kHeadFieldNumber;
+const int DevicesList::kDevicesListFieldNumber;
+#endif  // !_MSC_VER
+
+DevicesList::DevicesList()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void DevicesList::InitAsDefaultInstance() {
+  head_ = const_cast< ::apk::CommandResponse*>(&::apk::CommandResponse::default_instance());
+}
+
+DevicesList::DevicesList(const DevicesList& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void DevicesList::SharedCtor() {
+  _cached_size_ = 0;
+  head_ = NULL;
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+DevicesList::~DevicesList() {
+  SharedDtor();
+}
+
+void DevicesList::SharedDtor() {
+  if (this != default_instance_) {
+    delete head_;
+  }
+}
+
+void DevicesList::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* DevicesList::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return DevicesList_descriptor_;
+}
+
+const DevicesList& DevicesList::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  return *default_instance_;
+}
+
+DevicesList* DevicesList::default_instance_ = NULL;
+
+DevicesList* DevicesList::New() const {
+  return new DevicesList;
+}
+
+void DevicesList::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_head()) {
+      if (head_ != NULL) head_->::apk::CommandResponse::Clear();
+    }
+  }
+  devices_list_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool DevicesList::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required .apk.CommandResponse head = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+               input, mutable_head()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_devices_list;
+        break;
+      }
+
+      // repeated .apk.AdbDevice devices_list = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_devices_list:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadMessageNoVirtual(
+                input, add_devices_list()));
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(18)) goto parse_devices_list;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void DevicesList::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required .apk.CommandResponse head = 1;
+  if (has_head()) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      1, this->head(), output);
+  }
+
+  // repeated .apk.AdbDevice devices_list = 2;
+  for (int i = 0; i < this->devices_list_size(); i++) {
+    ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
+      2, this->devices_list(i), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* DevicesList::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required .apk.CommandResponse head = 1;
+  if (has_head()) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        1, this->head(), target);
+  }
+
+  // repeated .apk.AdbDevice devices_list = 2;
+  for (int i = 0; i < this->devices_list_size(); i++) {
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteMessageNoVirtualToArray(
+        2, this->devices_list(i), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int DevicesList::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required .apk.CommandResponse head = 1;
+    if (has_head()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+          this->head());
+    }
+
+  }
+  // repeated .apk.AdbDevice devices_list = 2;
+  total_size += 1 * this->devices_list_size();
+  for (int i = 0; i < this->devices_list_size(); i++) {
+    total_size +=
+      ::google::protobuf::internal::WireFormatLite::MessageSizeNoVirtual(
+        this->devices_list(i));
+  }
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void DevicesList::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const DevicesList* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const DevicesList*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void DevicesList::MergeFrom(const DevicesList& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  devices_list_.MergeFrom(from.devices_list_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_head()) {
+      mutable_head()->::apk::CommandResponse::MergeFrom(from.head());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void DevicesList::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void DevicesList::CopyFrom(const DevicesList& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool DevicesList::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00000001) != 0x00000001) return false;
+
+  if (has_head()) {
+    if (!this->head().IsInitialized()) return false;
+  }
+  for (int i = 0; i < devices_list_size(); i++) {
+    if (!this->devices_list(i).IsInitialized()) return false;
+  }
+  return true;
+}
+
+void DevicesList::Swap(DevicesList* other) {
+  if (other != this) {
+    std::swap(head_, other->head_);
+    devices_list_.Swap(&other->devices_list_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata DevicesList::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = DevicesList_descriptor_;
+  metadata.reflection = DevicesList_reflection_;
   return metadata;
 }
 

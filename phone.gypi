@@ -233,6 +233,8 @@
 		#adbtool
 		'../phone/demo/phone_spi/adbtool/adb_interface.cc',
 		'../phone/demo/phone_spi/adbtool/adb_interface.h',
+		'../phone/demo/phone_spi/adbtool/adb_py_interface.cc',
+		'../phone/demo/phone_spi/adbtool/adb_py_interface.h',
 
 		
 		#phone_message.cc

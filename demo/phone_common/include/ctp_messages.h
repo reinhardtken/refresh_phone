@@ -352,6 +352,8 @@ IPC_MESSAGE_CONTROL1(L2U_ApkInstallInfo,
   PointerWrapper<std::vector<phone_module::ApkInstallInfo>>)
 IPC_MESSAGE_CONTROL1(U2L_ApkInstallCmd, PointerWrapper<std::vector<phone_module::ApkInstallInfo>>)//…Ë±∏id
 IPC_MESSAGE_CONTROL0(U2L_LaunchPY)//  
+IPC_MESSAGE_CONTROL1(L2U_DevicesList,
+  PointerWrapper<phone_module::DevicesList>)
                           
 
 //must last one

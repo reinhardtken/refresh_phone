@@ -1,4 +1,6 @@
 import os.path as op
+import os
+
 
 from adb import adb_commands
 from adb import sign_m2crypto
@@ -35,14 +37,19 @@ class ADBWrapper():
   
   def __init__(self):
     self.device = None
+    self.adbkey = os.environ['USERPROFILE'] + r'\.android\adbkey'
     self.Init()
     
   
   def Init(self):
     try:
-      self.signer = sign_m2crypto.M2CryptoSigner(
-        op.expanduser(r'C:\Users\liuqingping\.android\adbkey'))
       self.device = adb_commands.AdbCommands()
+      self.signer = None
+      if os.path.exists(self.adbkey):
+        self.signer = sign_m2crypto.M2CryptoSigner(
+          op.expanduser(self.adbkey))
+          # op.expanduser(r'C:\Users\liuqingping\.android\adbkey'))
+      
     except Exception as e:
       self.device = None
       pass
@@ -63,3 +70,15 @@ class ADBWrapper():
       self.device.Install(r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk', transfer_progress_callback=callback)
     except Exception as e:
       pass
+    
+  def ListDevices(self):
+    out = []
+    try:
+      device_list= adb_commands.AdbCommands().Devices()
+    
+      for one in device_list:
+        out.append(one.serial_number)
+      else:
+        return (True, out)
+    except Exception as e:
+      return (False, e)

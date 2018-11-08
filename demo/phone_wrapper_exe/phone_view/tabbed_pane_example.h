@@ -92,8 +92,7 @@ class CTPTabbedPane : public CTPViewBase,
   // TabbedPaneListener:
   virtual void TabSelectedAt(int index) OVERRIDE;
 
-  // Print the status of the tab in the status area.
-  void PrintStatus();
+
 
 
   void OnOrder(std::string const & ba, PointerWrapper<phone_module::OrderFootprints::OneRecord> const & p);
@@ -106,6 +105,8 @@ class CTPTabbedPane : public CTPViewBase,
   void OnStopPrice(std::string const & ba, PointerWrapper<phone_module::StopPriceData> const & p);
 
   void OnAdbInfo(std::string const & id, std::wstring const & info);
+
+  void OnUpdateDevicesList(PointerWrapper<phone_module::DevicesList> const & p);
   
 
   // The tabbed pane to be tested.

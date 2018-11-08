@@ -61,6 +61,7 @@
 #include "phone_common/channel/codec/tlv_define.h"
 
 #include "../adbtool/adb_interface.h"
+#include "../adbtool/adb_py_interface.h"
 
 namespace {
   template<typename T>
@@ -181,8 +182,15 @@ namespace phone_module {
       DCHECK(false);
     }
     
-    adb_server_.reset(new channel::ChannelHost());
-    channel::ServerResult result2 = adb_server_->InitializeServer(::prefs::kAdbServer);
+    //下面这两个东西很多时候互斥，目前策略二选一
+    //pyadb
+    py_adb_.reset(new PythonAdbInterface(this));
+    //native adb
+    //phone begin here
+    /*CAdbInterface::StaticInit();
+    adb_.reset(new CAdbInterface);
+    ADB = adb_.get();*/
+    
     //开启连接服务器================================
     channel_host_.reset(new channel::ChannelHost());
     
@@ -215,6 +223,12 @@ namespace phone_module {
           PointerWrapper<DeviceData> tmp(date);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_DeviceUpdate(tmp));
+
+
+          if (py_adb_.get()) {
+            py_adb_->StartScan();
+          }
+
 		} else {
 			//通知断开连接
           DeviceData * date = new DeviceData();
@@ -222,17 +236,18 @@ namespace phone_module {
           PointerWrapper<DeviceData> tmp(date);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_DeviceUpdate(tmp));
-		}
+
+          if (py_adb_.get()) {
+            py_adb_->StopScan();
+          }
+		  }
     }
     );
     //======================
     RlangHeartbeat();
 
 
-	//phone begin here
-	CAdbInterface::StaticInit();
-	adb_.reset(new CAdbInterface);
-	ADB = adb_.get();
+	
 
    
     //周知各个模块，初始化已经完成===
@@ -357,14 +372,12 @@ namespace phone_module {
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_ApkUpdateInfo(tmp));
         } else if (std::string(command::kRemoveLocalPackageList) == progress->cmd()) {
-        } else if (std::string(command::kInstallApk) == progress->cmd()) {
-          std::wstring apk = UTF8ToWide(progress->info(0));
-          std::wstring percent;
-          if (progress->info_size() > 1) {
-            percent = UTF8ToWide(progress->info(1));
-          }
+        } else if (std::string(command::kPyAdbInstallApk) == progress->cmd()) {
+          std::wstring device = UTF8ToWide(progress->info(0));
+          std::wstring apk = UTF8ToWide(progress->info(1));
+          std::wstring percent = UTF8ToWide(progress->info(2));
 
-          StatusInfo * data = new StatusInfo(adb_->GetSerialNo2());
+          StatusInfo * data = new StatusInfo(device);
           data->result = StringPrintf(L"进度：%ls 完成 %ls", apk.c_str(), percent.c_str());
 
           PointerWrapper<StatusInfo> tmp(data);
@@ -393,6 +406,23 @@ namespace phone_module {
             PointerWrapper<std::vector< ApkInstallInfo>> tmp(data);
             ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
               new L2U_ApkInstallInfo(tmp));
+          } else {
+            DCHECK(false);
+          }
+        }
+      } else if (p->GetTypeName() == "apk.DevicesList") {
+        apk::DevicesList const* device_list = static_cast<apk::DevicesList const*>(p.get());
+        if (std::string(command::kPyAdbScanDevices) == device_list->head().cmd()) {
+          if (device_list->head().code() == ERROR_CODE_OK) {
+            DevicesList * data = new DevicesList;
+            for (auto i = 0; i < device_list->devices_list_size(); ++i) {
+              AdbDevice info;
+              info.serial_no = UTF8ToWide(device_list->devices_list(i).serial_no());
+              data->push_back(info);
+            }
+            PointerWrapper<DevicesList> tmp(data);
+            ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+              new L2U_DevicesList(tmp));
           } else {
             DCHECK(false);
           }
@@ -491,106 +521,103 @@ namespace phone_module {
 
   //phone begin here
   void CTPModule::InitConnectedDevice() {
-	  if (true) {
+	  if (adb_.get()) {
 		  adb_->SetPrintkLevel(KERN_ALL);
 	  }
-	  //InitResolution();
-
-	  //if (IsNormalMode())
-	  //{
-		 // GetDlgItem(IDC_BTN_IIC_OPERATOR)->EnableWindow(FALSE);
-		 // PostMessage(UWM_PROC_AVAILABLE, 1, 0);
-	  //}
   }
 
   void CTPModule::OnReconnect(std::string const & id) {
+    if (adb_.get()) {
+      CString strTitle;
+      adb_->Init();
 
-	  CString strTitle;
-	  adb_->Init();
+      //if (g_pDlgWifi && g_pDlgWifi->IsInOperation()) {
+       // g_cs.Unlock();
+       // return 0;
+      //}
 
-	  //if (g_pDlgWifi && g_pDlgWifi->IsInOperation()) {
-		 // g_cs.Unlock();
-		 // return 0;
-	  //}
+      for (int i = 0; i < 3; i++)
+      {
+        adb_->GetDevices();
+        if (adb_->IsMultiDevConnected()) {
+          //多个设备，默认选第一个
+          adb_->SelectDevice(0);
+          //CDialogSelectDevice  sddlg(g_pToolDlg);
+          //sddlg.DoModal();
+          //Sleep(1000);
+        }
+        if (adb_->IsConnected())
+        {
+          InitConnectedDevice();
+          break;
+        }
+        Sleep(100);
+      }
 
-	  for (int i = 0; i < 3; i++)
-	  {
-		  adb_->GetDevices();
-		  if (adb_->IsMultiDevConnected()) {
-			  //多个设备，默认选第一个
-			  adb_->SelectDevice(0);
-			  //CDialogSelectDevice  sddlg(g_pToolDlg);
-			  //sddlg.DoModal();
-			  //Sleep(1000);
-		  }
-		  if (adb_->IsConnected())
-		  {
-			  InitConnectedDevice();
-			  break;
-		  }
-		  Sleep(100);
-	  }
+      if (adb_->IsConnected())
+      {
+        strTitle = TEXT("Android Dev: ");
+        strTitle += adb_->GetModel();
+        strTitle.AppendFormat(TEXT("(%s)"), adb_->GetSerialNo());
+        strTitle += TEXT(" Connected");
+        if (adb_->IsRooted()) {
+          strTitle += TEXT("(Root)");
+        }
+      } else
+      {
+        strTitle = TEXT("Disconnected, Please Connect Android Device!");
+      }
 
-	  if (adb_->IsConnected())
-	  {
-		  strTitle = TEXT("Android Dev: ");
-		  strTitle += adb_->GetModel();
-		  strTitle.AppendFormat(TEXT("(%s)"), adb_->GetSerialNo());
-		  strTitle += TEXT(" Connected");
-		  if (adb_->IsRooted()) {
-			  strTitle += TEXT("(Root)");
-		  }
-	  }
-	  else
-	  {
-		  strTitle = TEXT("Disconnected, Please Connect Android Device!");
-	  }
+      //通知ui=================================
+      if (adb_->IsConnected()) {
+        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+          new L2U_AdbInfo("", std::wstring(strTitle.GetBuffer())));
+        strTitle.ReleaseBuffer();
 
-	  //通知ui=================================
-	  if (adb_->IsConnected()) {
-		  ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-			  new L2U_AdbInfo("", std::wstring(strTitle.GetBuffer())));
-		  strTitle.ReleaseBuffer();
-      
-      DeviceData * date = new DeviceData(adb_->GetSerialNo2());
-      PointerWrapper<DeviceData> tmp(date);
-      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-        new L2U_DeviceUpdate(tmp));
+        DeviceData * date = new DeviceData(adb_->GetSerialNo2());
+        PointerWrapper<DeviceData> tmp(date);
+        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+          new L2U_DeviceUpdate(tmp));
 
-		  //做一些其余的动作，先放在这里做
-		  CommonThread::PostTask(CommonThread::CTP,
-			  FROM_HERE,
-			  base::Bind(&CTPModule::OnGetPackageList, base::Unretained(this), L""));
-	  } else {
-		  ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-			  new L2U_AdbInfo("", std::wstring(L"No devices")));
-	  }
+        //做一些其余的动作，先放在这里做
+        CommonThread::PostTask(CommonThread::CTP,
+          FROM_HERE,
+          base::Bind(&CTPModule::OnGetPackageList, base::Unretained(this), L""));
+      } else {
+        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+          new L2U_AdbInfo("", std::wstring(L"No devices")));
+      }
+    }
+	  
 
   }
 
   void CTPModule::OnGetPackageList(std::wstring const &) {
-	  vector<ANDROID_PACKAGE_T> out;
-	  vector<ANDROID_PACKAGE_T> thirdpart_out;
-	  adb_->GetPackages(LPPARAM_FILE | LPPARAM_UID, out);
-	  adb_->GetPackages(LPPARAM_THIRDPARTY | LPPARAM_UID, thirdpart_out);
+    if (adb_.get()) {
+      vector<ANDROID_PACKAGE_T> out;
+      vector<ANDROID_PACKAGE_T> thirdpart_out;
+      adb_->GetPackages(LPPARAM_FILE | LPPARAM_UID, out);
+      adb_->GetPackages(LPPARAM_THIRDPARTY | LPPARAM_UID, thirdpart_out);
 
-	  vector<ANDROID_PACKAGE_T>::iterator ait = out.begin();
-	  vector<ANDROID_PACKAGE_T>::const_iterator subcit;
-	  for (; ait != out.end(); ait++)
-	  {
-		  subcit = thirdpart_out.begin();
-		  for (; subcit != thirdpart_out.end(); subcit++)
-		  {
-			  if (ait->package == subcit->package)
-			  {
-				  ait->type = PKGT_THIRD_PARTY;
-				  break;
-			  }
-		  }
-	  }
-	  PointerWrapper<vector<ANDROID_PACKAGE_T>> tmp(new vector<ANDROID_PACKAGE_T>(out));
-	  ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-		  new L2U_PackageList(std::wstring(L""), tmp));
+      vector<ANDROID_PACKAGE_T>::iterator ait = out.begin();
+      vector<ANDROID_PACKAGE_T>::const_iterator subcit;
+      for (; ait != out.end(); ait++)
+      {
+        subcit = thirdpart_out.begin();
+        for (; subcit != thirdpart_out.end(); subcit++)
+        {
+          if (ait->package == subcit->package)
+          {
+            ait->type = PKGT_THIRD_PARTY;
+            break;
+          }
+        }
+      }
+      PointerWrapper<vector<ANDROID_PACKAGE_T>> tmp(new vector<ANDROID_PACKAGE_T>(out));
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+        new L2U_PackageList(std::wstring(L""), tmp));
+    }
+	  
 
   }
 
@@ -599,6 +626,9 @@ namespace phone_module {
   }
 
   void CTPModule::OnDeviceChange(int const) {
+    if (py_adb_.get()) {
+      py_adb_->ScanDevicesNow();
+    }
 	  OnReconnect("");
   }
 
@@ -655,7 +685,7 @@ namespace phone_module {
       //std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
 
       apk::Command * cmd = new apk::Command;
-      cmd->set_cmd(command::kInstallApk);
+      cmd->set_cmd(command::kPyAdbInstallApk);
       cmd->set_cmd_no(cmd_no());
       cmd->add_param(WideToUTF8(file));
       codec::MessagePtr ptr(cmd);

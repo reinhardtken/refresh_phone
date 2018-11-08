@@ -120,7 +120,7 @@ namespace channel {
     keep_alive_checker_();
   }
 
-  ServerResult ChannelHost::InitializeServer(std::string const &name) {
+  ServerResult ChannelHost::InitializeServer(std::string const &name, bool const retry) {
     DCHECK_RLOG(CommonThread::CurrentlyOn(id()));
     name_ = name;
     std::pair<std::string, int> out;
@@ -144,12 +144,16 @@ namespace channel {
         result.second = out.second;
         return result;
       } else {
-        listen_socket_.reset(NULL);
-        ++counter;
-        ++out.second;
-        if (counter > 100) {
-          DCHECK(false);
-          LOG(WARNING) << "bind socket failed"<< name_ << " " << re << " " << out.second;
+        if (retry) {
+          listen_socket_.reset(NULL);
+          ++counter;
+          ++out.second;
+          if (counter > 100) {
+            DCHECK(false);
+            LOG(WARNING) << "bind socket failed" << name_ << " " << re << " " << out.second;
+            return result;
+          }
+        } else {
           return result;
         }
       }

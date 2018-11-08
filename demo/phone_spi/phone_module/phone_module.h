@@ -30,13 +30,13 @@ namespace channel {
 namespace phone_module {
 
   class CTPStoreImpl;
-  
+  class PythonAdbInterface;
   class CTPModule:  public IModule,
                               //public channel::ChannelHost::Delegate,
                               public content::NotificationObserver,
                               public ThreadMessageFilter {
   public:
-
+    friend class PythonAdbInterface;
     CTPModule();
     ~CTPModule();
     
@@ -117,7 +117,7 @@ private:
 
     int32 server_port_;
     scoped_ptr<channel::ChannelHost> channel_host_;
-    scoped_ptr<channel::ChannelHost> adb_server_;
+    
 
     scoped_ptr<VoidVoidCallback> keep_connect_rlang_;
 
@@ -148,7 +148,7 @@ private:
 	//phone begin here
 	private:
 		scoped_ptr<CAdbInterface> adb_;
-    
+    scoped_ptr<PythonAdbInterface> py_adb_;
 
     content::NotificationRegistrar registrar_;
 

@@ -39,6 +39,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
   ERROR_CODE_LOAD_LOCAL_APKLIST_FAILED = 9
 
+  ERROR_CODE_PYADB_SCAN_DEVICES_FAILED = 10
 
   ERROR_CODE_UNKNOWN = 100000
   
@@ -124,10 +125,6 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     self.Send(data)
 
   def RegisterHandler(self, src):
-    # src.RegisterMessageHandlerWithName(self, 'ctp.mq.QueryLevelMQ')
-    # src.RegisterMessageHandlerWithName(self, 'ctp.cp.BacktestingExpectAssetQuery')
-    # src.RegisterMessageHandlerWithName(self, 'ctp.cp.BacktestingResultSave2DBRequery')
-    src.RegisterMessageHandlerWithName(self, 'ctp.cp.Command')
     src.RegisterMessageHandlerWithName(self, 'apk.Command')
 
 
@@ -192,7 +189,25 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.ProcessGetLocalPackageList(msg)
         elif msg.cmd == 'install_apk':
           self.ProcessInstallApk(msg)
+        elif msg.cmd == 'pyadb_scan_devices':
+          self.ProcessScanDevices(msg)
         
+        
+   
+  def ProcessScanDevices(self, command):
+    succ, device_list = self.device.ListDevices()
+    if succ:
+      out = []
+      for one in device_list:
+        device = {}
+        device['serial_no'] = one
+        out.append(device)
+        
+      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, out)
+    else:
+      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
+      
+      
 
   def GenInstallApkCallback(self, command):
     def InstallApkCallback(apk, now, total):
@@ -369,6 +384,23 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         one_apk.apk_name = one.apk_name
         one_apk.price = one.price
         one_apk.type = one.type
+
+    self.Send(response)
+    
+    
+    
+  def SendDevicesList(self, cmd, code, device_list=None, info=None):
+    response = pb.apk_protomsg_pb2.DevicesList()
+    response.head.cmd = cmd.cmd
+    response.head.cmd_no = cmd.cmd_no
+    response.head.code = code
+    if device_list is not None:
+      for one in device_list:
+        one_device = response.devices_list.add()
+        one_device.serial_no = one['serial_no']
+
+    if info is not None:
+      response.head.info.append(info)
 
     self.Send(response)
 
