@@ -342,7 +342,7 @@ IPC_MESSAGE_CONTROL2(L2U_GetInstallApkListRsp, std::wstring, std::vector<std::ws
 
 
 IPC_MESSAGE_CONTROL0(U2L_CheckUpdateApkList)
-IPC_MESSAGE_CONTROL1(L2U_DeviceUpdate,
+IPC_MESSAGE_CONTROL1(L2U_ModuleUpdate,//仅用于py模块报活
   PointerWrapper<phone_module::DeviceData>)
 IPC_MESSAGE_CONTROL1(L2U_StatusInfo,
   PointerWrapper<phone_module::StatusInfo>)

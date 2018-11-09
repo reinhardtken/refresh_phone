@@ -28,6 +28,7 @@
 #include "ui/base/models/combobox_model.h"
 #include "ui/base/win/window_impl.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "ui/views/controls/label.h"
 #include "ui/views/controls/combobox/combobox.h"
 #include "ui/views/controls/combobox/combobox_listener.h"
 #include "ui/views/controls/progress_bar.h"
@@ -143,6 +144,7 @@ class UpdateView : public CTPViewBase,
   void UpdateView::DispatchProtobufMessage(std::string const & name, codec::MessagePtr const & p, base::Time const&);
   void UpdateView::DispatchTLVMessage(std::string const & name, codec::TLVMessagePtr const & p, base::Time const&);
   void OnApkUpdateInfo(PointerWrapper<phone_module::ApkUpdateInfo> const & p);
+  void OnModuleUpdate(PointerWrapper<phone_module::DeviceData> const & p);
 
  private:
   // The table to be tested.
@@ -155,6 +157,7 @@ class UpdateView : public CTPViewBase,
   TextButton* remove_local_;
   TextButton* clear_table_;
 
+  Label * module_status_;
 
 
   string16 GetColumnText(int id, phone_module::LevelQuotationInfoBig const & info);

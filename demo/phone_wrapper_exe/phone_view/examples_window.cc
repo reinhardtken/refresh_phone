@@ -19,29 +19,7 @@
 
 
 #include "grit/theme_resources.h"
-/*
-#include "ui/views/examples/bubble_example.h"
-#include "ui/views/examples/button_example.h"
-#include "ui/views/examples/combobox_example.h"
-#include "ui/views/examples/double_split_view_example.h"
-#include "ui/views/examples/label_example.h"
-#include "ui/views/examples/link_example.h"
-#include "ui/views/examples/menu_example.h"
-#include "ui/views/examples/message_box_example.h"
-#include "ui/views/examples/native_theme_button_example.h"
-#include "ui/views/examples/native_theme_checkbox_example.h"
-#include "ui/views/examples/progress_bar_example.h"
-#include "ui/views/examples/radio_button_example.h"
-#include "ui/views/examples/scroll_view_example.h"
-#include "ui/views/examples/single_split_view_example.h"
-#include "ui/views/examples/slider_example.h"
-#include "ui/views/examples/tabbed_pane_example.h"
-#include "ui/views/examples/table_example.h"
-#include "ui/views/examples/text_example.h"
-#include "ui/views/examples/textfield_example.h"
-#include "ui/views/examples/throbber_example.h"
-#include "ui/views/examples/tree_view_example.h"
-#include "ui/views/examples/widget_example.h"*/
+
 #include "ui/views/focus/accelerator_handler.h"
 #include "ui/views/layout/fill_layout.h"
 #include "ui/views/layout/grid_layout.h"

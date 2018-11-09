@@ -163,7 +163,7 @@ class ProtobufCodec:
     data = msg.SerializeToString()
     total_size = total_size + len(data)
     format_string = '2I ' + str(len(name)) + 's ' + str(len(data)) + 's'
-    print(format_string)
+    #print(format_string)
     in_data = (total_size, len(name), name, data)
     codec = struct.Struct(format_string)
     out_data = codec.pack(*in_data)

@@ -21,7 +21,9 @@
 
 #include "../../../phone_common/include/ctp_notification_types.h"
 #include "../ui_common.h"
-//#include "tabbed_pane_example.h"
+
+
+#include "../tabbed_pane_example.h"
 
 namespace {
 
@@ -46,20 +48,20 @@ namespace examples {
   }
 
   //=====================================================
-  void MakeupDeviceColunms(std::vector<ui::TableColumn> &columns, bool const global) {
+  void MakeupDeviceColunms(std::vector<ui::TableColumn> &columns) {
 
     int index = 0;
-    if (global) {
-      columns.push_back(ui::TableColumn(index++, L"账号",
-        ui::TableColumn::LEFT, 200));
-    }
     columns.push_back(ui::TableColumn(index++, L"时间",
       ui::TableColumn::LEFT, 150));
 
     columns.push_back(ui::TableColumn(index++, L"设备ID",
       ui::TableColumn::LEFT, 150));
-    columns.push_back(ui::TableColumn(index++, L"最新信息",
-      ui::TableColumn::LEFT, 500));
+    columns.push_back(ui::TableColumn(index++, L"product",
+      ui::TableColumn::LEFT, 150));
+    columns.push_back(ui::TableColumn(index++, L"model",
+      ui::TableColumn::LEFT, 150));
+    columns.push_back(ui::TableColumn(index++, L"device",
+      ui::TableColumn::LEFT, 150));
     
   }
 
@@ -90,8 +92,8 @@ MainView::MainView(CTPTabbedPane *p, std::string const &bc)
   pane_(p),
   bc_(bc),
   table_order_(NULL),
-  table_position_(NULL),
-  ALLOW_THIS_IN_INITIALIZER_LIST(model_position_(this)),
+  table_device_(NULL),
+  ALLOW_THIS_IN_INITIALIZER_LIST(model_device_(this)),
   ALLOW_THIS_IN_INITIALIZER_LIST(model_order_(this)),
   ThreadMessageFilter(true) {
 
@@ -106,8 +108,8 @@ MainView::~MainView() {
   // Delete the view before the model.
   delete table_order_;
   table_order_ = NULL;
-  delete table_position_;
-  table_position_ = NULL;
+  delete table_device_;
+  table_device_ = NULL;
 }
 
 void MainView::OnSelectedIndexChanged(Combobox* combobox) {
@@ -134,13 +136,13 @@ void MainView::CreateExampleView(View* container) {
   //----------------------------------------------------------------------
   std::vector<ui::TableColumn> columns;
 
-  MakeupDeviceColunms(columns, false);
+  MakeupDeviceColunms(columns);
   //==============================================
   table_order_ = new TableView(&model_order_, columns2, TEXT_ONLY, true, true, true);
   table_order_->SetObserver(&model_order_);
 
-  table_position_ = new CCTableView(this, &model_position_, columns, TEXT_ONLY, true, true, true);
-  table_position_->SetObserver(&model_position_);
+  table_device_ = new CCTableView(this, &model_device_, columns, TEXT_ONLY, true, true, true);
+  table_device_->SetObserver(&model_device_);
 
 
   //=========================================
@@ -158,7 +160,7 @@ void MainView::CreateExampleView(View* container) {
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL, 1,
     GridLayout::USE_PREF, 0, 0);
   layout->StartRow(0.3f, index);
-  layout->AddView(table_position_->CreateParentIfNecessary());
+  layout->AddView(table_device_->CreateParentIfNecessary());
   //=========================================
 
 
@@ -216,10 +218,12 @@ string16 MainView::GetColumnText(int id, phone_module::StatusInfo const & info) 
 }
 
 
-string16 MainView::GetColumnTextPosition(int id, phone_module::DeviceData const & info) {
+string16 MainView::GetColumnTextPosition(int id, phone_module::AdbDevice const & info) {
   switch (id) {
       case 0: {
-        return info.time_string;
+        base::Time::Exploded e;
+        base::Time::Now().LocalExplode(&e);
+        return base::StringPrintf(L"%02d:%02d:%02d", e.hour, e.minute, e.second);
         break;
       }
       case 1: {
@@ -227,7 +231,15 @@ string16 MainView::GetColumnTextPosition(int id, phone_module::DeviceData const 
         break;
       }
       case 2: {
-        return info.info;
+        return info.product;
+        break;
+      }
+      case 3: {
+        return info.model;
+        break;
+      }
+      case 4: {
+        return info.device;
         break;
       }
       default: {
@@ -287,7 +299,7 @@ bool MainView::OnMessageReceived(IPC::Message const & msg) {
     bool msg_is_ok = false;
     IPC_BEGIN_MESSAGE_MAP_EX(MainView, msg, msg_is_ok)
 
-      IPC_MESSAGE_HANDLER(L2U_DeviceUpdate, OnDeviceUpdate)
+      IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
       IPC_MESSAGE_HANDLER(L2U_StatusInfo, OnStatusInfo)
       //IPC_MESSAGE_UNHANDLED_ERROR()
       IPC_END_MESSAGE_MAP_EX()
@@ -338,27 +350,20 @@ bool MainView::OverrideThreadForMessage(IPC::Message const& message,
     return false;
 }
 
-void MainView::OnDeviceUpdate(PointerWrapper<phone_module::DeviceData> const & p) {
-  std::wstring key = p.get()->serial_no;
-  uint32 const old_size = device_data_.size();
-  device_data_[key] = std::shared_ptr<phone_module::DeviceData>(new phone_module::DeviceData(*p.get()));
-  uint32 const new_size = device_data_.size();
-  if (device_keys_.end() == std::find(device_keys_.begin(), device_keys_.end(), key)) {
-    device_keys_.push_back(key);
-  }
 
-  if (old_size == new_size) {
-    table_position_->OnItemsChanged(0, device_data_.size());
+
+void MainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
+  phone_module::DevicesList & list = *p.get();
+  std::size_t old_size = device_data_.size();
+  device_data_.swap(list);
+  
+  if (old_size == device_data_.size() && old_size > 0) {
+    table_device_->OnItemsChanged(0, device_data_.size());
   } else {
-    table_position_->OnModelChanged();
+    table_device_->OnModelChanged();
   }
 
-  //if (list_data_.size() > 0) {
-  //table_->ScrollRectToVisible(table_->GetRowBounds(list_data_.size() - 1));
-  //table_->Select(list_data_.size() - 1);
-  //}
-  EnsureVisible();
-
+  pane_->OnUpdateDevicesList(p);
 }
 
 
@@ -375,7 +380,7 @@ bool MainView::GetCellColors(
   CCTableView::ItemColor* foreground,
   CCTableView::ItemColor* background,
   LOGFONT* logfont) {
-    //DCHECK(who == table_position_);
+    //DCHECK(who == table_device_);
 /*
     DataList::iterator it = order_result_data_.find(keys_[model_row]);
     
@@ -393,25 +398,10 @@ bool MainView::GetCellColors(
 }
 
 int MainView::size() {
-  return device_keys_.size();
+  return device_data_.size();
 }
 string16 MainView::text(int row, int column_id) {
-  int type_select_index = 0;//type_combobox_->selected_index();
-  int level_select_index = 0;//strategy_combobox_->selected_index();
-
-  DCHECK(device_data_.size() == device_keys_.size());
-  if (type_select_index == 0 && level_select_index == 0) {
-    if ((uint32)row < device_keys_.size()) {
-      std::wstring key = device_keys_[row];
-      return GetColumnTextPosition(column_id, * device_data_[key].get());
-    } else {
-      DCHECK(false);
-    }
-  } 
-
-
-
-  return string16();
+  return GetColumnTextPosition(column_id, device_data_[row]);
 }
 
 }  // namespace examples

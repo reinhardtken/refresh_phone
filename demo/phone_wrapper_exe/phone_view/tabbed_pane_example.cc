@@ -127,7 +127,7 @@ void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
   //  tabbed_pane_->AddTab(ASCIIToUTF16(label), p->example_view());
     
   } else if (type == MAIN_TAB) {
-    MainView* p = new MainView(NULL, "");
+    MainView* p = new MainView(this, "");
 
     tabs_[tabbed_pane_->GetTabCount()] = p;
     tabbed_pane_->AddTab((label), p->example_view());
@@ -226,18 +226,10 @@ bool CTPTabbedPane::OnMessageReceived(IPC::Message const & msg) {
       
       IPC_MESSAGE_HANDLER(CTP_TradeUnitCreatedNew, OnTradeUnitCreated)
 
-      IPC_MESSAGE_HANDLER(CTP_Position2UI, OnPosition)
-      IPC_MESSAGE_HANDLER(CTP_StopPrice2UI, OnStopPrice)
-      IPC_MESSAGE_HANDLER(CTP_Order2UI, OnOrder)
-      //IPC_MESSAGE_HANDLER(CTP_Cash2UI, OnCash)
-      //IPC_MESSAGE_HANDLER(CTP_OrderResult2UI, OnOrderResult)
-      IPC_MESSAGE_HANDLER(CTP_TU_TypeList, OnTypeList)
       IPC_MESSAGE_HANDLER(CTP_BacktestingCreated, OnBacktestingCreated)
-      //IPC_MESSAGE_HANDLER(CTP_MQLevelParam, OnInitParam)
-      //IPC_MESSAGE_HANDLER(CTP_CONSOLE_CommandProtoBuf, OnConsoleCommandProtoBuf)
-      //IPC_MESSAGE_HANDLER(CTP_TradeUnitCreated, OnTradeUnitCreated)
+
       IPC_MESSAGE_HANDLER(L2U_AdbInfo, OnAdbInfo)
-      IPC_MESSAGE_HANDLER(L2U_DevicesList, OnUpdateDevicesList)
+      
 
       //IPC_MESSAGE_UNHANDLED_ERROR()
       IPC_END_MESSAGE_MAP_EX()
@@ -272,46 +264,6 @@ void CTPTabbedPane::OnOrder(std::string const & ba, PointerWrapper<phone_module:
   }
 }
 
-//void CTPTabbedPane::OnOrderResult(std::string const & ba, PointerWrapper<order_execute::OrderUnit2UI> const & p) {
-//  if (bc_2_tuview_.find(ba) != bc_2_tuview_.end()) {
-//    bc_2_tuview_[ba]->OnOrderResult(p);
-//  } else {
-//    DCHECK(false);
-//  }
-//}
-
-//void CTPTabbedPane::OnCash(std::string const & ba, PointerWrapper<CThostFtdcTradingAccountField> const & p) {
-//  if (bc_2_tuview_.find(ba) != bc_2_tuview_.end()) {
-//    bc_2_tuview_[ba]->OnCash(p);
-//  } else {
-//    DCHECK(false);
-//  }
-//}
-
-void CTPTabbedPane::OnPosition(std::string const & ba, PointerWrapper<phone_module::PositionData> const & p) {
-  if (bc_2_tuview_.find(ba) != bc_2_tuview_.end()) {
-    bc_2_tuview_[ba]->OnPosition(p);
-    ms_table_->OnPosition(ba, p);
-  } else {
-    DCHECK(false);
-  }
-}
-
-void CTPTabbedPane::OnStopPrice(std::string const & ba, PointerWrapper<phone_module::StopPriceData> const & p) {
-  if (bc_2_tuview_.find(ba) != bc_2_tuview_.end()) {
-    bc_2_tuview_[ba]->OnStopPrice(p);
-  } else {
-    DCHECK(false);
-  }
-}
-
-void CTPTabbedPane::OnTypeList(std::string const & ba, std::vector<std::string> const &v) {
-  if (bc_2_tuview_.find(ba) != bc_2_tuview_.end()) {
-    bc_2_tuview_[ba]->OnTypeList(v);
-  } else {
-    DCHECK(false);
-  }
-}
 
 void CTPTabbedPane::OnAdbInfo(std::string const & id, std::wstring const & info) {
   RefreshView * p = (RefreshView*)tabs_[2];

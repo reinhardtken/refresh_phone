@@ -83,6 +83,8 @@ class CTPTabbedPane : public CTPViewBase,
     }
   }
 
+  void OnUpdateDevicesList(PointerWrapper<phone_module::DevicesList> const & p);
+
  private:
    void OnTradeUnitCreated(PointerWrapper<phone_module::TradeUnitInfo> const & p);
    void OnBacktestingCreated(std::string const& bc, int32 const id);
@@ -96,17 +98,11 @@ class CTPTabbedPane : public CTPViewBase,
 
 
   void OnOrder(std::string const & ba, PointerWrapper<phone_module::OrderFootprints::OneRecord> const & p);
-  //void OnOrderResult(std::string const & ba, PointerWrapper<order_execute::OrderUnit2UI> const & p);
-  
-  //void OnCash(std::string const & ba, PointerWrapper<CThostFtdcTradingAccountField> const & p);
 
-  void OnPosition(std::string const & ba, PointerWrapper<phone_module::PositionData> const & p);
-  void OnTypeList(std::string const & ba, std::vector<std::string> const &v);
-  void OnStopPrice(std::string const & ba, PointerWrapper<phone_module::StopPriceData> const & p);
 
   void OnAdbInfo(std::string const & id, std::wstring const & info);
 
-  void OnUpdateDevicesList(PointerWrapper<phone_module::DevicesList> const & p);
+  
   
 
   // The tabbed pane to be tested.

@@ -55,7 +55,7 @@ namespace phone_module {
   }
 
   void PythonAdbInterface::StartScan() {
-    keep_scan_ = true;
+    //keep_scan_ = true;
     ScanDevices();
   }
 

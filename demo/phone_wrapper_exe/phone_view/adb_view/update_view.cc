@@ -167,7 +167,14 @@ void UpdateView::CreateExampleView(View* container) {
   layout->AddView(check_update_);
   layout->AddView(remove_local_);
   layout->AddView(clear_table_);
-  
+  //=========================================
+  ++index;
+  module_status_ = new Label(L"包管理模块-未连接");
+  column_set = layout->AddColumnSet(index);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+    1.0f, GridLayout::USE_PREF, 0, 0);
+  layout->StartRow(0 /* expand */, index);
+  layout->AddView(module_status_);
 
 }
 
@@ -370,6 +377,7 @@ bool UpdateView::OnMessageReceived(IPC::Message const & msg) {
     bool msg_is_ok = false;
     IPC_BEGIN_MESSAGE_MAP_EX(UpdateView, msg, msg_is_ok)
       IPC_MESSAGE_HANDLER(L2U_ApkUpdateInfo, OnApkUpdateInfo)
+      IPC_MESSAGE_HANDLER(L2U_ModuleUpdate, OnModuleUpdate)
       IPC_END_MESSAGE_MAP_EX()
 
       if (msg_is_ok) {
@@ -389,6 +397,10 @@ void UpdateView::OnApkUpdateInfo(PointerWrapper<phone_module::ApkUpdateInfo> con
   data_.push_back(*p.get());
   table_->OnItemsAdded(data_.size() - 1, 1);
   EnsureVisible();
+}
+
+void UpdateView::OnModuleUpdate(PointerWrapper<phone_module::DeviceData> const & p) {
+  module_status_->SetText(p.get()->info);
 }
 
 
@@ -438,25 +450,6 @@ void UpdateView::ExecuteCommand(int id) {
 
 
 void UpdateView::DispatchProtobufMessage(std::string const & name, codec::MessagePtr const & p, base::Time const&) {
-  //if (p->GetTypeName() == "ctp.guard.ReportPid") {
-  //  ctp::guard::ReportPid const* report = static_cast<ctp::guard::ReportPid const*>(p.get());
-  //  for(auto it = process_vector_->begin(); it != process_vector_->end(); ++it) {
-  //    if (name == it->socket_name) {
-  //      it->process_id = report->process_id();
-  //      if (table_) {
-  //        table_->OnModelChanged();
-  //      }
-  //      return;
-  //    }
-  //  }
-  //} else if (p->GetTypeName() == "ctp.guard.CommonCmd") {
-  //  ctp::guard::CommonCmd const* cmd = static_cast<ctp::guard::CommonCmd const*>(p.get());
-  //  if (cmd->str1() == "mergemq") {
-  //    LOG(INFO)<<"mergemq begin=======================";
-  //    LaunchWrapper(switches::kCommunicatePyMQCheckAlive);
-  //  }
-  //}
-  
 
 }
 

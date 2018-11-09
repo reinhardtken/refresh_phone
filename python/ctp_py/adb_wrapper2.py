@@ -2,47 +2,180 @@
 # encoding: utf-8
 
 import subprocess
+import re
 
-class AdbInstall():
+
+class AdbCommandBase(object):
+  adb_error_re = re.compile(r'error: (.*)')
+  adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
   
-  def __init__(self):
-    self.adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb '
-    
   
-  def BuildSerialNo(self, serial_no):
-    if serial_no is not None:
-      return ' -s {} '.format(serial_no)
-    else:
-      return ''
-    
+  def __init__(self, callback_succ=None, callback_fail=None, callback_exit=None, callback_exception=None):
+    self.callback_succ = callback_succ
+    self.callback_fail = callback_fail
+    self.callback_exit = callback_exit
+    self.callback_exception = callback_exception
+    self.cmd_stack = []
+    self.cmd_stack.append(AdbCommandBase.adb)
   
-  def BuildInstall(self, apk):
-    return ' install -r {}'.format(apk)
-    
-    
+  def Parser(self):
+    return (False, None)
+
+  def CallbackSucc(self, content):
+    if self.callback_succ is not None:
+      try:
+        self.callback_succ(content)
+      except Exception as e:
+        pass
+
+  def CallbackFail(self, content):
+    if self.callback_fail is not None:
+      try:
+        self.callback_fail(content)
+      except Exception as e:
+        pass
+      
   
-  def Install(self, serial_no, apk, callback):
+  def CallbackExit(self, code):
+    if self.callback_exit is not None:
+      try:
+        self.callback_exit(code)
+      except Exception as e:
+        pass
+  
+  def CallbackException(self, e):
+    if self.callback_exception is not None:
+      try:
+        self.callback_exception(e)
+      except Exception as e:
+        pass
+  
+  def _BuildCmd(self):
+    out = ''
+    for one in self.cmd_stack:
+      out += one + ' '
+    
+    return out
+  
+  def Execute(self):
     try:
-      cmd = self.adb + self.BuildSerialNo(serial_no) + self.BuildInstall(apk)
+      cmd = self._BuildCmd()
       p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
       while p.poll() is None:
         line = p.stdout.readline()
         line = line.strip()
         succ, content = self.Parser(line)
         if succ:
-          callback(succ, content)
+          self.CallbackSucc(content)
         else:
-          callback(succ, content)
+          self.CallbackFail(content)
           p.kill()
           break
-          
-      # if p.returncode == 0:
-      #   print('Subprogram success')
-      # else:
-      #   print('Subprogram failed')
+    
       
+      
+      line = p.stdout.readline()
+      while len(line) > 0:
+        line = line.strip()
+        succ, content = self.Parser(line)
+        if succ:
+          self.CallbackSucc(content)
+        else:
+          self.CallbackFail(content)
+          break
+        line = p.stdout.readline()
+
+
+      self.CallbackExit(p.returncode)
+  
     except Exception as e:
+      self.CallbackException(e)
       pass
+  
+  
+
+class AdbLIstDevices(AdbCommandBase):
+  cmd = 'devices -l'
+  
+  def __init__(self, callback_exit):
+    super(AdbLIstDevices, self).__init__(None, None, self._callback_wrapper)
+    self.step = 0
+    self.devices_list = []
+    self.my_callback_exit = callback_exit
+    
+  
+  def _callback_wrapper(self, code):
+    if self.my_callback_exit is not None:
+      try:
+        self.my_callback_exit(self.devices_list)
+      except Exception as e:
+        pass
+      
+
+  def _BuildCmd(self):
+    self.cmd_stack.append(AdbLIstDevices.cmd)
+    return super(AdbLIstDevices, self)._BuildCmd()
+  
+  
+  
+  def Parser(self, line):
+    '''
+    List of devices attached
+    
+    
+    List of devices attached
+    aa1ee7d1               device product:LeMax2_CN model:Le_X820 device:le_x2
+    '''
+    print(line)
+    if 'error' in line:
+      error = self.adb_error_re.search(line).group(1)
+      return (False, error)
+    # if line.startswith('adb: error: '):
+    #   return (False, line)
+    elif 'List of devices attached' in line:
+      self.step = 1
+    elif self.step == 1:
+      one_device = {}
+      first_space = line.find(' ')
+      if first_space != -1:
+        one_device['serial_no'] = line[:first_space]
+        rest = line[first_space:].strip()
+        part = rest.split(' ')
+        if len(part) >= 4:
+          one_device['product'] = part[1].split(':')[1]
+          one_device['model'] = part[2].split(':')[1]
+          one_device['device'] = part[3].split(':')[1]
+          self.devices_list.append(one_device)
+          return (True, None)
+
+    return (True, None)
+  
+  
+
+class AdbInstallApk(AdbCommandBase):
+  
+  def __init__(self, serial_no, apk, callback_succ, callback_fail):
+    super(AdbInstallApk, self).__init__(callback_succ, callback_fail)
+    self.serial_no = serial_no
+    self.apk = apk
+  
+    
+    
+  def _BuildCmd(self):
+    self.cmd_stack.append(self._BuildSerialNo())
+    self.cmd_stack.append(self._BuildInstall())
+    return super(AdbInstallApk, self)._BuildCmd()
+  
+  def _BuildSerialNo(self):
+    if self.serial_no is not None:
+      return ' -s {} '.format(self.serial_no)
+    else:
+      return ''
+    
+  
+  def _BuildInstall(self):
+    return ' install -r {}'.format(self.apk)
+    
   
   
   
@@ -54,18 +187,33 @@ class AdbInstall():
     Please select on your phone whether can install the app by The ADB command?
     pkg: /data/local/tmp/com.tencent.android.qqdownloader.apk
     Success
-    :param line:
-    :return:
     '''
-    if line.startswith('adb: error: '):
-      return (False, line)
-    else:
-      '[  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk'
-      left = line.find('[')
-      right = line.find(']')
-      if left != -1 and right != -1:
-        return (True, line[left+1: right])
-      elif line == 'Success':
-        return (True, 'Success')
+    try:
+      print(line)
+      if 'error' in line:
+        error = self.adb_error_re.search(line).group(1)
+        return (False, error)
+      # if line.startswith('adb: error: '):
+      #   return (False, line)
       else:
-        pass
+        #'[  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk'
+        left = line.find('[')
+        right = line.find(']')
+        if left != -1 and right != -1:
+          return (True, line[left+1: right])
+        elif line == 'Success':
+          return (True, 'Success')
+        else:
+          pass
+    except Exception as e:
+      return (False, e)
+      
+      
+      
+#======================================================
+if __name__ == '__main__':
+  one = AdbLIstDevices(None)
+  one.Execute()
+  apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
+  two = AdbInstallApk('aa1ee7d1', apk, None, None)
+  two.Execute()

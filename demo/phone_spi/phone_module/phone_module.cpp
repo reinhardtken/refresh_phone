@@ -219,10 +219,10 @@ namespace phone_module {
           channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
 			    //通知建立连接
           DeviceData * date = new DeviceData();
-          date->info = L"包更新模块-已经连接";
+          date->info = L"包管理模块-已连接";
           PointerWrapper<DeviceData> tmp(date);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-            new L2U_DeviceUpdate(tmp));
+            new L2U_ModuleUpdate(tmp));
 
 
           if (py_adb_.get()) {
@@ -232,13 +232,18 @@ namespace phone_module {
 		} else {
 			//通知断开连接
           DeviceData * date = new DeviceData();
-          date->info = L"包更新模块-失去连接";
+          date->info = L"包管理模块-未连接";
           PointerWrapper<DeviceData> tmp(date);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-            new L2U_DeviceUpdate(tmp));
+            new L2U_ModuleUpdate(tmp));
 
           if (py_adb_.get()) {
             py_adb_->StopScan();
+            //当使用pyadb的时候，如果连接断开，即不能工作，等同于没有设备连接
+            DevicesList * data = new DevicesList;
+            PointerWrapper<DevicesList> tmp(data);
+            ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+              new L2U_DevicesList(tmp));
           }
 		  }
     }
@@ -418,6 +423,9 @@ namespace phone_module {
             for (auto i = 0; i < device_list->devices_list_size(); ++i) {
               AdbDevice info;
               info.serial_no = UTF8ToWide(device_list->devices_list(i).serial_no());
+              info.device = UTF8ToWide(device_list->devices_list(i).device());
+              info.product = UTF8ToWide(device_list->devices_list(i).product());
+              info.model = UTF8ToWide(device_list->devices_list(i).model());
               data->push_back(info);
             }
             PointerWrapper<DevicesList> tmp(data);
@@ -574,10 +582,10 @@ namespace phone_module {
           new L2U_AdbInfo("", std::wstring(strTitle.GetBuffer())));
         strTitle.ReleaseBuffer();
 
-        DeviceData * date = new DeviceData(adb_->GetSerialNo2());
-        PointerWrapper<DeviceData> tmp(date);
-        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-          new L2U_DeviceUpdate(tmp));
+        //DeviceData * date = new DeviceData(adb_->GetSerialNo2());
+        //PointerWrapper<DeviceData> tmp(date);
+        //ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+        //  new L2U_DeviceUpdate(tmp));
 
         //做一些其余的动作，先放在这里做
         CommonThread::PostTask(CommonThread::CTP,

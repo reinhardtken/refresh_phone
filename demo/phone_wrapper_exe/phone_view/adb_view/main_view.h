@@ -203,9 +203,9 @@ class MainView : public CTPViewBase,
   //void OnPosition(PointerWrapper<phone_module::DeviceData> const & p);
   //void OnOrder(PointerWrapper<phone_module::OrderFootprints::OneRecord> const & p);
   //void OnCash(PointerWrapper<CThostFtdcTradingAccountField> const & p);
-  void OnDeviceUpdate(PointerWrapper<phone_module::DeviceData> const & p);
+  void OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p);
   void OnStatusInfo(PointerWrapper<phone_module::StatusInfo> const & p);
-
+  
 
   virtual int size() OVERRIDE;
   virtual string16 text(int row, int column_id) OVERRIDE;
@@ -223,14 +223,11 @@ class MainView : public CTPViewBase,
   StatusModel model_order_;
   TableView* table_order_;
 
-  DeviceModel model_position_;
-  CCTableView* table_position_;
+  DeviceModel model_device_;
+  CCTableView* table_device_;
   ColorMap position_color_map_;
-  DeviceDataList device_data_;
-  std::vector<std::wstring> device_keys_;
-  //DeviceModel model_position_;
-  //TableView* table_position_;
-  //CCTableView* table_position_;
+  phone_module::DevicesList device_data_;
+
 
 
   TextButton* clear_table_;
@@ -240,38 +237,12 @@ class MainView : public CTPViewBase,
   Label * balance_label_;
   Label * position_profit_label_;
   
-  // ÷∂Ø=
-  //Combobox* manual_type_checkbox_;
- // Combobox* manual_direction_checkbox_;
-  //Combobox* manual_oc_checkbox_;
-  //Combobox* manual_close_day_checkbox_;
-  //StringComboboxModel manual_type_checkbox_model_;
-  //StringComboboxModel manual_direction_checkbox_model_;
-  //StringComboboxModel manual_oc_checkbox_model_;
-  //StringComboboxModel manual_close_day_checkbox_model_;
-  //Textfield* manual_number_;
-  //TextButton * manual_button_;
 
-  //Textfield* manual_direction_text_;
-  //Textfield* manual_oc_text_;
-
-  
-  //StringComboboxModel type_combobox_model_;
-  //StringComboboxModel strategy_combobox_model_;
-  //Combobox* strategy_combobox_;
-  //Combobox* type_combobox_;
-  //SkBitmap icon1_;
-  //SkBitmap icon2_;
 
 
   StatusInfoList status_info_data_;
-  std::vector<std::string> order_result_keys_;
-  std::map<std::string, uint32> order_result_keys_map_;
 
-  //OrderDataList order_data_;
-  //StrategyMap strategy_map_;
-  //TypeMap type_map_;
-  //StrategyTypeMap strategy_type_map_;
+
   content::NotificationRegistrar registrar_;
   CTPTabbedPane* pane_;
   
@@ -284,7 +255,7 @@ class MainView : public CTPViewBase,
 
   string16 GetColumnText(int id, phone_module::StatusInfo const & info);
   //string16 GetColumnTextOrder(int id, OrderResultData const & info);
-  string16 GetColumnTextPosition(int id, phone_module::DeviceData const & info);
+  string16 GetColumnTextPosition(int id, phone_module::AdbDevice const & info);
   void EnsureVisible();
 
 

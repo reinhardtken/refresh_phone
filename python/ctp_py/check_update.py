@@ -41,9 +41,13 @@ class CallbackObject():
                                [self.serial_no.encode('utf-8'), apk, str(progress), ])
 
       
-  def Callback2(self, succ, progress):
+  def CallbackSucc(self, progress):
     self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK,
                              [self.serial_no.encode('utf-8'), self.apk, progress, ])
+    
+  
+  def CallbackFail(self, progress):
+    pass
       
 
 
@@ -120,7 +124,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     self.apk_dir = None
     
     self.device = adb_wrapper.ADBWrapper()
-    self.device2 = adb_wrapper2.AdbInstall()
+    # self.device2 = adb_wrapper2.AdbInstall()
     
     
 
@@ -214,9 +218,19 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         elif msg.cmd == 'pyadb_install_apk':
           self.ProcessInstallApk2(msg)
         elif msg.cmd == 'pyadb_scan_devices':
-          self.ProcessScanDevices(msg)
-        
-        
+          self.ProcessScanDevices2(msg)
+
+
+
+  def ProcessScanDevices2(self, command):
+    def Callback(list):
+      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, list)
+      
+      
+    devices = adb_wrapper2.AdbLIstDevices(Callback)
+    devices.Execute()
+    
+
    
   def ProcessScanDevices(self, command):
     succ, device_list = self.device.ListDevices()
@@ -250,7 +264,8 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       elif command.param[0] == 'default':
         apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
         callback = CallbackObject(self, command, 'default', apk)
-        self.device2.Install(None, apk, callback.Callback2)
+        install = adb_wrapper2.AdbInstallApk('aa1ee7d1', apk, callback.CallbackSucc, callback.CallbackFail)
+        install.Execute()
       else:
         pass
 
@@ -454,7 +469,13 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     if device_list is not None:
       for one in device_list:
         one_device = response.devices_list.add()
-        one_device.serial_no = one['serial_no']
+        try:
+          one_device.serial_no = one['serial_no']
+          one_device.product = one['product']
+          one_device.model = one['model']
+          one_device.device = one['device']
+        except Exception as e:
+          pass
 
     if info is not None:
       response.head.info.append(info)
