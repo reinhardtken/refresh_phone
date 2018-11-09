@@ -142,7 +142,7 @@ void UpdateView::CreateExampleView(View* container) {
   layout->AddView(table_->CreateParentIfNecessary());
   //========================================
   ++index;
-  launch_py_ = new TextButton(this, L"启动包更新模块");
+  launch_py_ = new TextButton(this, L"启动包管理模块");
   launch_py_->set_alignment(TextButton::ALIGN_CENTER);
   check_update_ = new TextButton(this, L"检查网络包更新");
   check_update_->set_alignment(TextButton::ALIGN_CENTER);
