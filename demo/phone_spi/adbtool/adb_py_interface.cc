@@ -25,7 +25,7 @@ namespace phone_module {
 
   PythonAdbInterface::PythonAdbInterface(CTPModule* p)
     :core_(p),
-    keep_scan_(false) {
+    scan_times_(0) {
     adb_server_.reset(new channel::ChannelHost());
     //channel::ServerResult result = adb_server_->InitializeServer(::prefs::kAdbServer, false);
     //DCHECK(result.first == true && result.second == 5037);
@@ -36,14 +36,9 @@ namespace phone_module {
   }
 
   void PythonAdbInterface::ScanDevices() {
+    //每次设备变动，持续进行3次间隔3秒的扫描
+    scan_times_ = 3;
     ScanDevicesNow();
-
-    if (keep_scan_) {
-      CommonThread::PostDelayedTask(CommonThread::CTP,
-        FROM_HERE,
-        base::Bind(&PythonAdbInterface::ScanDevices, base::Unretained(this)),
-        10 * 1000);
-    }
   }
 
   void PythonAdbInterface::ScanDevicesNow() {
@@ -52,6 +47,14 @@ namespace phone_module {
     cmd->set_cmd_no(core_->cmd_no());
     codec::MessagePtr ptr(cmd);
     core_->channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+
+    if (scan_times_ > 0) {
+      --scan_times_;
+      CommonThread::PostDelayedTask(CommonThread::CTP,
+        FROM_HERE,
+        base::Bind(&PythonAdbInterface::ScanDevicesNow, base::Unretained(this)),
+        3 * 1000);
+    }
   }
 
   void PythonAdbInterface::StartScan() {
@@ -60,6 +63,6 @@ namespace phone_module {
   }
 
   void PythonAdbInterface::StopScan() {
-    keep_scan_ = false;
+    //keep_scan_ = false;
   }
 }

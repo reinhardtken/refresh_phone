@@ -52,51 +52,8 @@ void RefreshView::CreateExampleView(View* container) {
   //  GridLayout::USE_PREF, 0, 0);
 
   uint32 index = 0;
-  ////=================================
-  //layout->StartRow(0 /* expand */, index);
-  //python_label_ = new Label(L"python status:");
-  //python_bar_ = new ProgressBar();
-  //layout->AddView(python_label_);
-  //layout->AddView(python_bar_);
 
-  ////=============================
-  //index++;
-  //play_sound_login_ = new TextButton(this, L" 登录声音");
-  //play_sound_login_->set_alignment(TextButton::ALIGN_CENTER);
-
-  //play_sound_logout_ = new TextButton(this, L" 登出声音");
-  //play_sound_logout_->set_alignment(TextButton::ALIGN_CENTER);
-
-  //play_sound_order_ = new TextButton(this, L" 下单声音");
-  //play_sound_order_->set_alignment(TextButton::ALIGN_CENTER);
-
-  //play_sound_withdraw_ = new TextButton(this, L" 撤单声音");
-  //play_sound_withdraw_->set_alignment(TextButton::ALIGN_CENTER);
-
-  //play_sound_clinch_ = new TextButton(this, L" 成交声音");
-  //play_sound_clinch_->set_alignment(TextButton::ALIGN_CENTER);
-
-
-
-  //column_set = layout->AddColumnSet(index);
-  //column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-  //  1.0f, GridLayout::USE_PREF, 0, 0);
-  //column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-  //  1.0f, GridLayout::USE_PREF, 0, 0);
-  //column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-  //  1.0f, GridLayout::USE_PREF, 0, 0);
-  //column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-  //  1.0f, GridLayout::USE_PREF, 0, 0);
-  //column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
-  //  1.0f, GridLayout::USE_PREF, 0, 0);
-  //layout->StartRow(0 /* no expand */, index);
-  //layout->AddView(play_sound_login_);
-  //layout->AddView(play_sound_logout_);
-  //layout->AddView(play_sound_order_);
-  //layout->AddView(play_sound_withdraw_);
-  //layout->AddView(play_sound_clinch_);
-
-  reconnect_ = new TextButton(this, L" 一键连接");
+  reconnect_ = new TextButton(this, L" 扫描设备");
   reconnect_->set_alignment(TextButton::ALIGN_CENTER);
 
 
@@ -111,7 +68,7 @@ void RefreshView::CreateExampleView(View* container) {
   index++;
   refresh_ = new TextButton(this, L" 一键刷机");
   refresh_->set_alignment(TextButton::ALIGN_CENTER);
-
+  refresh_->SetEnabled(false);
 
 
   column_set = layout->AddColumnSet(index);
@@ -169,7 +126,7 @@ void RefreshView::ButtonPressed(Button* sender, const ui::Event& event) {
   } else if (sender == play_sound_clinch_) {
     ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new CTP_PlaySound(phone_module::PLAYSOUND_CLINCH));
   } else if (sender == reconnect_) {
-    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Reconnect(std::string()));
+    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_ScanDevices());
   } else if (sender == refresh_) {
 	  ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Refresh(std::string()));
   } else if (sender == calc_password_) {

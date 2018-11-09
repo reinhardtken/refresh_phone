@@ -7,7 +7,8 @@ import re
 
 class AdbCommandBase(object):
   adb_error_re = re.compile(r'error: (.*)')
-  adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
+  # adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
+  adb = None
   
   
   def __init__(self, callback_succ=None, callback_fail=None, callback_exit=None, callback_exception=None):

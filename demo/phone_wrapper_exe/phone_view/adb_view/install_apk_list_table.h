@@ -169,6 +169,7 @@ class InstallApkListTable : public CTPViewBase,
   TextButton* get_apk_list_;
   TextButton* check_update_apk_list_;
   TextButton* install_apk_list_;
+  TextButton* install_apk_list_all_device_;
   TextButton* clear_table_;
   TextButton* clear_apk_ir_table_;
 

@@ -30,7 +30,13 @@ class CallbackObject():
     self.command = command
     self.serial_no = serial_no
     self.last_progress = 0
-    self.apk = apk
+    index = apk.rfind('\\')
+    if index != -1:
+      self.apk = apk[index+1:]
+    else:
+      index = apk.rfind('/')
+      if index != -1:
+        self.apk = apk[index+1:]
   
   def Callback(self, apk, now, total):
     
@@ -47,7 +53,8 @@ class CallbackObject():
     
   
   def CallbackFail(self, progress):
-    pass
+    self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
+                                  [self.serial_no.encode('utf-8'), self.apk, progress, ])
       
 
 
@@ -67,6 +74,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   ERROR_CODE_LOAD_LOCAL_APKLIST_FAILED = 9
 
   ERROR_CODE_PYADB_SCAN_DEVICES_FAILED = 10
+  ERROR_CODE_PYADB_INSTALL_APK_FAILED = 11
 
   ERROR_CODE_UNKNOWN = 100000
   
@@ -184,6 +192,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   
       self.debugPath = self.prop['debugPath']
       util.utility.CreateDir(self.prop['apkPath'])
+      
+      #设置adbexe文件
+      adb_wrapper2.AdbCommandBase.adb = self.prop['adb_exe']
 
 
   def Work(self):
@@ -259,12 +270,13 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
   def ProcessInstallApk2(self, command):
     try:
-      if command.param[0] == 'all':
+      if command.param[0].encode('utf-8') == 'all':
         pass
-      elif command.param[0] == 'default':
-        apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
-        callback = CallbackObject(self, command, 'default', apk)
-        install = adb_wrapper2.AdbInstallApk('aa1ee7d1', apk, callback.CallbackSucc, callback.CallbackFail)
+      elif command.param[0].encode('utf-8') == 'first':
+        #apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
+        apk_path = command.param[1].encode('utf-8')
+        callback = CallbackObject(self, command, 'first', apk_path)
+        install = adb_wrapper2.AdbInstallApk('aa1ee7d1', apk_path, callback.CallbackSucc, callback.CallbackFail)
         install.Execute()
       else:
         pass

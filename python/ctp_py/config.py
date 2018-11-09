@@ -114,8 +114,9 @@ def CreateProp(msg):
   prop['localPath'] = msg.param[0] + '\\ctp_data\\apk_local'
   prop['logPath'] = msg.param[0] + '\\ctp_data\\log'
   prop['debugPath'] = msg.param[0] + '\\ctp_data\\log'
+  prop['adb_exe'] = msg.param[0] + '\\adb\\adb.exe'
   return prop
 
 
 def Version():
-  return '1.0.1.45'
+  return '1.0.0.1'

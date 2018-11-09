@@ -62,9 +62,9 @@ void CTPTabbedPane::CreateExampleView(View* container) {
   CommandLine const& command_line = *CommandLine::ForCurrentProcess();
   std::string const process_type = command_line.GetSwitchValueASCII(switches::kProcessType);
   AddOneTab(MAIN_TAB, L"设备列表");
-  AddOneTab(UPDATE_TAB, L"包管理");//所有网络更新检查在这里
-  AddOneTab(REFRESH_TAB, L"恢复出厂设置");
-  AddOneTab(PACKAGE_LIST_TAB, L"已安装包名列表");
+  AddOneTab(UPDATE_TAB, L"包更新管理");//所有网络更新检查在这里
+  AddOneTab(REFRESH_TAB, L"命令集合");
+  //AddOneTab(PACKAGE_LIST_TAB, L"已安装包名列表");
   AddOneTab(INSTALL_APK_LIST_TAB, L"包安装/删除");//所有adb装包，删包在这里
   //if (process_type == switches::kProcessTypeTest) {
   //  AddOneTab(TEST_TAB, "Test");

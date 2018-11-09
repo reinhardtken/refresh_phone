@@ -326,7 +326,7 @@ IPC_MESSAGE_ROUTED1(CTP_CONSOLE_RoutedCommandRsp,
 //U2L ui to logic
 //L2U logic to ui
 
-IPC_MESSAGE_CONTROL1(U2L_Reconnect, std::string)//设备id
+IPC_MESSAGE_CONTROL0(U2L_ScanDevices)
 IPC_MESSAGE_CONTROL1(U2L_Refresh, std::string)//设备id
 IPC_MESSAGE_CONTROL2(L2U_AdbInfo, std::string, std::wstring)//设备id
 IPC_MESSAGE_CONTROL1(U2L_DeviceChange, int)//设备id
@@ -350,7 +350,7 @@ IPC_MESSAGE_CONTROL1(L2U_ApkUpdateInfo,
   PointerWrapper<phone_module::ApkUpdateInfo>)
 IPC_MESSAGE_CONTROL1(L2U_ApkInstallInfo,
   PointerWrapper<std::vector<phone_module::ApkInstallInfo>>)
-IPC_MESSAGE_CONTROL1(U2L_ApkInstallCmd, PointerWrapper<std::vector<phone_module::ApkInstallInfo>>)//设备id
+IPC_MESSAGE_CONTROL2(U2L_ApkInstallCmd, std::wstring, PointerWrapper<std::vector<phone_module::ApkInstallInfo>>)//设备id
 IPC_MESSAGE_CONTROL0(U2L_LaunchPY)//  
 IPC_MESSAGE_CONTROL1(L2U_DevicesList,
   PointerWrapper<phone_module::DevicesList>)

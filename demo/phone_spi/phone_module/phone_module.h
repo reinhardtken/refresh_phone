@@ -93,14 +93,14 @@ private:
     void RlangHeartbeat();
     void OnPlaySound(uint32 const v);
     //void OnLoginAll();
-	void OnReconnect(std::string const & id);
+	void ScanDevices();
 	void InitConnectedDevice();
 	void OnRefresh(std::string const & id);
 	void OnDeviceChange(int const);
 	void OnGetPackageList(std::wstring const &);
 	void OnGetLocalInstallApkList();
   void OnGetNetInstallApkList();
-	void OnInstallApkList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p);
+	void OnInstallApkList(std::wstring const & type, PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p);
 	void OnCheckUpdateApkList();
   void OnRemoveLocalInstallApkList();
   void OnLaunchPY();

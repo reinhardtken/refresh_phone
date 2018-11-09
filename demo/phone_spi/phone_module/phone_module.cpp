@@ -309,7 +309,7 @@ namespace phone_module {
 
         IPC_MESSAGE_HANDLER(CTP_QUIT_R, OnQuitR)
         IPC_MESSAGE_HANDLER(CTP_PlaySound, OnPlaySound)
-        IPC_MESSAGE_HANDLER(U2L_Reconnect, OnReconnect)
+        IPC_MESSAGE_HANDLER(U2L_ScanDevices, ScanDevices)
 		    IPC_MESSAGE_HANDLER(U2L_Refresh, OnRefresh)
 		    IPC_MESSAGE_HANDLER(U2L_DeviceChange, OnDeviceChange)
 		    IPC_MESSAGE_HANDLER(U2L_GetLocalInstallApkList, OnGetLocalInstallApkList)
@@ -383,7 +383,12 @@ namespace phone_module {
           data->package_name = UTF8ToWide(progress->info(1));
           data->percent = UTF8ToWide(progress->info(2));
           data->op = L"全新/覆盖安装";
-          data->result = L"成功";
+          if (data->error_code == ERROR_CODE_OK) {
+            data->result = L"成功";
+          } else {
+            data->result = L"失败";
+          }
+          
 
           PointerWrapper<ApkIRStatus> tmp(data);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
@@ -534,68 +539,66 @@ namespace phone_module {
 	  }
   }
 
-  void CTPModule::OnReconnect(std::string const & id) {
-    if (adb_.get()) {
-      CString strTitle;
-      adb_->Init();
-
-      //if (g_pDlgWifi && g_pDlgWifi->IsInOperation()) {
-       // g_cs.Unlock();
-       // return 0;
-      //}
-
-      for (int i = 0; i < 3; i++)
-      {
-        adb_->GetDevices();
-        if (adb_->IsMultiDevConnected()) {
-          //多个设备，默认选第一个
-          adb_->SelectDevice(0);
-          //CDialogSelectDevice  sddlg(g_pToolDlg);
-          //sddlg.DoModal();
-          //Sleep(1000);
-        }
-        if (adb_->IsConnected())
-        {
-          InitConnectedDevice();
-          break;
-        }
-        Sleep(100);
-      }
-
-      if (adb_->IsConnected())
-      {
-        strTitle = TEXT("Android Dev: ");
-        strTitle += adb_->GetModel();
-        strTitle.AppendFormat(TEXT("(%s)"), adb_->GetSerialNo());
-        strTitle += TEXT(" Connected");
-        if (adb_->IsRooted()) {
-          strTitle += TEXT("(Root)");
-        }
-      } else
-      {
-        strTitle = TEXT("Disconnected, Please Connect Android Device!");
-      }
-
-      //通知ui=================================
-      if (adb_->IsConnected()) {
-        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-          new L2U_AdbInfo("", std::wstring(strTitle.GetBuffer())));
-        strTitle.ReleaseBuffer();
-
-        //DeviceData * date = new DeviceData(adb_->GetSerialNo2());
-        //PointerWrapper<DeviceData> tmp(date);
-        //ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-        //  new L2U_DeviceUpdate(tmp));
-
-        //做一些其余的动作，先放在这里做
-        CommonThread::PostTask(CommonThread::CTP,
-          FROM_HERE,
-          base::Bind(&CTPModule::OnGetPackageList, base::Unretained(this), L""));
-      } else {
-        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-          new L2U_AdbInfo("", std::wstring(L"No devices")));
-      }
+  void CTPModule::ScanDevices() {
+    if (py_adb_.get()) {
+      py_adb_->ScanDevices();
     }
+    //if (adb_.get()) {
+    //  CString strTitle;
+    //  adb_->Init();
+
+    //  for (int i = 0; i < 3; i++)
+    //  {
+    //    adb_->GetDevices();
+    //    if (adb_->IsMultiDevConnected()) {
+    //      //多个设备，默认选第一个
+    //      adb_->SelectDevice(0);
+    //      //CDialogSelectDevice  sddlg(g_pToolDlg);
+    //      //sddlg.DoModal();
+    //      //Sleep(1000);
+    //    }
+    //    if (adb_->IsConnected())
+    //    {
+    //      InitConnectedDevice();
+    //      break;
+    //    }
+    //    Sleep(100);
+    //  }
+
+    //  if (adb_->IsConnected())
+    //  {
+    //    strTitle = TEXT("Android Dev: ");
+    //    strTitle += adb_->GetModel();
+    //    strTitle.AppendFormat(TEXT("(%s)"), adb_->GetSerialNo());
+    //    strTitle += TEXT(" Connected");
+    //    if (adb_->IsRooted()) {
+    //      strTitle += TEXT("(Root)");
+    //    }
+    //  } else
+    //  {
+    //    strTitle = TEXT("Disconnected, Please Connect Android Device!");
+    //  }
+
+    //  //通知ui=================================
+    //  if (adb_->IsConnected()) {
+    //    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+    //      new L2U_AdbInfo("", std::wstring(strTitle.GetBuffer())));
+    //    strTitle.ReleaseBuffer();
+
+    //    //DeviceData * date = new DeviceData(adb_->GetSerialNo2());
+    //    //PointerWrapper<DeviceData> tmp(date);
+    //    //ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+    //    //  new L2U_DeviceUpdate(tmp));
+
+    //    //做一些其余的动作，先放在这里做
+    //    CommonThread::PostTask(CommonThread::CTP,
+    //      FROM_HERE,
+    //      base::Bind(&CTPModule::OnGetPackageList, base::Unretained(this), L""));
+    //  } else {
+    //    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+    //      new L2U_AdbInfo("", std::wstring(L"No devices")));
+    //  }
+    //}
 	  
 
   }
@@ -634,10 +637,7 @@ namespace phone_module {
   }
 
   void CTPModule::OnDeviceChange(int const) {
-    if (py_adb_.get()) {
-      py_adb_->ScanDevicesNow();
-    }
-	  OnReconnect("");
+    ScanDevices();
   }
 
 
@@ -685,7 +685,7 @@ namespace phone_module {
   //}
 
 
-  void CTPModule::OnInstallApkList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
+  void CTPModule::OnInstallApkList(std::wstring const & type, PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
     std::vector<phone_module::ApkInstallInfo> & info = *p.get();
     for (auto it = info.begin(); it != info.end(); ++it) {
       std::wstring dir = apk_dir_;
@@ -695,12 +695,11 @@ namespace phone_module {
       apk::Command * cmd = new apk::Command;
       cmd->set_cmd(command::kPyAdbInstallApk);
       cmd->set_cmd_no(cmd_no());
-      cmd->add_param("default");
+      cmd->add_param(WideToUTF8(type));
       cmd->add_param(WideToUTF8(file));
       codec::MessagePtr ptr(cmd);
       current_cmd_no_set_.insert(cmd->cmd_no());
       channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
-      break;
       
     }
   }

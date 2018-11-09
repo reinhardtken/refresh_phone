@@ -35,7 +35,7 @@ namespace phone_module {
   private:
     scoped_ptr<channel::ChannelHost> adb_server_;
     CTPModule* core_;
-    bool keep_scan_;
+    int scan_times_;
   };
 
 

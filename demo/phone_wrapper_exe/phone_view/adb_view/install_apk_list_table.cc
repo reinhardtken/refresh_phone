@@ -135,9 +135,11 @@ void InstallApkListTable::CreateExampleView(View* container) {
     ui::TableColumn::LEFT, 300));
   columns.push_back(ui::TableColumn(3, L"操作",
     ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(4, L"进度",
-    ui::TableColumn::LEFT, 100));
+  columns.push_back(ui::TableColumn(4, L"进度/错误信息",
+    ui::TableColumn::LEFT, 300));
   columns.push_back(ui::TableColumn(5, L"结果",
+    ui::TableColumn::LEFT, 200));
+  columns.push_back(ui::TableColumn(6, L"错误码",
     ui::TableColumn::LEFT, 200));
 
   table_apk_ir_ = new TableView(&model_apk_ir_, columns, ICON_AND_TEXT, true, true, true);
@@ -157,8 +159,10 @@ void InstallApkListTable::CreateExampleView(View* container) {
   //check_update_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
   get_apk_list_ = new TextButton(this, L" 获取本地包列表");
   get_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
-  install_apk_list_ = new TextButton(this, L" 安装/删除包列表");
+  install_apk_list_ = new TextButton(this, L"装包-单台");
   install_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
+  install_apk_list_all_device_ = new TextButton(this, L" 装包-所有");
+  install_apk_list_all_device_->set_alignment(TextButton::ALIGN_CENTER);
   clear_table_ = new TextButton(this, L"清除包列表显示");
   clear_table_->set_alignment(TextButton::ALIGN_CENTER);
   clear_apk_ir_table_ = new TextButton(this, L"清除安装进度显示");
@@ -173,12 +177,15 @@ void InstallApkListTable::CreateExampleView(View* container) {
     1.0f, GridLayout::USE_PREF, 0, 0);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
     1.0f, GridLayout::USE_PREF, 0, 0);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+    1.0f, GridLayout::USE_PREF, 0, 0);
 
 
   layout->StartRow(0 /* expand */, index);
 
   layout->AddView(get_apk_list_);
   layout->AddView(install_apk_list_);
+  layout->AddView(install_apk_list_all_device_);
   layout->AddView(clear_table_);
   layout->AddView(clear_apk_ir_table_);
 }
@@ -267,6 +274,10 @@ string16 InstallApkListTable::GetText2(int row, int column_id) {
     return apk_ir_data_[row].result;
     break;
   }
+  case 6: {
+    return ASCIIToUTF16(base::IntToString(apk_ir_data_[row].error_code));
+    break;
+  }
   default: {
     //DCHECK(false);
   }
@@ -285,7 +296,7 @@ gfx::ImageSkia InstallApkListTable::GetIcon(int row) {
 
 gfx::ImageSkia InstallApkListTable::GetIcon2(int row) {
   if ((uint32)row < data_.size()) {
-    return apk_ir_data_[row].error_code == 0 ? *alive_ : *die_;
+    return apk_ir_data_[row].error_code == phone_module::ERROR_CODE_OK ? *alive_ : *die_;
   }
   return gfx::ImageSkia();
 }
@@ -315,11 +326,15 @@ void InstallApkListTable::OnTableView2Delete(TableView2* table_view) {}
 void InstallApkListTable::ButtonPressed(Button* sender, const ui::Event& event) {
 	if (sender == get_apk_list_) {
 		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_GetLocalInstallApkList());
-	} else if (sender == install_apk_list_) {
-
+	} else if (sender == install_apk_list_ ||
+    sender == install_apk_list_all_device_) {
+    std::wstring type = L"all";
+    if (sender == install_apk_list_) {
+      type = L"first";
+    }
     std::vector<phone_module::ApkInstallInfo> * date = new std::vector<phone_module::ApkInstallInfo>(data_);
     PointerWrapper<std::vector<phone_module::ApkInstallInfo>> tmp(date);
-		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_ApkInstallCmd(tmp));
+		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_ApkInstallCmd(type, tmp));
 	} else if (sender == clear_table_) {
     data_.clear();
     table_->OnModelChanged();
