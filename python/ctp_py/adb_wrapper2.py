@@ -5,13 +5,20 @@ import subprocess
 import re
 
 
+import util
+
+
 class AdbCommandBase(object):
   adb_error_re = re.compile(r'error: (.*)')
+  adb_install_failure = re.compile(r'Failure \[(.*)\]')
+
   # adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
   adb = None
   
   
   def __init__(self, callback_succ=None, callback_fail=None, callback_exit=None, callback_exception=None):
+    self.log = util.log.GetLogger(self.__class__.__name__)
+
     self.callback_succ = callback_succ
     self.callback_fail = callback_fail
     self.callback_exit = callback_exit
@@ -61,6 +68,7 @@ class AdbCommandBase(object):
   def Execute(self):
     try:
       cmd = self._BuildCmd()
+      self.log.info('AdbCommandBase cmd: ' + cmd)
       p = subprocess.Popen(cmd, shell=False, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
       while p.poll() is None:
         line = p.stdout.readline()
@@ -95,11 +103,13 @@ class AdbCommandBase(object):
   
   
 
-class AdbLIstDevices(AdbCommandBase):
+class AdbListDevices(AdbCommandBase):
   cmd = 'devices -l'
   
   def __init__(self, callback_exit):
-    super(AdbLIstDevices, self).__init__(None, None, self._callback_wrapper)
+    super(AdbListDevices, self).__init__(None, None, self._callback_wrapper)
+    self.log = util.log.GetLogger(self.__class__.__name__)
+
     self.step = 0
     self.devices_list = []
     self.my_callback_exit = callback_exit
@@ -114,8 +124,8 @@ class AdbLIstDevices(AdbCommandBase):
       
 
   def _BuildCmd(self):
-    self.cmd_stack.append(AdbLIstDevices.cmd)
-    return super(AdbLIstDevices, self)._BuildCmd()
+    self.cmd_stack.append(AdbListDevices.cmd)
+    return super(AdbListDevices, self)._BuildCmd()
   
   
   
@@ -128,6 +138,7 @@ class AdbLIstDevices(AdbCommandBase):
     aa1ee7d1               device product:LeMax2_CN model:Le_X820 device:le_x2
     '''
     print(line)
+
     if 'error' in line:
       error = self.adb_error_re.search(line).group(1)
       return (False, error)
@@ -157,8 +168,12 @@ class AdbInstallApk(AdbCommandBase):
   
   def __init__(self, serial_no, apk, callback_succ, callback_fail):
     super(AdbInstallApk, self).__init__(callback_succ, callback_fail)
+    self.log = util.log.GetLogger(self.__class__.__name__)
     self.serial_no = serial_no
     self.apk = apk
+
+    #接收到某条信息后，就认为后续信息无意义，不再解析避免干扰
+    self.stop_parser = False
   
     
     
@@ -182,20 +197,41 @@ class AdbInstallApk(AdbCommandBase):
   
   def Parser(self, line):
     '''
+    letv##################################################
     [  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk
     adb: error: failed to get feature set: no devices/emulators found
     C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk: 1 file pushed. 2.3 MB/s (9099747 bytes in 3.744s)]
     Please select on your phone whether can install the app by The ADB command?
     pkg: /data/local/tmp/com.tencent.android.qqdownloader.apk
     Success
+    #xiaomi###############################################
+    Failure [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]
+  1115 KB/s (9099747 bytes in 7.965s)
+  Please select on your phone whether can install the app by The ADB command?
+  Failure [INSTALL_FAILED_USER_RESTRICTED: Install canceled by user]
+  3406 KB/s (14642800 bytes in 4.197s)
+  Please select on your phone whether can install the app by The ADB command?
+  Failure [INSTALL_FAILED_VERSION_DOWNGRADE]
+  6531 KB/s (21376547 bytes in 3.196s)
+  Please select on your phone whether can install the app by The ADB command?
     '''
+
+    if self.stop_parser == True:
+      return (True, 'Success')
+
     try:
       print(line)
+      self.log.info(line)
       if 'error' in line:
         error = self.adb_error_re.search(line).group(1)
+        self.log.info(error)
         return (False, error)
       # if line.startswith('adb: error: '):
       #   return (False, line)
+      elif 'Failure' in line:
+        error = self.adb_install_failure.search(line).group(1)
+        self.log.info(error)
+        return (False, error)
       else:
         #'[  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk'
         left = line.find('[')
@@ -203,9 +239,10 @@ class AdbInstallApk(AdbCommandBase):
         if left != -1 and right != -1:
           return (True, line[left+1: right])
         elif line == 'Success':
+          self.stop_parser = True
           return (True, 'Success')
         else:
-          pass
+          return (True, line)
     except Exception as e:
       return (False, e)
       
@@ -213,6 +250,7 @@ class AdbInstallApk(AdbCommandBase):
       
 #======================================================
 if __name__ == '__main__':
+  re = AdbCommandBase.adb_install_failure.search('Failure [INSTALL_FAILED_VERSION_DOWNGRADE]').group(1)
   one = AdbLIstDevices(None)
   one.Execute()
   apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'

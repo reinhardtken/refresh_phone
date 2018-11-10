@@ -135,11 +135,13 @@ void InstallApkListTable::CreateExampleView(View* container) {
     ui::TableColumn::LEFT, 300));
   columns.push_back(ui::TableColumn(3, L"操作",
     ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(4, L"进度/错误信息",
+  columns.push_back(ui::TableColumn(4, L"阶段",
+    ui::TableColumn::LEFT, 70));
+  columns.push_back(ui::TableColumn(5, L"进度/错误信息",
     ui::TableColumn::LEFT, 300));
-  columns.push_back(ui::TableColumn(5, L"结果",
+  columns.push_back(ui::TableColumn(6, L"结果",
     ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(6, L"错误码",
+  columns.push_back(ui::TableColumn(7, L"错误码",
     ui::TableColumn::LEFT, 200));
 
   table_apk_ir_ = new TableView(&model_apk_ir_, columns, ICON_AND_TEXT, true, true, true);
@@ -266,15 +268,19 @@ string16 InstallApkListTable::GetText2(int row, int column_id) {
     break;
   }
   case 4: {
+    return apk_ir_data_[row].stage;
+    break;
+  }
+  case 5: {
     /*return ASCIIToUTF16(base::DoubleToString(apk_ir_data_[row].percent));*/
     return apk_ir_data_[row].percent;
     break;
   }
-  case 5: {
+  case 6: {
     return apk_ir_data_[row].result;
     break;
   }
-  case 6: {
+  case 7: {
     return ASCIIToUTF16(base::IntToString(apk_ir_data_[row].error_code));
     break;
   }

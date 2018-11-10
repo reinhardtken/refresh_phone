@@ -468,6 +468,7 @@ struct ApkIRStatus {
   base::Time time;//时间=
   std::wstring time_string;//用于显示=
   std::wstring op;
+  std::wstring stage;
   std::wstring package_name;
   std::wstring percent;
   std::wstring result;

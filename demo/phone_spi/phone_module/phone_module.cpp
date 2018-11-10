@@ -380,8 +380,9 @@ namespace phone_module {
         } else if (std::string(command::kPyAdbInstallApk) == progress->cmd()) {
           ApkIRStatus * data = new ApkIRStatus(UTF8ToWide(progress->info(0)));
           data->error_code = progress->code();
-          data->package_name = UTF8ToWide(progress->info(1));
-          data->percent = UTF8ToWide(progress->info(2));
+          data->stage = UTF8ToWide(progress->info(1));
+          data->package_name = UTF8ToWide(progress->info(2));
+          data->percent = UTF8ToWide(progress->info(3));
           data->op = L"全新/覆盖安装";
           if (data->error_code == ERROR_CODE_OK) {
             data->result = L"成功";

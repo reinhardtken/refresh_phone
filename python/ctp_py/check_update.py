@@ -30,13 +30,7 @@ class CallbackObject():
     self.command = command
     self.serial_no = serial_no
     self.last_progress = 0
-    index = apk.rfind('\\')
-    if index != -1:
-      self.apk = apk[index+1:]
-    else:
-      index = apk.rfind('/')
-      if index != -1:
-        self.apk = apk[index+1:]
+    self.apk = apk
   
   def Callback(self, apk, now, total):
     
@@ -48,13 +42,16 @@ class CallbackObject():
 
       
   def CallbackSucc(self, progress):
+    stage = '进行中'
+    if progress == 'Success':
+      stage = '完成'
     self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK,
-                             [self.serial_no.encode('utf-8'), self.apk, progress, ])
+                             [self.serial_no.encode('utf-8'), stage, self.apk, progress, ])
     
   
   def CallbackFail(self, progress):
     self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
-                                  [self.serial_no.encode('utf-8'), self.apk, progress, ])
+                                  [self.serial_no.encode('utf-8'), '完成', self.apk, progress, ])
       
 
 
@@ -133,6 +130,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     
     self.device = adb_wrapper.ADBWrapper()
     # self.device2 = adb_wrapper2.AdbInstall()
+    self.last_devices_list = None
     
     
 
@@ -234,12 +232,17 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
 
   def ProcessScanDevices2(self, command):
-    def Callback(list):
-      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, list)
+    def Callback(data):
+      # 记录最新的设备列表
+      self.last_devices_list = data
+
+      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, data)
       
       
-    devices = adb_wrapper2.AdbLIstDevices(Callback)
+    devices = adb_wrapper2.AdbListDevices(Callback)
+    self.log.info('before ProcessScanDevices2')
     devices.Execute()
+    self.log.info('end ProcessScanDevices2')
     
 
    
@@ -268,16 +271,51 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   #
   #   return InstallApkCallback
 
+  def GetApkNameFromPath(self, apk):
+    index = apk.rfind('\\')
+    if index != -1:
+      return apk[index + 1:]
+    else:
+      index = apk.rfind('/')
+      if index != -1:
+        return apk[index + 1:]
+
+    return ''
+
+
+
   def ProcessInstallApk2(self, command):
     try:
+      apk_path = command.param[1].encode('utf-8')
+      apk = self.GetApkNameFromPath(apk_path)
+
       if command.param[0].encode('utf-8') == 'all':
-        pass
+        if self.last_devices_list is not None:
+          for one in self.last_devices_list:
+
+            callback = CallbackObject(self, command, one['serial_no'], apk)
+            install = adb_wrapper2.AdbInstallApk(one['serial_no'], apk_path, callback.CallbackSucc, callback.CallbackFail)
+
+            self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
+            self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
+                                          [one['serial_no'].encode('utf-8'), '开始', apk, '', ])
+
+            install.Execute()
+
+            self.log.info('end ProcessInstallApk2')
+
       elif command.param[0].encode('utf-8') == 'first':
         #apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
-        apk_path = command.param[1].encode('utf-8')
-        callback = CallbackObject(self, command, 'first', apk_path)
-        install = adb_wrapper2.AdbInstallApk('aa1ee7d1', apk_path, callback.CallbackSucc, callback.CallbackFail)
-        install.Execute()
+        if self.last_devices_list is not None:
+          for one in self.last_devices_list:
+            callback = CallbackObject(self, command, one['serial_no'], apk)
+            install = adb_wrapper2.AdbInstallApk(one['serial_no'], apk_path, callback.CallbackSucc, callback.CallbackFail)
+            self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
+            self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
+                                     [one['serial_no'].encode('utf-8'), '开始', apk, '', ])
+            install.Execute()
+            self.log.info('end ProcessInstallApk2')
+            break
       else:
         pass
 
