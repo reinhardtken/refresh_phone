@@ -103,24 +103,8 @@ class CTPWindowContents : public WidgetDelegateView,
   virtual bool CanMaximize() const OVERRIDE { return true; }
   virtual string16 GetWindowTitle() const OVERRIDE {
     
-    std::wstring head = L"刷包大师 (1.0.0.2) ";    
+    std::wstring head = L"刷包大师 (1.0.0.3) ";    
     return head;
-    /*if (process_type_.size() == 0) {
-      return head + L"Guard";
-    } else if (process_type_ == switches::kProcessTypeMQ) {
-      return head + L"MQ";
-    } else if (process_type_ == switches::kProcessTypeTU) {
-      return head + L"TU";
-    } else if (process_type_ == switches::kProcessTypeMQTU) {
-      return head + L"MQTU";
-    } else if (process_type_ == switches::kProcessTypeTest) {
-      return head + L"Test";
-    } else if (process_type_ == switches::kProcessTypeBacktesting) {
-      return head + L"Backtesting";
-    } else {
-      DCHECK(false);
-      return head;
-    }*/
   }
   virtual View* GetContentsView() OVERRIDE { return this; }
   virtual void WindowClosing() OVERRIDE {

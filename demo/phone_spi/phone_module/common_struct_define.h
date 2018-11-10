@@ -404,7 +404,7 @@ struct DeviceData {
     }
     base::Time::Exploded e;
     time.LocalExplode(&e);
-    time_string = base::StringPrintf(L"%d:%d:%d", e.hour, e.minute, e.second);
+    time_string = base::StringPrintf(L"%02d:%02d:%02d", e.hour, e.minute, e.second);
   }
   std::wstring serial_no;
   base::Time time;//时间=
@@ -432,7 +432,7 @@ struct StatusInfo {
     }
     base::Time::Exploded e;
     time.LocalExplode(&e);
-    time_string = base::StringPrintf(L"%d:%d:%d", e.hour, e.minute, e.second);
+    time_string = base::StringPrintf(L"%02d:%02d:%02d", e.hour, e.minute, e.second);
   }
   std::wstring serial_no;
   base::Time time;//时间=
@@ -462,7 +462,7 @@ struct ApkIRStatus {
     }
     base::Time::Exploded e;
     time.LocalExplode(&e);
-    time_string = base::StringPrintf(L"%d:%d:%d", e.hour, e.minute, e.second);
+    time_string = base::StringPrintf(L"%02d:%02d:%02d", e.hour, e.minute, e.second);
   }
   std::wstring serial_no;
   base::Time time;//时间=
