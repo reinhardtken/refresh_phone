@@ -196,6 +196,7 @@ class AdbInstallApk(AdbCommandBase):
   
   
   #这块后面可能需要根据不同手机设置parser
+  #可以通过装完后枚举package list的方式来判断是不是装成功了
   def Parser(self, line):
     '''
     letv##################################################

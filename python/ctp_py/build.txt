@@ -14,9 +14,11 @@ C:\Python27-std\python ./tools/home_recursion_copy.py
 
 mac»úÆ÷
 cd C:\workspace\chromium\version24\src\ctp\python\ctp_py
-C:\out\Python27\python -m compileall -f .
+
+
+E:\workspace\chromium24\src\build\out\python\python -m compileall -f .
 ´ò°ü
-C:\out\Python27\python ./tools/home_recursion_copy.py
+E:\workspace\chromium24\src\build\out\python\python ./tools/home_recursion_copy.py
 
 
 
