@@ -301,7 +301,7 @@ gfx::ImageSkia InstallApkListTable::GetIcon(int row) {
 }
 
 gfx::ImageSkia InstallApkListTable::GetIcon2(int row) {
-  if ((uint32)row < data_.size()) {
+  if ((uint32)row < apk_ir_data_.size()) {
     return apk_ir_data_[row].error_code == phone_module::ERROR_CODE_OK ? *alive_ : *die_;
   }
   return gfx::ImageSkia();

@@ -166,11 +166,12 @@ class AdbListDevices(AdbCommandBase):
 
 class AdbInstallApk(AdbCommandBase):
   
-  def __init__(self, serial_no, apk, callback_succ, callback_fail):
+  def __init__(self, serial_no, package_name, apk, callback_succ, callback_fail):
     super(AdbInstallApk, self).__init__(callback_succ, callback_fail)
     self.log = util.log.GetLogger(self.__class__.__name__)
     self.serial_no = serial_no
     self.apk = apk
+    self.package_name = package_name
 
     #接收到某条信息后，就认为后续信息无意义，不再解析避免干扰
     self.stop_parser = False
@@ -194,7 +195,7 @@ class AdbInstallApk(AdbCommandBase):
     
   
   
-  
+  #这块后面可能需要根据不同手机设置parser
   def Parser(self, line):
     '''
     letv##################################################
@@ -214,6 +215,8 @@ class AdbInstallApk(AdbCommandBase):
   Failure [INSTALL_FAILED_VERSION_DOWNGRADE]
   6531 KB/s (21376547 bytes in 3.196s)
   Please select on your phone whether can install the app by The ADB command?
+  
+  拔线：Failed to install
     '''
 
     if self.stop_parser == True:
@@ -232,6 +235,10 @@ class AdbInstallApk(AdbCommandBase):
         error = self.adb_install_failure.search(line).group(1)
         self.log.info(error)
         return (False, error)
+      elif line.startswith('pkg:') and self.package_name in line:
+        return (True, 'push over: ')
+      elif 'Failed' in line:
+        return (False, line)
       else:
         #'[  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk'
         left = line.find('[')
@@ -251,7 +258,7 @@ class AdbInstallApk(AdbCommandBase):
 #======================================================
 if __name__ == '__main__':
   re = AdbCommandBase.adb_install_failure.search('Failure [INSTALL_FAILED_VERSION_DOWNGRADE]').group(1)
-  one = AdbLIstDevices(None)
+  one = AdbListDevices(None)
   one.Execute()
   apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
   two = AdbInstallApk('aa1ee7d1', apk, None, None)

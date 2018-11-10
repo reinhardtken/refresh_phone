@@ -36,8 +36,8 @@ namespace phone_module {
   }
 
   void PythonAdbInterface::ScanDevices() {
-    //每次设备变动，持续进行3次间隔3秒的扫描
-    scan_times_ = 3;
+    //每次设备变动，持续进行6次间隔3秒的扫描
+    scan_times_ = 6;
     ScanDevicesNow();
   }
 

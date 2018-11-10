@@ -45,6 +45,8 @@ class CallbackObject():
     stage = '进行中'
     if progress == 'Success':
       stage = '完成'
+    elif progress == 'push over: ':
+      stage = '安装中'
     self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK,
                              [self.serial_no.encode('utf-8'), stage, self.apk, progress, ])
     
@@ -271,7 +273,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   #
   #   return InstallApkCallback
 
-  def GetApkNameFromPath(self, apk):
+  def GetPackageNameFromPath(self, apk):
     index = apk.rfind('\\')
     if index != -1:
       return apk[index + 1:]
@@ -287,18 +289,18 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   def ProcessInstallApk2(self, command):
     try:
       apk_path = command.param[1].encode('utf-8')
-      apk = self.GetApkNameFromPath(apk_path)
+      package_name = self.GetPackageNameFromPath(apk_path)
 
       if command.param[0].encode('utf-8') == 'all':
         if self.last_devices_list is not None:
           for one in self.last_devices_list:
 
-            callback = CallbackObject(self, command, one['serial_no'], apk)
-            install = adb_wrapper2.AdbInstallApk(one['serial_no'], apk_path, callback.CallbackSucc, callback.CallbackFail)
+            callback = CallbackObject(self, command, one['serial_no'], package_name)
+            install = adb_wrapper2.AdbInstallApk(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
 
             self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
             self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
-                                          [one['serial_no'].encode('utf-8'), '开始', apk, '', ])
+                                          [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
 
             install.Execute()
 
@@ -308,11 +310,11 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         #apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
         if self.last_devices_list is not None:
           for one in self.last_devices_list:
-            callback = CallbackObject(self, command, one['serial_no'], apk)
-            install = adb_wrapper2.AdbInstallApk(one['serial_no'], apk_path, callback.CallbackSucc, callback.CallbackFail)
+            callback = CallbackObject(self, command, one['serial_no'], package_name)
+            install = adb_wrapper2.AdbInstallApk(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
             self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
             self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
-                                     [one['serial_no'].encode('utf-8'), '开始', apk, '', ])
+                                     [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
             install.Execute()
             self.log.info('end ProcessInstallApk2')
             break

@@ -228,7 +228,7 @@ void ShowExamplesWindow(Operation operation, CommandLine const & c) {
     gfx::Rect rect;
     std::string const process_type = c.GetSwitchValueASCII(switches::kProcessType);
     if (process_type.size() == 0) {
-      rect = gfx::Rect(0, 0, 1100, 500); 
+      rect = gfx::Rect(0, 0, 1400, 800); 
     } else {
       rect = gfx::Rect(0, 0, 550, 600);
     }
