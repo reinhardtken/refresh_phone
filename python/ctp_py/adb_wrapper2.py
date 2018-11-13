@@ -3,7 +3,7 @@
 
 import subprocess
 import re
-
+import traceback
 
 import util
 
@@ -98,6 +98,9 @@ class AdbCommandBase(object):
       self.CallbackExit(p.returncode)
   
     except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      self.log.info(exstr)
       self.CallbackException(e)
       pass
   
@@ -138,7 +141,7 @@ class AdbListDevices(AdbCommandBase):
     aa1ee7d1               device product:LeMax2_CN model:Le_X820 device:le_x2
     '''
     print(line)
-
+    self.log.info(line)
     if 'error' in line:
       error = self.adb_error_re.search(line).group(1)
       return (False, error)
@@ -252,6 +255,9 @@ class AdbInstallApk(AdbCommandBase):
         else:
           return (True, line)
     except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      self.log.info(exstr)
       return (False, e)
       
       

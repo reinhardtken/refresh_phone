@@ -81,6 +81,7 @@ https://github.com/libusb/libusb/releases
 pyadb地址
 https://github.com/google/python-adb
 
+adb start-server
 adb kill-server
 
 netstat -ano | findstr "5037"

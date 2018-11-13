@@ -140,26 +140,6 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     self.queue_out.put(data)
 
 
-  def SendHandler(self, msg, result):
-    data = pb.cp_comunication_pb2.BacktestingExpectAssetList()
-    data.table_name = self.expectTableName
-    data.type = msg.type
-    data.level = msg.level
-    data.total = self.expectCounter
-    #data.index = index
-
-    for v in result:
-      try:
-        data.data.append(v[2])
-      except (TypeError):
-        self.log.error('exception happen ========')
-        pass
-      
-      
-    #发送数据==
-    self.log.info('before send================')
-    self.Send(data)
-
   def RegisterHandler(self, src):
     src.RegisterMessageHandlerWithName(self, 'apk.Command')
 
