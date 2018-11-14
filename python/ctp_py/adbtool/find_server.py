@@ -12,9 +12,9 @@ import psutil
 
 #用于测试，自测
 def _debug_jump(one):
-  for one_cmd in one['cmd']:
-    if one_cmd.isdigit() and one_cmd == '5038':
-      return True
+  # for one_cmd in one['cmd']:
+  #   if one_cmd.isdigit() and one_cmd == '5038':
+  #     return True
 
   return False
 
