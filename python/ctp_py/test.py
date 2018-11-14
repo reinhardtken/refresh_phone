@@ -7,7 +7,7 @@ import cmdtool.netstat
 import cmdtool.taskkill
 import os
 import psutil
-
+import re
 import util.utility
 
 
@@ -16,6 +16,34 @@ import requests
 import requests.packages.urllib3
 
 requests.packages.urllib3.disable_warnings()
+
+
+
+def test_psutil():
+  out = []
+  print u"系统全部进程 %s" % psutil.pids()
+  for pnum in psutil.pids():
+    p = psutil.Process(pnum)
+    # print u"进程名 %-20s  内存利用率 %-18s 进程状态 %-10s 创建时间 %-10s " % (p.name(), p.memory_percent(), p.status(), p.create_time())
+    # print p.io_counters()    #进程读写信息
+    try:
+      print('==================')
+      cmd = p.cmdline()
+      for one in cmd:
+        if 'fork-server' in one:
+          one_result = {}
+          one_result['cmd'] = cmd
+          one_result['cwd'] = p.cwd()
+          one_result['status'] = p.status()
+          one_result['create_time'] = p.create_time()
+          out.append(one_result)
+          break
+
+    except Exception as e:
+      print(e)
+
+  for one in out:
+    print(one)
 
 
 def test_down():
@@ -41,6 +69,12 @@ def test_down():
 
 
 if __name__ == '__main__':
+  test_psutil()
+  line = '* daemon not running. starting it now at tcp:5038 *'
+  re_port = re.compile(r'^[\*\.: A-Za-z]*([0-9]*) \*$')
+  result = re_port.search(line).group(1)
+  line = '* daemon not running. starting it now on port 5038 *'
+  result = re_port.search(line).group(1)
   test_down()
   a = r'C:\Users\liuqingping\Desktop\7c8cf81d5b7edc5c3daa33b4d97bc400.apk'
   out = util.utility.GetFileMD5(a)

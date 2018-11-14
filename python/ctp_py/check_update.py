@@ -26,6 +26,7 @@ import cmdtool.taskkill
 import adbtool.start_server
 import adbtool.install
 import adbtool.list_devices
+import adbtool.find_server
 #=======================================================
 
 
@@ -221,23 +222,33 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
 
   def ProcessStartServer(self, command):
+    #遍历所有的server，尝试kill，保留kill不掉的
+    live = adbtool.find_server.FindAllServer()
+    adbtool.find_server.KillAllServer(live)
+    live = adbtool.find_server.FindAllServer()
     # 获取一个port
-    port = adbtool.start_server.Command.GenPort()
+    if len(live) > 0:
+      ports = adbtool.find_server.FindPort(live)
+      # 复用老server
+      start_server = adbtool.start_server.Command(ports)
+      start_server.Execute()
+      succ, pid = start_server.GetReturnCode()
+    else:
+      port = adbtool.start_server.Command.GenPort()
+      # 产生新server
+      start_server = adbtool.start_server.Command(port)
+      start_server.Execute()
+      succ, pid = start_server.GetReturnCode()
   
-    # 总是尝试先看看这个port有没有人用
-    netstat = cmdtool.netstat.Command(port)
-    netstat.Execute()
-  
-    # 有人用kill掉
-    succ, pid = netstat.GetReturnCode()
-    if succ:
-      kill = cmdtool.taskkill.Command(pid)
-      kill.Execute()
-    
-    # 产生新server
-    start_server = adbtool.start_server.Command(port)
-    start_server.Execute()
-    succ, pid = start_server.GetReturnCode()
+    # # 总是尝试先看看这个port有没有人用
+    # netstat = cmdtool.netstat.Command(port)
+    # netstat.Execute()
+    #
+    # # 有人用kill掉
+    # succ, pid = netstat.GetReturnCode()
+    # if succ:
+    #   kill = cmdtool.taskkill.Command(pid)
+    #   kill.Execute()
     
     
     

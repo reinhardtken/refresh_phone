@@ -96,4 +96,49 @@ device.Close()
 
 ANDROID_ADB_SERVER_PORT
 
+adb -
+
+
+当先于360枪战了adb server的时候，如果尝试启动5037，360可能会挂
+E:\workspace\chromium24\src\build\Debug\adb>adb -P 5037 devices -l
+List of devices attached
+error: protocol fault (couldn't read status): Invalid argument
+error: protocol fault (couldn't read status): Invalid argument
+
+当adb -P xxxx fork-server server这样的进程存在多个的时候。只有一个会真正拿到
+连接权限，而其他的会等待真正拿到权限的那个gg。估计然后又会随机的启动一个吧。
+
+从如下测试可知，猜测正确。因为在37启动之前41已结bind到了端口
+E:\>cd E:\workspace\chromium24\src\build\Debug\adb
+
+E:\workspace\chromium24\src\build\Debug\adb>adb devices -l
+List of devices attached
+* daemon not running. starting it now on port 5037 *
+* daemon started successfully *
+
+
+E:\workspace\chromium24\src\build\Debug\adb>adb devices -l
+List of devices attached
+
+
+E:\workspace\chromium24\src\build\Debug\adb>adb devices -l
+List of devices attached
+
+
+E:\workspace\chromium24\src\build\Debug\adb>adb -P 5040 devices -l
+List of devices attached
+
+
+E:\workspace\chromium24\src\build\Debug\adb>adb -P 5041 devices -l
+List of devices attached
+aa1ee7d1               device product:LeMax2_CN model:Le_X820 device:le_x2
+
+
+E:\workspace\chromium24\src\build\Debug\adb>adb -P 5042 devices -l
+List of devices attached
+
+
+E:\workspace\chromium24\src\build\Debug\adb>
+
+
 */

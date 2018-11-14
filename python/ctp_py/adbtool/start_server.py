@@ -11,21 +11,63 @@ import base
 
 class Command(base.AdbCommandBase):
   cmd = 'start-server'
-  re_port = re.compile(r'tcp:(.*)\*')
+  re_port = re.compile(r'^[\*\.: A-Za-z]*([0-9]*) \*$')
   port_seed = 5037
   counter = 0
   MAX_TRY = 500
+
+  zombie_ports = None
+  zombie_ports_index = 0
   
   def __init__(self, suggest_port=None, callback_succ=None, callback_failed=None):
     super(Command, self).__init__(self._my_succ_callback, callback_failed)
     self.log = util.log.GetLogger(self.__class__.__name__)
     self.my_callback = callback_succ
     self.port = None
-    self.suggest_port = suggest_port
+    self.zombie_mode = False
+    if isinstance(suggest_port, list):
+      #复用老port，这些都是牛逼软件，没法kill
+      self.ZombieInit(suggest_port)
+    else:
+      self.NormalInit(suggest_port)
+      # self.suggest_port = suggest_port
+    # if self.suggest_port is None:
+    #   self.suggest_port = Command.GenPort()
+
+
+  def NormalInit(self, port):
+    self.suggest_port = port
     if self.suggest_port is None:
       self.suggest_port = Command.GenPort()
-      
-      
+
+  def ZombieInit(self, ports):
+    #在这种情况下，启动server其实已经没有任何意义了
+    self.zombie_mode = True
+    Command.zombie_ports = ports
+    # Command.zombie_ports_index = 0
+
+  def NextZombiePort(self):
+    #总是挨个遍历zombie_ports的数据
+    if Command.zombie_ports_index + 1 < len(Command.zombie_ports):
+      Command.zombie_ports_index += 1
+    else:
+      Command.zombie_ports_index = 0
+
+    return Command.zombie_ports[Command.zombie_ports_index]
+
+
+
+  def Execute(self):
+    if self.zombie_mode:
+      self.port = self.NextZombiePort()
+      self.log.info('zombie_mode ANDROID_ADB_SERVER_PORT = ' + self.port)
+      base.AdbCommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = self.port
+      return
+    else:
+      super(Command, self).Execute()
+    pass
+
+
   @staticmethod
   def GenPort():
     Command.counter += 1
@@ -66,6 +108,8 @@ class Command(base.AdbCommandBase):
     '''
     * daemon not running. starting it now at tcp:5038 *
     * daemon started successfully *
+    my pc:
+    '* daemon not running. starting it now on port 5038 *'
     '''
     try:
       print(line)
