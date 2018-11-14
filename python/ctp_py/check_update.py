@@ -544,6 +544,51 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     self.Send(response)
 
 
+
+  def DownloadFile(self, command, one, file_path, callback):
+    url = one['apkurl']
+    
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    }
+    ret = False
+    try:
+      response = requests.request("GET", url, stream=True, data=None, headers=headers)
+      total_length = int(response.headers.get("Content-Length"))
+      now = 0
+      with open(file_path, 'wb') as f:
+        for chunk in response.iter_content(chunk_size=8096):
+          if chunk:
+            f.write(chunk)
+            f.flush()
+            now += len(chunk)
+            callback(now, total_length)
+        else:
+          callback(total_length, total_length)
+          return True
+    except Exception as e:
+      self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED,
+                               ['包更新',
+                                CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED),
+                                one['apkname']])
+    return ret
+  
+  
+  class DownloadCallbck(object):
+    def __init__(self, command, one, host):
+      self.host = host
+      self.last_report = 0
+      self.command = command
+      self.one = one
+
+    def callback_progress(self, now, total):
+      percent = float(now) / total
+      if percent - self.last_report > 0.05 or now == total:
+        self.last_report = percent
+        data = ("%.2f%%" % (percent *100))
+        self.host.SendCommandProgress(self.command, CheckUpdateApkList.ERROR_CODE_OK, ['包更新', '下载中', self.one['apkname'], data])
+      pass
+ 
   
   def DownloadOneApk(self, one, command):
     file_path = self.prop['apkPath'] + '/' + one['apkname'] + '.apk'
@@ -551,7 +596,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     #检查文件是否存在
     if os.path.exists(file_path):
       #文件存在判断md5是否匹配
-      md5 = util.utility.GetFileMd5(file_path)
+      md5 = util.utility.GetFileMD5(file_path)
       if md5 != one['apkmd5']:
         #理论上这种情况不应该存在
         os.remove(file_path)
@@ -562,54 +607,34 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
     #开始下载
     self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK, ['包更新', '开始下载', one['apkname']])
-
     
-    URL = one['apkurl']
-    headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
-    }
-    s = requests.Session()
-    s.mount('http://', requests.adapters.HTTPAdapter(max_retries=5))
-    s.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
+    
+    
+    
     try:
-      r = s.get(URL, headers=headers, timeout=10)
-      if r.status_code == 200:
-        try:
-          with open(file_path, "wb") as code:
-            code.write(r.content)
-          # 检查md5
-          md5 = util.utility.GetFileMd5(file_path)
-          if md5 != one['apkmd5']:
-            #删除文件
-            os.remove(file_path)
-            self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_MD5_APK_FAILED,
-                                     ['包更新', CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_MD5_APK_FAILED), one['apkname']])
-            return
-          else:
-            self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
-                                     ['包更新',
-                                      '下载成功',
-                                      one['apkname']])
-            return
-        except Exception as e:
-          self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_SAVE_APK_FILE_FAILED,
-                                   ['包更新',
-                                    CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_SAVE_APK_FILE_FAILED),
+      dc = CheckUpdateApkList.DownloadCallbck(command, one, self)
+      ret = self.DownloadFile(command, one, file_path, dc.callback_progress)
+      if ret:
+        md5 = util.utility.GetFileMD5(file_path)
+        if md5 != one['apkmd5']:
+          # 删除文件
+          os.remove(file_path)
+          self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_MD5_APK_FAILED,
+                                   ['包更新', CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_MD5_APK_FAILED),
                                     one['apkname']])
           return
-      else:
-        self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED,
-                                 ['包更新',
-                                  CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED),
-                                  one['apkname']])
-        return
-    except requests.ConnectionError as e:
-      self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED,
+        else:
+          self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
+                                   ['包更新',
+                                    '下载成功',
+                                    one['apkname']])
+      
+    except Exception as e:
+      self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_SAVE_APK_FILE_FAILED,
                                ['包更新',
-                                CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED),
+                                CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_SAVE_APK_FILE_FAILED),
                                 one['apkname']])
-      return
-
+         
     
     
   

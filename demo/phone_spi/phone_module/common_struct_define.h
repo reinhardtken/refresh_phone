@@ -507,6 +507,7 @@ struct ApkUpdateInfo {
   std::wstring op;
   std::wstring package_name;
   std::wstring info;
+  std::wstring progress;//包下载进度
   int success;
 };
 

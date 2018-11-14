@@ -373,6 +373,10 @@ namespace phone_module {
           if (progress->info_size() > 2) {
             data->package_name = UTF8ToWide(progress->info(2));
           }
+          if (data->info == L"下载中") {
+            //这种情况下，字段会比其他的多一个下载进度的字符串
+            data->progress = UTF8ToWide(progress->info(3));
+          }
           PointerWrapper<ApkUpdateInfo> tmp(data);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_ApkUpdateInfo(tmp));
@@ -507,7 +511,7 @@ namespace phone_module {
   //}
 
   void CTPModule::OnPlaySound(uint32 const v) {
-    FilePath dir_path;
+    /*FilePath dir_path;
     PathService::Get(base::DIR_EXE, &dir_path);
 
     if (v == PLAYSOUND_LOGIN) {
@@ -529,7 +533,7 @@ namespace phone_module {
       dir_path = dir_path.Append(L"bt_finish.wav");
       PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
     }
-
+*/
   }
 
 

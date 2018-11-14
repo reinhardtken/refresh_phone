@@ -164,7 +164,7 @@ def GetMAC():
   return uuid.uuid1().hex[-12:]
 
 
-def GetFileMd5(filename):
+def GetFileMD5(filename):
   if not os.path.isfile(filename):
     return
   myhash = hashlib.md5()

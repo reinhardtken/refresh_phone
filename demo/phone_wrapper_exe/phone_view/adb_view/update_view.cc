@@ -120,10 +120,12 @@ void UpdateView::CreateExampleView(View* container) {
                                     ui::TableColumn::LEFT, 150));
   columns.push_back(ui::TableColumn(2, L"结果",
                                     ui::TableColumn::LEFT, 150));
-  columns.push_back(ui::TableColumn(4, L"具体信息",
+  columns.push_back(ui::TableColumn(3, L"具体信息",
     ui::TableColumn::LEFT, 250));
-  columns.push_back(ui::TableColumn(3, L"包名",
+  columns.push_back(ui::TableColumn(4, L"包名",
     ui::TableColumn::LEFT, 300));
+  columns.push_back(ui::TableColumn(5, L"进度",
+    ui::TableColumn::LEFT, 100));
   
   //columns.push_back(ui::TableColumn(5, L"价格",
   //  ui::TableColumn::LEFT, 100));
@@ -198,11 +200,15 @@ string16 UpdateView::GetText(int row, int column_id) {
       break;
     }
     case 3: {
-      return data_[row].package_name;
+      return data_[row].info;
       break;
     }         
     case 4: {
-      return data_[row].info;
+      return data_[row].package_name;
+      break;
+    }
+    case 5: {
+      return data_[row].progress;
       break;
     }
   }
@@ -273,72 +279,11 @@ void UpdateView::LaunchWrapper(std::string const & socket_name) {
 }
 
 void UpdateView::Launch(uint32 const index) {
-  //if (process_vector_->size() > index) {
-  //  std::string socket_name = process_vector_->operator[](index).socket_name;
-  //  LOG(INFO)<<"UpdateView::Launch =====>"<<socket_name;
-
-  //  if (socket_name == switches::kCommunicateMQSQLAlive) {
-  //    std::string cmd = common_util::g_pref_service->GetString(prefs::kMQPyPathAndCmd);
-  //    DCHECK_RLOG(cmd.size());
-  //    LOG(INFO) << "Launching: " << cmd;
-  //    base::LaunchProcess(ASCIIToWide(cmd), base::LaunchOptions(), &process_vector_->operator[](index).process_handler);
-  //  } else if (socket_name == switches::kCommunicateCmdAndSQLAlive) {
-  //    std::string cmd = common_util::g_pref_service->GetString(prefs::kTUPyPathAndCmd);
-  //    DCHECK_RLOG(cmd.size());
-  //    LOG(INFO) << "Launching: " << cmd;
-  //    base::LaunchProcess(ASCIIToWide(cmd), base::LaunchOptions(), &process_vector_->operator[](index).process_handler);
-  //  } else if (socket_name == switches::kCommunicatePyBacktestingAlive) {
-  //    std::string cmd = common_util::g_pref_service->GetString(prefs::kBacktestingPyPathAndCmd);
-  //    DCHECK_RLOG(cmd.size());
-  //    LOG(INFO) << "Launching: " << cmd;
-  //    base::LaunchProcess(ASCIIToWide(cmd), base::LaunchOptions(), &process_vector_->operator[](index).process_handler);
-  //  } else if (socket_name == switches::kCommunicatePyMQCheckAlive) {
-  //    std::string cmd = common_util::g_pref_service->GetString(prefs::kMQCheckPyPathAndCmd);
-  //    DCHECK_RLOG(cmd.size());
-  //    LOG(INFO) << "Launching: " << cmd;
-  //    base::LaunchProcess(ASCIIToWide(cmd), base::LaunchOptions(), &process_vector_->operator[](index).process_handler);
-  //  } else if (socket_name == switches::kCommunicatePyToolboxAlive) {
-  //    std::string cmd = common_util::g_pref_service->GetString(prefs::kPyToolboxPyPathAndCmd);
-  //    DCHECK_RLOG(cmd.size());
-  //    LOG(INFO) << "Launching: " << cmd;
-  //    //toolbox不维持alive状态
-  //    HANDLE process_handler;
-  //    base::LaunchProcess(ASCIIToWide(cmd), base::LaunchOptions(), &process_handler);
-  //  } else {
-  //    FilePath exe_path;
-  //    PathService::Get(base::FILE_EXE, &exe_path);
-  //    CommandLine cmd_line(exe_path);
-  //    cmd_line.AppendSwitchASCII(switches::kProcessType, common_util::SocketName2ProcessType(socket_name));
-  //    if (auto_run_.size()) {
-  //      auto it = auto_run_.find(socket_name);
-  //      if (it != auto_run_.end() && it->second.params.size()) {
-  //        cmd_line.AppendSwitch(it->second.params);
-  //      }
-  //    } else if (timing_run_.size()) {
-  //      auto it = timing_run_.find(socket_name);
-  //      if (it != timing_run_.end() && it->second.params.size()) {
-  //        cmd_line.AppendSwitch(it->second.params);
-  //      }
-  //    }
-
-  //    LOG(INFO) << "Launching: " << cmd_line.GetCommandLineString();
-  //    base::LaunchProcess(cmd_line, base::LaunchOptions(), &process_vector_->operator[](index).process_handler);
-  //  }
-  //} else {
-  //  DCHECK_RLOG(false);
-  //}
+  
 }
 
 void UpdateView::Terminate(std::string const & socket_name) {
-  //LOG(INFO)<<"UpdateView::Terminate =====>"<<socket_name;
 
-  //for(auto it = process_vector_->begin(); it != process_vector_->end(); ++it) {
-  //  if (socket_name == it->socket_name && true == it->alive) {
-  //    HANDLE handle = OpenProcess(PROCESS_TERMINATE, FALSE, it->process_id);
-  //    TerminateProcess(handle, 0);
-  //    return;
-  //  }
-  //}
 }
 
 
@@ -394,6 +339,18 @@ bool UpdateView::OnMessageReceived(IPC::Message const & msg) {
 
 
 void UpdateView::OnApkUpdateInfo(PointerWrapper<phone_module::ApkUpdateInfo> const & p) {
+  phone_module::ApkUpdateInfo & info = *p.get();
+  if (data_.size() > 0) {
+    if (data_.back().package_name == info.package_name &&
+      info.info == L"下载中") {
+      //这种情况下，是下载进度更新，不追加条目，而是刷新最后一个条目
+      //这个逻辑有一个前提，就是下载包不会并发。下载目前看没必要并发，先这样吧。。。
+      data_.back() = info;
+      table_->OnItemsChanged(data_.size() - 1, 1);
+      EnsureVisible();
+      return;
+    }
+  }
   data_.push_back(*p.get());
   table_->OnItemsAdded(data_.size() - 1, 1);
   EnsureVisible();
