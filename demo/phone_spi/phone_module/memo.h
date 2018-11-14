@@ -93,4 +93,7 @@ device.ConnectDevice(
     xxx操作
 device.Close()
 
+
+ANDROID_ADB_SERVER_PORT
+
 */

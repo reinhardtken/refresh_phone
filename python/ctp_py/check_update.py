@@ -20,7 +20,12 @@ import config
 import util.log
 import util.utility
 import adb_wrapper
-import adb_wrapper2
+# import adb_wrapper2
+import cmdtool.netstat
+import cmdtool.taskkill
+import adbtool.start_server
+import adbtool.install
+import adbtool.list_devices
 #=======================================================
 
 
@@ -174,7 +179,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       util.utility.CreateDir(self.prop['apkPath'])
       
       #设置adbexe文件
-      adb_wrapper2.AdbCommandBase.adb = self.prop['adb_exe']
+      adbtool.base.AdbCommandBase.adb = self.prop['adb_exe']
 
 
   def Work(self):
@@ -198,6 +203,8 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         if self.prop is None:
           self.InitGlobalLogByParam(config.CreateProp(msg))
           self.Init2(config.CreateProp(msg))
+          #先尝试把自己的adb server启动起来
+          self.ProcessStartServer(None)
       elif self.prop is not None:
         #只有完成了初始化才能响应业务请求
         if msg.cmd == 'check_net_package_list':
@@ -213,6 +220,28 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
 
 
+  def ProcessStartServer(self, command):
+    # 获取一个port
+    port = adbtool.start_server.Command.GenPort()
+  
+    # 总是尝试先看看这个port有没有人用
+    netstat = cmdtool.netstat.Command(port)
+    netstat.Execute()
+  
+    # 有人用kill掉
+    succ, pid = netstat.GetReturnCode()
+    if succ:
+      kill = cmdtool.taskkill.Command(pid)
+      kill.Execute()
+    
+    # 产生新server
+    start_server = adbtool.start_server.Command(port)
+    start_server.Execute()
+    succ, pid = start_server.GetReturnCode()
+    
+    
+    
+
   def ProcessScanDevices2(self, command):
     def Callback(data):
       # 记录最新的设备列表
@@ -221,7 +250,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, data)
       
       
-    devices = adb_wrapper2.AdbListDevices(Callback)
+    devices = adbtool.list_devices.Command(Callback)
     self.log.info('before ProcessScanDevices2')
     devices.Execute()
     self.log.info('end ProcessScanDevices2')
@@ -276,7 +305,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           for one in self.last_devices_list:
 
             callback = CallbackObject(self, command, one['serial_no'], package_name)
-            install = adb_wrapper2.AdbInstallApk(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
+            install = adbtool.install.Command(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
 
             self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
             self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
@@ -291,7 +320,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         if self.last_devices_list is not None:
           for one in self.last_devices_list:
             callback = CallbackObject(self, command, one['serial_no'], package_name)
-            install = adb_wrapper2.AdbInstallApk(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
+            install = adbtool.install.Command(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
             self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
             self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
                                      [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
