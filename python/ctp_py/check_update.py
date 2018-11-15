@@ -7,8 +7,15 @@ import Queue
 import os
 import json
 import sys
-
+import traceback
 import requests
+import requests.exceptions
+# HTTPSConnectionPool(host='s0qrdt.kdndj.com', port=443):
+# Max retries exceeded with url: /files/0eccc965d5d8693b2e0cbc9fda97104c.apk
+# (Caused by SSLError(CertificateError("hostname 's0qrdt.kdndj.com' doesn't match either of 'img.ucdl.pp.uc.cn', 'api.flash.cn', 'cdn.osupdateservice.yunos.com', 'static.flash.cn', 'www.flash.cn', 'dl6.ztems.com', 'slient.ucdl.pp.uc.cn', 'apimini.flash.2144.com', 'dl1.ztems.com', 'alissl.ucdl.pp.uc.cn', 'iscsi.ucdl.pp.uc.cn', 'stage.admin.flash.cn', 'mini.flash.2144.com', 'tongji.flash.cn', 'test.flash.cn', 'oss.ucdl.pp.uc.cn', 'stage-api.flash.cn', 'admin.flash.cn', 'tool.flash.cn', 'tongji.flash.2144.com', 'static-stage.flash.cn', 'stage.flash.cn'",),))
+# 对于python自带的 urllib库  解决办法
+# import ssl
+# ssl.match_hostname = lambda cert, hostname: True
 #====================================
 import util.thread_class
 import pb.mq_protomsg_pb2
@@ -453,9 +460,25 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         need_save_json = False
         if self.local_prop is not None:
           #检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
+          old_package_name_set = set()
+          for old_one in self.local_prop['data']['install']:
+            old_package_name_set.add(old_one['apkname'])
+          new_package_name_set = set()
+          for new_one in data['data']['install']:
+            new_package_name_set.add(new_one['apkname'])
+            
+          diff_set = new_package_name_set - old_package_name_set
+            
           for new_one in data['data']['install']:
             for old_one in self.local_prop['data']['install']:
-              if new_one['apkmd5'] != old_one['apkmd5']:
+              #1 如果包名在差集合，说明是新增，需要下载
+              # 2 如果包名不在差集，说明不是新增，但md5不一致，说明换包了，需要下载
+              #3 如果包名不在差集，说明不是新增，md5一致，但是本地没文件，需要下载
+              file_path = self.prop['apkPath'] + '/' + new_one['apkname'] + '.apk'
+
+              if new_one['apkname'] in diff_set or \
+                  (new_one['apkname'] == old_one['apkname'] and new_one['apkmd5'] != old_one['apkmd5']) or \
+                        (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) == False):
                 need_save_json = True
                 self.DownloadOneApk(new_one, command)
 
@@ -564,7 +587,11 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     }
     ret = False
     try:
-      response = requests.request("GET", url, stream=True, data=None, headers=headers)
+      try:
+        response = requests.request("GET", url, stream=True, data=None, headers=headers)
+      except requests.exceptions.SSLError as e:
+        response = requests.request("GET", url, stream=True, data=None, headers=headers, verify=False)
+        
       total_length = int(response.headers.get("Content-Length"))
       now = 0
       with open(file_path, 'wb') as f:
@@ -578,6 +605,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           callback(total_length, total_length)
           return True
     except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      self.log.info(exstr)
       self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED,
                                ['包更新',
                                 CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_DOWNLOAD_APK_FAILED),
@@ -601,6 +631,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       pass
  
   
+  
+  
+  
   def DownloadOneApk(self, one, command):
     file_path = self.prop['apkPath'] + '/' + one['apkname'] + '.apk'
 
@@ -609,7 +642,6 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       #文件存在判断md5是否匹配
       md5 = util.utility.GetFileMD5(file_path)
       if md5 != one['apkmd5']:
-        #理论上这种情况不应该存在
         os.remove(file_path)
       else:
         self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['apkname']])
