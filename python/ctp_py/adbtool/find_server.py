@@ -25,8 +25,11 @@ def KillAllServer(out):
   try:
     for one in out:
       if _debug_jump(one) == False:
-        p = psutil.Process(one['pid'])
-        p.kill()
+        try:
+          p = psutil.Process(one['pid'])
+          p.kill()
+        except Exception as e:
+          pass
   except Exception as e:
     pass
 
@@ -34,8 +37,8 @@ def KillAllServer(out):
 def FindAllServer():
   out = []
   for pnum in psutil.pids():
-    p = psutil.Process(pnum)
     try:
+      p = psutil.Process(pnum)
       cmd = p.cmdline()
       param = set(cmd)
       if 'fork-server' in param and '-P' in param:
@@ -46,7 +49,6 @@ def FindAllServer():
         one_result['status'] = p.status()
         one_result['create_time'] = p.create_time()
         out.append(one_result)
-
 
     except Exception as e:
       print(e)
