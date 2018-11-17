@@ -34,6 +34,7 @@ import adbtool.start_server
 import adbtool.install
 import adbtool.list_devices
 import adbtool.find_server
+import device.master
 #=======================================================
 
 
@@ -143,9 +144,12 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     self.local_prop = None
     self.apk_dir = None
     
-    self.device = adb_wrapper.ADBWrapper()
+    # self.device = adb_wrapper.ADBWrapper()
     # self.device2 = adb_wrapper2.AdbInstall()
     self.last_devices_list = None
+    
+    self.device = device.master.Master(queue_out)
+    self.device.Start()
     
     
 
@@ -191,7 +195,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
 
   def Work(self):
-    time.sleep(2)
+    time.sleep(1)
 
 
   def Handle(self, msg):
@@ -222,9 +226,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         elif msg.cmd == 'get_local_package_list':
           self.ProcessGetLocalPackageList(msg)
         elif msg.cmd == 'pyadb_install_apk':
-          self.ProcessInstallApk2(msg)
+          self.ProcessInstallApk3(msg)
         elif msg.cmd == 'pyadb_scan_devices':
-          self.ProcessScanDevices2(msg)
+          self.ProcessScanDevices3(msg)
 
 
 
@@ -258,20 +262,12 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     #   kill.Execute()
     
     
+   
+  def ProcessScanDevices3(self, command):
+    self.device.ProcessCommand('-', command)
     
 
-  def ProcessScanDevices2(self, command):
-    def Callback(data):
-      # 记录最新的设备列表
-      self.last_devices_list = data
-
-      self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_OK, data)
-      
-      
-    devices = adbtool.list_devices.Command(Callback)
-    self.log.info('before ProcessScanDevices2')
-    devices.Execute()
-    self.log.info('end ProcessScanDevices2')
+  
     
 
    
@@ -312,6 +308,13 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     return ''
 
 
+  def ProcessInstallApk3(self, command):
+    #此处有并发隐患
+    # tmp = self.device.last_devices_list.copy()
+    for one in self.device.last_devices_list:
+      self.device.ProcessCommand(one['serial_no'], command)
+      
+      
 
   def ProcessInstallApk2(self, command):
     try:

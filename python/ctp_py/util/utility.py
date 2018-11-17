@@ -196,6 +196,18 @@ def RemoveDir(dir):
     if (os.path.exists(dir)):
       os.remove(dir)
 
+
+
+def GetPackageNameFromPath(apk):
+  index = apk.rfind('\\')
+  if index != -1:
+    return apk[index + 1:]
+  else:
+    index = apk.rfind('/')
+    if index != -1:
+      return apk[index + 1:]
+
+  return ''
 #==============================================================
 def SomeDayStartLine(type, microSeconds):
   microSecondsFrom1970 = microSeconds - __kTimeTToMicrosecondsOffse

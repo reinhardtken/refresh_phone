@@ -41,7 +41,8 @@ def FindAllServer():
       p = psutil.Process(pnum)
       cmd = p.cmdline()
       param = set(cmd)
-      if 'fork-server' in param and '-P' in param:
+      if 'fork-server' in param and \
+          ('-P' in param or '-L' in param):
         one_result = {}
         one_result['pid'] = pnum
         one_result['cmd'] = cmd
