@@ -59,7 +59,10 @@ class Proxy(object):
     self.thread.setDaemon(True)
 
     self.log = util.log.GetLogger(self.__class__.__name__)
-  
+    
+    self.last_command = {}
+    self.last_command['command'] = None
+    self.last_command['timestamp'] = time.time()
   
   
   def Start(self):
@@ -79,6 +82,9 @@ class Proxy(object):
     
   
   def Process(self, command):
+    self.last_command['command'] = command
+    self.last_command['timestamp'] = time.time()
+    
     if command.cmd == 'pyadb_scan_devices':
       self.ProcessScanDevices(command)
     elif command.cmd == 'pyadb_install_apk':
@@ -91,13 +97,16 @@ class Proxy(object):
       msg = self.queue_in.get()
       self.Process(msg)
       #报活
-      self.queue_master.put(('alive', self.serial_number))
-      self.queue_in.task_done()
+      # self.queue_master.put(('alive', self.serial_number))
+      # self.queue_in.task_done()
   
   
   def Work(self):
     while self._continue:
       self.DealWithIncomeQueue()
+      #跑到这里说明当前没有命令在执行，也就是不会处于卡主的状态
+      self.last_command['command'] = None
+      self.last_command['timestamp'] = time.time()
       time.sleep(1)
   
   
@@ -123,6 +132,11 @@ class Proxy(object):
     try:
       apk_path = command.param[1].encode('utf-8')
       package_name = util.utility.GetPackageNameFromPath(apk_path)
+      self.last_command['package_name'] = package_name
+      
+      #test code
+      # if 'com.youku.phone' in package_name:
+      #   time.sleep(10000)
 
       cb = callback.CallbackObject(self.queue_network, command, self.serial_number, package_name)
       install = adbtool.install.Command(self.serial_number, package_name, apk_path, cb.CallbackSucc,
