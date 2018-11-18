@@ -66,7 +66,7 @@ class Master(object):
         if v.last_command['command'].cmd == 'pyadb_install_apk':
           package_name = v.last_command['package_name']
           callback.SendCommandProgress(self. queue_out, v.last_command['command'], consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
-                                 [k.encode('utf-8'), '完成', package_name, '', ])
+                                 [k.encode('utf-8'), '完成', package_name, '超时', ])
         self._Remove(k)
         
         

@@ -63,6 +63,8 @@ class Proxy(object):
     self.last_command = {}
     self.last_command['command'] = None
     self.last_command['timestamp'] = time.time()
+
+    self.debug_once = True
   
   
   def Start(self):
@@ -135,7 +137,8 @@ class Proxy(object):
       self.last_command['package_name'] = package_name
       
       #test code
-      # if 'com.youku.phone' in package_name:
+      # if 'com.youku.phone' in package_name and self.debug_once:
+      #   self.debug_once = False
       #   time.sleep(10000)
 
       cb = callback.CallbackObject(self.queue_network, command, self.serial_number, package_name)
