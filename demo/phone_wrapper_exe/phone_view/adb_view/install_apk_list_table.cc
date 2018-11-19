@@ -130,18 +130,22 @@ void InstallApkListTable::CreateExampleView(View* container) {
   columns.push_back(ui::TableColumn(0, L"时间",
     ui::TableColumn::LEFT, 100));
   columns.push_back(ui::TableColumn(1, L"设备ID",
-    ui::TableColumn::LEFT, 150));
+    ui::TableColumn::LEFT, 110));
   columns.push_back(ui::TableColumn(2, L"包名",
-    ui::TableColumn::LEFT, 300));
+    ui::TableColumn::LEFT, 250));
   columns.push_back(ui::TableColumn(3, L"操作",
-    ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(4, L"阶段",
+    ui::TableColumn::LEFT, 150));
+  columns.push_back(ui::TableColumn(4, L"操作ID",
+    ui::TableColumn::LEFT, 100));
+  columns.push_back(ui::TableColumn(5, L"操作耗时",
+    ui::TableColumn::LEFT, 100));
+  columns.push_back(ui::TableColumn(6, L"阶段",
     ui::TableColumn::LEFT, 70));
-  columns.push_back(ui::TableColumn(5, L"进度/错误信息",
+  columns.push_back(ui::TableColumn(7, L"进度/错误信息",
     ui::TableColumn::LEFT, 300));
-  columns.push_back(ui::TableColumn(6, L"结果",
+  columns.push_back(ui::TableColumn(8, L"结果",
     ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(7, L"错误码",
+  columns.push_back(ui::TableColumn(9, L"错误码",
     ui::TableColumn::LEFT, 200));
 
   table_apk_ir_ = new TableView(&model_apk_ir_, columns, ICON_AND_TEXT, true, true, true);
@@ -268,19 +272,29 @@ string16 InstallApkListTable::GetText2(int row, int column_id) {
     break;
   }
   case 4: {
-    return apk_ir_data_[row].stage;
+    return base::IntToString16(apk_ir_data_[row].command_id);
     break;
   }
   case 5: {
+    std::wstring tmp = base::IntToString16(apk_ir_data_[row].time_cost);
+    tmp.append(L" 秒");
+    return tmp;
+    break;
+  }
+  case 6: {
+    return apk_ir_data_[row].stage;
+    break;
+  }
+  case 7: {
     /*return ASCIIToUTF16(base::DoubleToString(apk_ir_data_[row].percent));*/
     return apk_ir_data_[row].percent;
     break;
   }
-  case 6: {
+  case 8: {
     return apk_ir_data_[row].result;
     break;
   }
-  case 7: {
+  case 9: {
     return ASCIIToUTF16(base::IntToString(apk_ir_data_[row].error_code));
     break;
   }

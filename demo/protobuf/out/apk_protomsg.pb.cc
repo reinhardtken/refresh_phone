@@ -52,9 +52,10 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       "apk_protomsg.proto");
   GOOGLE_CHECK(file != NULL);
   Command_descriptor_ = file->message_type(0);
-  static const int Command_offsets_[3] = {
+  static const int Command_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, cmd_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, cmd_no_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, param_),
   };
   Command_reflection_ =
@@ -69,10 +70,11 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Command));
   CommandProgress_descriptor_ = file->message_type(1);
-  static const int CommandProgress_offsets_[4] = {
+  static const int CommandProgress_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, cmd_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, cmd_no_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, code_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, time_cost_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, info_),
   };
   CommandProgress_reflection_ =
@@ -87,10 +89,11 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CommandProgress));
   CommandResponse_descriptor_ = file->message_type(2);
-  static const int CommandResponse_offsets_[4] = {
+  static const int CommandResponse_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, cmd_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, cmd_no_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, code_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, time_cost_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, info_),
   };
   CommandResponse_reflection_ =
@@ -234,23 +237,25 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022apk_protomsg.proto\022\003apk\"5\n\007Command\022\013\n\003"
-    "cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\r\n\005param\030\003 \003(\t"
-    "\"J\n\017CommandProgress\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_"
-    "no\030\002 \002(\005\022\014\n\004code\030\003 \002(\005\022\014\n\004info\030\004 \003(\t\"J\n\017"
-    "CommandResponse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002"
-    " \002(\005\022\014\n\004code\030\003 \002(\005\022\014\n\004info\030\004 \003(\t\"\265\001\n\006One"
-    "Apk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030\002 \001(\t\022\013\n\003md5\030\003 \001("
-    "\t\022\014\n\004name\030\004 \002(\t\022\r\n\005brief\030\005 \001(\t\022\017\n\007orderi"
-    "d\030\006 \001(\005\022\023\n\013update_time\030\007 \001(\t\022\023\n\013create_t"
-    "ime\030\010 \001(\t\022\020\n\010apk_name\030\t \002(\t\022\r\n\005price\030\n \002"
-    "(\001\022\014\n\004type\030\013 \002(\005\"L\n\007ApkList\022\"\n\004head\030\001 \002("
-    "\0132\024.apk.CommandResponse\022\035\n\010apk_list\030\002 \003("
-    "\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial_no"
-    "\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022\017\n\007"
-    "product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013Devices"
+    "\n\022apk_protomsg.proto\022\003apk\"H\n\007Command\022\013\n\003"
+    "cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\021\n\ttimestamp\030\003"
+    " \002(\003\022\r\n\005param\030\004 \003(\t\"]\n\017CommandProgress\022\013"
+    "\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\014\n\004code\030\003 \002("
+    "\005\022\021\n\ttime_cost\030\004 \001(\003\022\014\n\004info\030\005 \003(\t\"]\n\017Co"
+    "mmandResponse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002"
+    "(\005\022\014\n\004code\030\003 \002(\005\022\021\n\ttime_cost\030\004 \001(\003\022\014\n\004i"
+    "nfo\030\005 \003(\t\"\265\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030"
+    "\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005brie"
+    "f\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_time\030"
+    "\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_name\030\t"
+    " \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\"L\n\007Apk"
     "List\022\"\n\004head\030\001 \002(\0132\024.apk.CommandResponse"
-    "\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevice", 678);
+    "\022\035\n\010apk_list\030\002 \003(\0132\013.apk.OneApk\"]\n\tAdbDe"
+    "vice\022\021\n\tserial_no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r"
+    "\n\005model\030\003 \001(\t\022\017\n\007product\030\004 \001(\t\022\016\n\006device"
+    "\030\005 \001(\t\"W\n\013DevicesList\022\"\n\004head\030\001 \002(\0132\024.ap"
+    "k.CommandResponse\022$\n\014devices_list\030\002 \003(\0132"
+    "\016.apk.AdbDevice", 735);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -282,6 +287,7 @@ struct StaticDescriptorInitializer_apk_5fprotomsg_2eproto {
 #ifndef _MSC_VER
 const int Command::kCmdFieldNumber;
 const int Command::kCmdNoFieldNumber;
+const int Command::kTimestampFieldNumber;
 const int Command::kParamFieldNumber;
 #endif  // !_MSC_VER
 
@@ -303,6 +309,7 @@ void Command::SharedCtor() {
   _cached_size_ = 0;
   cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   cmd_no_ = 0;
+  timestamp_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -347,6 +354,7 @@ void Command::Clear() {
       }
     }
     cmd_no_ = 0;
+    timestamp_ = GOOGLE_LONGLONG(0);
   }
   param_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -387,12 +395,28 @@ bool Command::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_param;
+        if (input->ExpectTag(24)) goto parse_timestamp;
         break;
       }
 
-      // repeated string param = 3;
+      // required int64 timestamp = 3;
       case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_timestamp:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &timestamp_)));
+          set_has_timestamp();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(34)) goto parse_param;
+        break;
+      }
+
+      // repeated string param = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_param:
@@ -405,7 +429,7 @@ bool Command::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_param;
+        if (input->ExpectTag(34)) goto parse_param;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -442,13 +466,18 @@ void Command::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->cmd_no(), output);
   }
 
-  // repeated string param = 3;
+  // required int64 timestamp = 3;
+  if (has_timestamp()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->timestamp(), output);
+  }
+
+  // repeated string param = 4;
   for (int i = 0; i < this->param_size(); i++) {
   ::google::protobuf::internal::WireFormat::VerifyUTF8String(
     this->param(i).data(), this->param(i).length(),
     ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->param(i), output);
+      4, this->param(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -474,13 +503,18 @@ void Command::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->cmd_no(), target);
   }
 
-  // repeated string param = 3;
+  // required int64 timestamp = 3;
+  if (has_timestamp()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->timestamp(), target);
+  }
+
+  // repeated string param = 4;
   for (int i = 0; i < this->param_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->param(i).data(), this->param(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(3, this->param(i), target);
+      WriteStringToArray(4, this->param(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -508,8 +542,15 @@ int Command::ByteSize() const {
           this->cmd_no());
     }
 
+    // required int64 timestamp = 3;
+    if (has_timestamp()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->timestamp());
+    }
+
   }
-  // repeated string param = 3;
+  // repeated string param = 4;
   total_size += 1 * this->param_size();
   for (int i = 0; i < this->param_size(); i++) {
     total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -549,6 +590,9 @@ void Command::MergeFrom(const Command& from) {
     if (from.has_cmd_no()) {
       set_cmd_no(from.cmd_no());
     }
+    if (from.has_timestamp()) {
+      set_timestamp(from.timestamp());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -566,7 +610,7 @@ void Command::CopyFrom(const Command& from) {
 }
 
 bool Command::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000003) != 0x00000003) return false;
+  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
 
   return true;
 }
@@ -575,6 +619,7 @@ void Command::Swap(Command* other) {
   if (other != this) {
     std::swap(cmd_, other->cmd_);
     std::swap(cmd_no_, other->cmd_no_);
+    std::swap(timestamp_, other->timestamp_);
     param_.Swap(&other->param_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
@@ -597,6 +642,7 @@ void Command::Swap(Command* other) {
 const int CommandProgress::kCmdFieldNumber;
 const int CommandProgress::kCmdNoFieldNumber;
 const int CommandProgress::kCodeFieldNumber;
+const int CommandProgress::kTimeCostFieldNumber;
 const int CommandProgress::kInfoFieldNumber;
 #endif  // !_MSC_VER
 
@@ -619,6 +665,7 @@ void CommandProgress::SharedCtor() {
   cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   cmd_no_ = 0;
   code_ = 0;
+  time_cost_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -664,6 +711,7 @@ void CommandProgress::Clear() {
     }
     cmd_no_ = 0;
     code_ = 0;
+    time_cost_ = GOOGLE_LONGLONG(0);
   }
   info_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -720,12 +768,28 @@ bool CommandProgress::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_info;
+        if (input->ExpectTag(32)) goto parse_time_cost;
         break;
       }
 
-      // repeated string info = 4;
+      // optional int64 time_cost = 4;
       case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_time_cost:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &time_cost_)));
+          set_has_time_cost();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_info;
+        break;
+      }
+
+      // repeated string info = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_info:
@@ -738,7 +802,7 @@ bool CommandProgress::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_info;
+        if (input->ExpectTag(42)) goto parse_info;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -780,13 +844,18 @@ void CommandProgress::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->code(), output);
   }
 
-  // repeated string info = 4;
+  // optional int64 time_cost = 4;
+  if (has_time_cost()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->time_cost(), output);
+  }
+
+  // repeated string info = 5;
   for (int i = 0; i < this->info_size(); i++) {
   ::google::protobuf::internal::WireFormat::VerifyUTF8String(
     this->info(i).data(), this->info(i).length(),
     ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      4, this->info(i), output);
+      5, this->info(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -817,13 +886,18 @@ void CommandProgress::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->code(), target);
   }
 
-  // repeated string info = 4;
+  // optional int64 time_cost = 4;
+  if (has_time_cost()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->time_cost(), target);
+  }
+
+  // repeated string info = 5;
   for (int i = 0; i < this->info_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->info(i).data(), this->info(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(4, this->info(i), target);
+      WriteStringToArray(5, this->info(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -858,8 +932,15 @@ int CommandProgress::ByteSize() const {
           this->code());
     }
 
+    // optional int64 time_cost = 4;
+    if (has_time_cost()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->time_cost());
+    }
+
   }
-  // repeated string info = 4;
+  // repeated string info = 5;
   total_size += 1 * this->info_size();
   for (int i = 0; i < this->info_size(); i++) {
     total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -902,6 +983,9 @@ void CommandProgress::MergeFrom(const CommandProgress& from) {
     if (from.has_code()) {
       set_code(from.code());
     }
+    if (from.has_time_cost()) {
+      set_time_cost(from.time_cost());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -929,6 +1013,7 @@ void CommandProgress::Swap(CommandProgress* other) {
     std::swap(cmd_, other->cmd_);
     std::swap(cmd_no_, other->cmd_no_);
     std::swap(code_, other->code_);
+    std::swap(time_cost_, other->time_cost_);
     info_.Swap(&other->info_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
@@ -951,6 +1036,7 @@ void CommandProgress::Swap(CommandProgress* other) {
 const int CommandResponse::kCmdFieldNumber;
 const int CommandResponse::kCmdNoFieldNumber;
 const int CommandResponse::kCodeFieldNumber;
+const int CommandResponse::kTimeCostFieldNumber;
 const int CommandResponse::kInfoFieldNumber;
 #endif  // !_MSC_VER
 
@@ -973,6 +1059,7 @@ void CommandResponse::SharedCtor() {
   cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   cmd_no_ = 0;
   code_ = 0;
+  time_cost_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1018,6 +1105,7 @@ void CommandResponse::Clear() {
     }
     cmd_no_ = 0;
     code_ = 0;
+    time_cost_ = GOOGLE_LONGLONG(0);
   }
   info_.Clear();
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1074,12 +1162,28 @@ bool CommandResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_info;
+        if (input->ExpectTag(32)) goto parse_time_cost;
         break;
       }
 
-      // repeated string info = 4;
+      // optional int64 time_cost = 4;
       case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_time_cost:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &time_cost_)));
+          set_has_time_cost();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(42)) goto parse_info;
+        break;
+      }
+
+      // repeated string info = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_info:
@@ -1092,7 +1196,7 @@ bool CommandResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_info;
+        if (input->ExpectTag(42)) goto parse_info;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1134,13 +1238,18 @@ void CommandResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->code(), output);
   }
 
-  // repeated string info = 4;
+  // optional int64 time_cost = 4;
+  if (has_time_cost()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->time_cost(), output);
+  }
+
+  // repeated string info = 5;
   for (int i = 0; i < this->info_size(); i++) {
   ::google::protobuf::internal::WireFormat::VerifyUTF8String(
     this->info(i).data(), this->info(i).length(),
     ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      4, this->info(i), output);
+      5, this->info(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -1171,13 +1280,18 @@ void CommandResponse::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->code(), target);
   }
 
-  // repeated string info = 4;
+  // optional int64 time_cost = 4;
+  if (has_time_cost()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->time_cost(), target);
+  }
+
+  // repeated string info = 5;
   for (int i = 0; i < this->info_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->info(i).data(), this->info(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(4, this->info(i), target);
+      WriteStringToArray(5, this->info(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -1212,8 +1326,15 @@ int CommandResponse::ByteSize() const {
           this->code());
     }
 
+    // optional int64 time_cost = 4;
+    if (has_time_cost()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->time_cost());
+    }
+
   }
-  // repeated string info = 4;
+  // repeated string info = 5;
   total_size += 1 * this->info_size();
   for (int i = 0; i < this->info_size(); i++) {
     total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -1256,6 +1377,9 @@ void CommandResponse::MergeFrom(const CommandResponse& from) {
     if (from.has_code()) {
       set_code(from.code());
     }
+    if (from.has_time_cost()) {
+      set_time_cost(from.time_cost());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -1283,6 +1407,7 @@ void CommandResponse::Swap(CommandResponse* other) {
     std::swap(cmd_, other->cmd_);
     std::swap(cmd_no_, other->cmd_no_);
     std::swap(code_, other->code_);
+    std::swap(time_cost_, other->time_cost_);
     info_.Swap(&other->info_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);

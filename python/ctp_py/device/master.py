@@ -57,7 +57,7 @@ class Master(object):
     
   
   def CheckTimeout(self):
-    K_TIMEOUT = 90
+    K_TIMEOUT = 120
     # 检查所有，干掉超时
     tmp = self.devices_map.copy()
     for k, v in tmp.items():

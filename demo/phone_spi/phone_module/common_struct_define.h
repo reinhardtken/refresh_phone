@@ -444,14 +444,16 @@ struct StatusInfo {
 
 
 struct ApkIRStatus {
-  ApkIRStatus(std::wstring const & sn)
+  ApkIRStatus(std::wstring const & sn, int const id)
     :serial_no(sn),
+    command_id(id),
     time(base::Time::Now()) {
     Init();
   }
 
   ApkIRStatus()
     :serial_no(L"无"),
+    command_id(-1),
     time(base::Time::Now()) {
     Init();
   }
@@ -473,12 +475,18 @@ struct ApkIRStatus {
   std::wstring percent;
   std::wstring result;
   int error_code;
-  std::wstring key;
-  std::wstring get_key() {
-    if (key.size() == 0) {
-      key = serial_no + L"-" + package_name;
-    }
-    return key;
+  int time_cost;//秒
+  //std::wstring key;
+  int command_id;
+  //std::wstring get_key() {
+  //  if (key.size() == 0) {
+  //    key = serial_no + L"-" + package_name;
+  //  }
+  //  return key;
+  //}
+
+  int get_key() {
+    return command_id;
   }
 };
 

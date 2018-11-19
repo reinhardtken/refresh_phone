@@ -11,6 +11,7 @@ import time
 
 
 import consts
+import util.utility
 
 import pb.apk_protomsg_pb2
 
@@ -43,6 +44,16 @@ class CallbackObject():
   def CallbackFail(self, progress):
     SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
                                   [self.serial_no.encode('utf-8'), '完成', self.apk, progress, ])
+    
+    
+    
+
+def Send(queue, data):
+  if isinstance(queue, list):
+    for one in queue:
+      one.put(data)
+  else:
+    queue.put(data)
 
 
 
@@ -50,12 +61,14 @@ def SendCommandProgress(queue, cmd, code, info=None):
   response = pb.apk_protomsg_pb2.CommandProgress()
   response.cmd = cmd.cmd
   response.cmd_no = cmd.cmd_no
+  start_timestamp = cmd.timestamp
+  response.time_cost = util.utility.UTCTime2TimeInMicroseconds(int(time.time())) - start_timestamp
   response.code = code
   if info is not None:
     for one in info:
       response.info.append(one.decode('utf-8'))
 
-  queue.put(response)
+  Send(queue, response)
 
 
 def SendCommandResponse(queue, cmd, code, info=None):
@@ -67,25 +80,26 @@ def SendCommandResponse(queue, cmd, code, info=None):
     for one in info:
       response.info.append(one.decode('utf-8'))
 
-  queue.put(response)
+  Send(queue, response)
 
 
-def SendApkList(queue, cmd, code, package_list=None):
-  response = pb.apk_protomsg_pb2.ApkList()
-  response.head.cmd = cmd.cmd
-  response.head.cmd_no = cmd.cmd_no
-  response.head.code = code
-  if package_list is not None:
-    for one in package_list:
-      one_apk = response.apk_list.add()
-      one_apk.md5 = one.md5
-      one_apk.name = one.name
-      one_apk.brief = one.brief
-      one_apk.apk_name = one.apk_name
-      one_apk.price = one.price
-      one_apk.type = one.type
 
-  queue.put(response)
+# def SendApkList(queue, cmd, code, package_list=None):
+#   response = pb.apk_protomsg_pb2.ApkList()
+#   response.head.cmd = cmd.cmd
+#   response.head.cmd_no = cmd.cmd_no
+#   response.head.code = code
+#   if package_list is not None:
+#     for one in package_list:
+#       one_apk = response.apk_list.add()
+#       one_apk.md5 = one.md5
+#       one_apk.name = one.name
+#       one_apk.brief = one.brief
+#       one_apk.apk_name = one.apk_name
+#       one_apk.price = one.price
+#       one_apk.type = one.type
+#
+#   queue.put(response)
 
 
 def SendDevicesList(queue_network, queue_master, cmd, code, device_list=None, info=None):

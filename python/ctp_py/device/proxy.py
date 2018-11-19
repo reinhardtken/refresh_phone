@@ -132,18 +132,26 @@ class Proxy(object):
 
   def ProcessInstallApk(self, command):
     try:
+      old_timestamp = command.timestamp
+      command.timestamp = util.utility.UTCTime2TimeInMicroseconds(int(time.time()))
+      
       apk_path = command.param[1].encode('utf-8')
       package_name = util.utility.GetPackageNameFromPath(apk_path)
       self.last_command['package_name'] = package_name
+      self.log.info('command ' + command.cmd)
+      self.log.info('command id ' + str(command.cmd_no))
+      self.log.info('command apk_path ' + apk_path)
+      self.log.info('command package_name ' + package_name)
       
-      #test code
-      # if 'com.youku.phone' in package_name and self.debug_once:
-      #   self.debug_once = False
-      #   time.sleep(10000)
 
       cb = callback.CallbackObject(self.queue_network, command, self.serial_number, package_name)
       install = adbtool.install.Command(self.serial_number, package_name, apk_path, cb.CallbackSucc,
                                         cb.CallbackFail)
+
+      #    test code
+      # if 'com.youku.phone' in package_name and self.debug_once:
+      #   self.debug_once = False
+      #   time.sleep(10000)
 
       self.log.info('before ProcessInstallApk2 ' + self.serial_number + ' : ' + apk_path)
       callback.SendCommandProgress(self.queue_network, command, consts.ERROR_CODE_OK,

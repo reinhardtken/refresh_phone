@@ -10,21 +10,24 @@ package apk;
 message Command {
  required string cmd = 1;
  required int32 cmd_no = 2;
- repeated string param = 3;
+ required int64 timestamp = 3;//命令开始执行的时间戳，非命令生成的
+ repeated string param = 4;
 };
 
 message CommandProgress {
   required string cmd = 1;
   required int32 cmd_no = 2;
   required int32 code = 3;
-  repeated string info = 4;
+  optional int64 time_cost = 4;
+  repeated string info = 5;
 };
 
 message CommandResponse {
   required string cmd = 1;
   required int32 cmd_no = 2;
   required int32 code = 3;
-  repeated string info = 4;
+  optional int64 time_cost = 4;
+  repeated string info = 5;
 };
 
 

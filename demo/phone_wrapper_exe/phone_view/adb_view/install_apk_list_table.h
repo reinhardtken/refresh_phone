@@ -158,7 +158,7 @@ class InstallApkListTable : public CTPViewBase,
   
    ApkIRStatusModel model_apk_ir_;
    std::vector<phone_module::ApkIRStatus> apk_ir_data_;
-   std::map<std::wstring, int> apk_ir_data_map_;
+   std::map<int, int> apk_ir_data_map_;
    TableView* table_apk_ir_;
 
   TableView* table_;

@@ -10,6 +10,7 @@
 #include "base/path_service.h"
 #include "base/logging.h"
 #include "base/string_util.h"
+#include "base/time.h"
 
 #include "phone_common/common/pref_service.h"
 #include "phone_common/common/common_common.h"
@@ -44,6 +45,7 @@ namespace phone_module {
   void PythonAdbInterface::ScanDevicesNow() {
     apk::Command * cmd = new apk::Command;
     cmd->set_cmd(command::kPyAdbScanDevices);
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
     cmd->set_cmd_no(core_->cmd_no());
     codec::MessagePtr ptr(cmd);
     core_->channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);

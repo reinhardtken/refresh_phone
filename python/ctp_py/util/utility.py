@@ -11,7 +11,7 @@ import hashlib
 #// 1700, 1800, and 1900.
 __kTimeTToMicrosecondsOffse = 11644473600000000
 
-def UTCTime2DBTimeInMicroseconds(seconds):
+def UTCTime2TimeInMicroseconds(seconds):
   return seconds * 1000 * 1000 + __kTimeTToMicrosecondsOffse
   pass
 
@@ -64,7 +64,7 @@ def YesterdayTimeInSeconds():
 #====================================================
 def TodayTimeInMicroseconds():
   today = TodayTimeInSeconds()
-  micro = UTCTime2DBTimeInMicroseconds(today)
+  micro = UTCTime2TimeInMicroseconds(today)
   s = "%20.3f" % micro
   #print('today micro', s)
   return micro
@@ -79,7 +79,7 @@ def TomorrowTimeInMicroseconds():
 
 def YesterdayTimeInMicroseconds():
   yesterday = YesterdayTimeInSeconds()
-  micro = UTCTime2DBTimeInMicroseconds(yesterday)
+  micro = UTCTime2TimeInMicroseconds(yesterday)
   s = "%20.3f" % micro
   print('yesterday micro', s)
   return micro
@@ -96,7 +96,7 @@ def ATimeInMicroseconds(years, months, days, hours=0, minutes=0, seconds=0):
   t += hours * 3600
   t += minutes * 60
   t += seconds
-  micro = UTCTime2DBTimeInMicroseconds(t)
+  micro = UTCTime2TimeInMicroseconds(t)
   s = "%20.3f" % micro
   #print('ATimeInMicroseconds', s)
   return micro

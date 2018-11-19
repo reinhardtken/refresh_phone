@@ -212,6 +212,7 @@ namespace phone_module {
           apk::Command * cmd = new apk::Command;
           cmd->set_cmd(command::kPYConfig);
           cmd->set_cmd_no(cmd_no());
+          cmd->set_timestamp(base::Time::Now().ToInternalValue());
           cmd->add_param(WideToUTF8(exe_dir_.value()));
             
           codec::MessagePtr ptr(cmd);
@@ -382,8 +383,9 @@ namespace phone_module {
             new L2U_ApkUpdateInfo(tmp));
         } else if (std::string(command::kRemoveLocalPackageList) == progress->cmd()) {
         } else if (std::string(command::kPyAdbInstallApk) == progress->cmd()) {
-          ApkIRStatus * data = new ApkIRStatus(UTF8ToWide(progress->info(0)));
+          ApkIRStatus * data = new ApkIRStatus(UTF8ToWide(progress->info(0)), progress->cmd_no());
           data->error_code = progress->code();
+          data->time_cost = (int)base::TimeDelta::FromMicroseconds(progress->time_cost()).InSeconds();
           data->stage = UTF8ToWide(progress->info(1));
           data->package_name = UTF8ToWide(progress->info(2));
           data->percent = UTF8ToWide(progress->info(3));
@@ -407,7 +409,7 @@ namespace phone_module {
         apk::ApkList const* apk_list = static_cast<apk::ApkList const*>(p.get());
         if (std::string(command::kGetLocalPackageList) == apk_list->head().cmd()) {
           if (apk_list->head().code() == ERROR_CODE_OK) {
-            std::vector< ApkInstallInfo> * data = new std::vector< ApkInstallInfo>;
+            std::vector<ApkInstallInfo> * data = new std::vector<ApkInstallInfo>;
             for (auto i = 0; i < apk_list->apk_list_size(); ++i) {
               ApkInstallInfo info;
               info.package_name = UTF8ToWide(apk_list->apk_list(i).apk_name());
@@ -650,6 +652,7 @@ namespace phone_module {
     apk::Command * cmd = new apk::Command;
     cmd->set_cmd(command::kGetLocalPackageList);
     cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
     codec::MessagePtr ptr(cmd);
     current_cmd_no_set_.insert(cmd->cmd_no());
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
@@ -661,6 +664,7 @@ namespace phone_module {
     apk::Command * cmd = new apk::Command;
     cmd->set_cmd(command::kCheckNetPackageList);
     cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
     codec::MessagePtr ptr(cmd);
     current_cmd_no_set_.insert(cmd->cmd_no());
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
@@ -700,6 +704,7 @@ namespace phone_module {
       apk::Command * cmd = new apk::Command;
       cmd->set_cmd(command::kPyAdbInstallApk);
       cmd->set_cmd_no(cmd_no());
+      cmd->set_timestamp(base::Time::Now().ToInternalValue());
       cmd->add_param(WideToUTF8(type));
       cmd->add_param(WideToUTF8(file));
       codec::MessagePtr ptr(cmd);
@@ -722,6 +727,7 @@ namespace phone_module {
     apk::Command * cmd = new apk::Command;
     cmd->set_cmd(command::kRemoveLocalPackageList);
     cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
     codec::MessagePtr ptr(cmd);
     current_cmd_no_set_.insert(cmd->cmd_no());
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);

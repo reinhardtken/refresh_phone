@@ -116,10 +116,17 @@ class Command : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 cmd_no() const;
   inline void set_cmd_no(::google::protobuf::int32 value);
 
-  // repeated string param = 3;
+  // required int64 timestamp = 3;
+  inline bool has_timestamp() const;
+  inline void clear_timestamp();
+  static const int kTimestampFieldNumber = 3;
+  inline ::google::protobuf::int64 timestamp() const;
+  inline void set_timestamp(::google::protobuf::int64 value);
+
+  // repeated string param = 4;
   inline int param_size() const;
   inline void clear_param();
-  static const int kParamFieldNumber = 3;
+  static const int kParamFieldNumber = 4;
   inline const ::std::string& param(int index) const;
   inline ::std::string* mutable_param(int index);
   inline void set_param(int index, const ::std::string& value);
@@ -138,15 +145,18 @@ class Command : public ::google::protobuf::Message {
   inline void clear_has_cmd();
   inline void set_has_cmd_no();
   inline void clear_has_cmd_no();
+  inline void set_has_timestamp();
+  inline void clear_has_timestamp();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* cmd_;
+  ::google::protobuf::int64 timestamp_;
   ::google::protobuf::RepeatedPtrField< ::std::string> param_;
   ::google::protobuf::int32 cmd_no_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -237,10 +247,17 @@ class CommandProgress : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 code() const;
   inline void set_code(::google::protobuf::int32 value);
 
-  // repeated string info = 4;
+  // optional int64 time_cost = 4;
+  inline bool has_time_cost() const;
+  inline void clear_time_cost();
+  static const int kTimeCostFieldNumber = 4;
+  inline ::google::protobuf::int64 time_cost() const;
+  inline void set_time_cost(::google::protobuf::int64 value);
+
+  // repeated string info = 5;
   inline int info_size() const;
   inline void clear_info();
-  static const int kInfoFieldNumber = 4;
+  static const int kInfoFieldNumber = 5;
   inline const ::std::string& info(int index) const;
   inline ::std::string* mutable_info(int index);
   inline void set_info(int index, const ::std::string& value);
@@ -261,16 +278,19 @@ class CommandProgress : public ::google::protobuf::Message {
   inline void clear_has_cmd_no();
   inline void set_has_code();
   inline void clear_has_code();
+  inline void set_has_time_cost();
+  inline void clear_has_time_cost();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* cmd_;
   ::google::protobuf::int32 cmd_no_;
   ::google::protobuf::int32 code_;
+  ::google::protobuf::int64 time_cost_;
   ::google::protobuf::RepeatedPtrField< ::std::string> info_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -361,10 +381,17 @@ class CommandResponse : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 code() const;
   inline void set_code(::google::protobuf::int32 value);
 
-  // repeated string info = 4;
+  // optional int64 time_cost = 4;
+  inline bool has_time_cost() const;
+  inline void clear_time_cost();
+  static const int kTimeCostFieldNumber = 4;
+  inline ::google::protobuf::int64 time_cost() const;
+  inline void set_time_cost(::google::protobuf::int64 value);
+
+  // repeated string info = 5;
   inline int info_size() const;
   inline void clear_info();
-  static const int kInfoFieldNumber = 4;
+  static const int kInfoFieldNumber = 5;
   inline const ::std::string& info(int index) const;
   inline ::std::string* mutable_info(int index);
   inline void set_info(int index, const ::std::string& value);
@@ -385,16 +412,19 @@ class CommandResponse : public ::google::protobuf::Message {
   inline void clear_has_cmd_no();
   inline void set_has_code();
   inline void clear_has_code();
+  inline void set_has_time_cost();
+  inline void clear_has_time_cost();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* cmd_;
   ::google::protobuf::int32 cmd_no_;
   ::google::protobuf::int32 code_;
+  ::google::protobuf::int64 time_cost_;
   ::google::protobuf::RepeatedPtrField< ::std::string> info_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -1060,7 +1090,29 @@ inline void Command::set_cmd_no(::google::protobuf::int32 value) {
   cmd_no_ = value;
 }
 
-// repeated string param = 3;
+// required int64 timestamp = 3;
+inline bool Command::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void Command::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void Command::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void Command::clear_timestamp() {
+  timestamp_ = GOOGLE_LONGLONG(0);
+  clear_has_timestamp();
+}
+inline ::google::protobuf::int64 Command::timestamp() const {
+  return timestamp_;
+}
+inline void Command::set_timestamp(::google::protobuf::int64 value) {
+  set_has_timestamp();
+  timestamp_ = value;
+}
+
+// repeated string param = 4;
 inline int Command::param_size() const {
   return param_.size();
 }
@@ -1222,7 +1274,29 @@ inline void CommandProgress::set_code(::google::protobuf::int32 value) {
   code_ = value;
 }
 
-// repeated string info = 4;
+// optional int64 time_cost = 4;
+inline bool CommandProgress::has_time_cost() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CommandProgress::set_has_time_cost() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CommandProgress::clear_has_time_cost() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CommandProgress::clear_time_cost() {
+  time_cost_ = GOOGLE_LONGLONG(0);
+  clear_has_time_cost();
+}
+inline ::google::protobuf::int64 CommandProgress::time_cost() const {
+  return time_cost_;
+}
+inline void CommandProgress::set_time_cost(::google::protobuf::int64 value) {
+  set_has_time_cost();
+  time_cost_ = value;
+}
+
+// repeated string info = 5;
 inline int CommandProgress::info_size() const {
   return info_.size();
 }
@@ -1384,7 +1458,29 @@ inline void CommandResponse::set_code(::google::protobuf::int32 value) {
   code_ = value;
 }
 
-// repeated string info = 4;
+// optional int64 time_cost = 4;
+inline bool CommandResponse::has_time_cost() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CommandResponse::set_has_time_cost() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CommandResponse::clear_has_time_cost() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CommandResponse::clear_time_cost() {
+  time_cost_ = GOOGLE_LONGLONG(0);
+  clear_has_time_cost();
+}
+inline ::google::protobuf::int64 CommandResponse::time_cost() const {
+  return time_cost_;
+}
+inline void CommandResponse::set_time_cost(::google::protobuf::int64 value) {
+  set_has_time_cost();
+  time_cost_ = value;
+}
+
+// repeated string info = 5;
 inline int CommandResponse::info_size() const {
   return info_.size();
 }
