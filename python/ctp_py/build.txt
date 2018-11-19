@@ -21,6 +21,11 @@ E:\workspace\chromium24\src\build\out\python\python -m compileall -f .
 E:\workspace\chromium24\src\build\out\python\python ./tools/home_recursion_copy.py
 
 
+C:\workspace\Python27\python -m compileall -f .
+打包
+C:\workspace\Python27\python ./tools/home_recursion_copy.py
+
+
 
 
 运行

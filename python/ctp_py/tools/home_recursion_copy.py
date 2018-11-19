@@ -4,8 +4,10 @@
 import os
 import shutil
 #=========================================
-IN_DIR = r"E:\workspace\chromium24\src\phone\python\ctp_py"
-OUT_DIR = r"E:\workspace\chromium24\src\phone\python\python_code"
+#IN_DIR = r"E:\workspace\chromium24\src\phone\python\ctp_py"
+#OUT_DIR = r"E:\workspace\chromium24\src\phone\python\python_code"
+IN_DIR = r"C:\workspace\code\chromium24\src\phone\python\ctp_py"
+OUT_DIR = r"C:\workspace\code\chromium24\src\phone\python\python_code"
 EXT = '.pyc'
 #=========================================
 # 目录递归拷贝函数
