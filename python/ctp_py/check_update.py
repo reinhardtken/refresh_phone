@@ -26,15 +26,13 @@ import tempfile
 import config
 import util.log
 import util.utility
-import adb_wrapper
-# import adb_wrapper2
-import cmdtool.netstat
-import cmdtool.taskkill
+import consts
 import adbtool.start_server
 import adbtool.install
 import adbtool.list_devices
 import adbtool.find_server
 import device.master
+import device.callback
 #=======================================================
 
 
@@ -312,7 +310,20 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     #此处有并发隐患
     # tmp = self.device.last_devices_list.copy()
     for one in self.device.last_devices_list:
-      self.device.ProcessCommand(one['serial_no'], command)
+      #检查是不是强制安装，强制安装无条件装，非强制安装检查是否已经装过
+      type = command.param[0].encode('utf-8')
+      if 'force' in type:
+        self.log.info('ProcessInstallApk3  force ' + command.cmd)
+        self.device.ProcessCommand(one['serial_no'], command)
+      else:
+        self.log.info('ProcessInstallApk3 ' + command.cmd)
+        apk_path = command.param[1].encode('utf-8')
+        package_name = util.utility.GetPackageNameFromPath(apk_path)
+        if one['serial_no'] in self.device.installed_map and package_name in self.device.installed_map[one['serial_no']]:
+          device.callback.SendCommandProgress(self.queue_out, command, consts.ERROR_CODE_OK,
+                              [one['serial_no'], '完成', package_name, '已经装过跳过安装', ])
+        else:
+          self.device.ProcessCommand(one['serial_no'], command)
       
       
 

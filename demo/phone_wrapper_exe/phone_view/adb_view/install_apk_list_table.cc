@@ -144,7 +144,7 @@ void InstallApkListTable::CreateExampleView(View* container) {
   columns.push_back(ui::TableColumn(7, L"进度/错误信息",
     ui::TableColumn::LEFT, 300));
   columns.push_back(ui::TableColumn(8, L"结果",
-    ui::TableColumn::LEFT, 200));
+    ui::TableColumn::LEFT, 100));
   columns.push_back(ui::TableColumn(9, L"错误码",
     ui::TableColumn::LEFT, 200));
 
@@ -165,8 +165,8 @@ void InstallApkListTable::CreateExampleView(View* container) {
   //check_update_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
   get_apk_list_ = new TextButton(this, L" 获取本地包列表");
   get_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
-  install_apk_list_ = new TextButton(this, L"装包-单台");
-  install_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
+  install_apk_list_all_device_force_ = new TextButton(this, L"装包-所有-强制重复");
+  install_apk_list_all_device_force_->set_alignment(TextButton::ALIGN_CENTER);
   install_apk_list_all_device_ = new TextButton(this, L" 装包-所有");
   install_apk_list_all_device_->set_alignment(TextButton::ALIGN_CENTER);
   clear_table_ = new TextButton(this, L"清除包列表显示");
@@ -190,7 +190,7 @@ void InstallApkListTable::CreateExampleView(View* container) {
   layout->StartRow(0 /* expand */, index);
 
   layout->AddView(get_apk_list_);
-  layout->AddView(install_apk_list_);
+  layout->AddView(install_apk_list_all_device_force_);
   layout->AddView(install_apk_list_all_device_);
   layout->AddView(clear_table_);
   layout->AddView(clear_apk_ir_table_);
@@ -346,11 +346,11 @@ void InstallApkListTable::OnTableView2Delete(TableView2* table_view) {}
 void InstallApkListTable::ButtonPressed(Button* sender, const ui::Event& event) {
 	if (sender == get_apk_list_) {
 		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_GetLocalInstallApkList());
-	} else if (sender == install_apk_list_ ||
+	} else if (sender == install_apk_list_all_device_force_ ||
     sender == install_apk_list_all_device_) {
     std::wstring type = L"all";
-    if (sender == install_apk_list_) {
-      type = L"first";
+    if (sender == install_apk_list_all_device_force_) {
+      type = L"all force";
     }
     std::vector<phone_module::ApkInstallInfo> * date = new std::vector<phone_module::ApkInstallInfo>(data_);
     PointerWrapper<std::vector<phone_module::ApkInstallInfo>> tmp(date);

@@ -102,7 +102,7 @@ def SendCommandResponse(queue, cmd, code, info=None):
 #   queue.put(response)
 
 
-def SendDevicesList(queue_network, queue_master, cmd, code, device_list=None, info=None):
+def SendDevicesList(queue_master, cmd, code, device_list=None, info=None):
   try:
     response = pb.apk_protomsg_pb2.DevicesList()
     response.head.cmd = cmd.cmd
@@ -122,7 +122,7 @@ def SendDevicesList(queue_network, queue_master, cmd, code, device_list=None, in
     if info is not None:
       response.head.info.append(info)
   
-    queue_master.put(('device_list', device_list, ))
-    queue_network.put(response)
+    queue_master.put(response)
+    # queue_network.put(response)
   except Exception as e:
     pass

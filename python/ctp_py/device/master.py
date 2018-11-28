@@ -14,7 +14,7 @@ import proxy
 import util.log
 import callback
 import consts
-
+import pb.apk_protomsg_pb2
 # ====================================
 class Master(object):
   def __init__(self, queue_out):
@@ -23,7 +23,9 @@ class Master(object):
     self.queue_in = Queue.Queue()
     self.devices_map = {}
     # self.last_alive = {}
-    self.last_devices_list = None
+    self.last_devices_list = []
+    #记录所有已经成功安装的包，除非强制清空，不然不再重复安装
+    self.installed_map = {}
 
     self.log = util.log.GetLogger(self.__class__.__name__)
 
@@ -72,14 +74,45 @@ class Master(object):
         
     
     
-    
-  def ProcessIncome(self, msg):
-    
-    # if msg[0] == 'alive':
-    #   self.last_alive[msg[1]] = time.time()
-    if msg[0] == 'device_list':
-      self.last_devices_list = msg[1]
+  
+  def ProcessScanDevicesResponse(self, command):
+    self.last_devices_list = []
+    for one_device in command.devices_list:
+      one = {}
+      one['serial_no'] = one_device.serial_no
+      one['product'] = one_device.product
+      one['model'] = one_device.model
+      one['device'] = one_device.device
+      self.last_devices_list.append(one)
+      if one_device.serial_no not in self.installed_map:
+        self.installed_map[one_device.serial_no] = set()
       
+    
+    return True
+
+
+
+  def ProcessInstallApkResponse(self, command):
+    if len(command.info)  == 4:
+      if command.info[1] == '完成'.decode('utf-8') and command.info[3] == 'Success'.decode('utf-8'):
+        if command.info[0] in self.installed_map:
+          self.installed_map[command.info[0]].add(command.info[2])
+  
+    return True
+
+  
+    
+  def ProcessIncome(self, command):
+    forword = True
+    if isinstance(command, pb.apk_protomsg_pb2.DevicesList):
+      forword = self.ProcessScanDevicesResponse(command)
+    elif command.cmd == 'pyadb_install_apk':
+      forword = self.ProcessInstallApkResponse(command)
+      
+      
+    
+    if forword:
+      self.queue_out.put(command)
     
         
 

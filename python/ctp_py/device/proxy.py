@@ -50,7 +50,6 @@ def stop_thread(id):
 class Proxy(object):
   def __init__(self, queue_network, queue_master, serial_number):
     print("Proxy.init=======================================")
-    self.queue_network = queue_network
     self.queue_master = queue_master
     self.queue_in = Queue.Queue()
     self.serial_number = serial_number
@@ -121,7 +120,7 @@ class Proxy(object):
     def Callback(data):
       # 记录最新的设备列表
       self.last_devices_list = data
-      callback.SendDevicesList(self.queue_network, self.queue_master, command, consts.ERROR_CODE_OK, data)
+      callback.SendDevicesList(self.queue_master, command, consts.ERROR_CODE_OK, data)
   
     devices = adbtool.list_devices.Command(Callback)
     self.log.info('before ProcessScanDevices')
@@ -144,7 +143,7 @@ class Proxy(object):
       self.log.info('command package_name ' + package_name)
       
 
-      cb = callback.CallbackObject(self.queue_network, command, self.serial_number, package_name)
+      cb = callback.CallbackObject(self.queue_master, command, self.serial_number, package_name)
       install = adbtool.install.Command(self.serial_number, package_name, apk_path, cb.CallbackSucc,
                                         cb.CallbackFail)
 
@@ -154,7 +153,7 @@ class Proxy(object):
       #   time.sleep(10000)
 
       self.log.info('before ProcessInstallApk2 ' + self.serial_number + ' : ' + apk_path)
-      callback.SendCommandProgress(self.queue_network, command, consts.ERROR_CODE_OK,
+      callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
                                [self.serial_number.encode('utf-8'), '开始', package_name, '', ])
 
       install.Execute()

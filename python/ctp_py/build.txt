@@ -26,6 +26,11 @@ C:\workspace\Python27\python -m compileall -f .
 C:\workspace\Python27\python ./tools/home_recursion_copy.py
 
 
+C:\workspace\Python27_xp\python -m compileall -f .
+打包
+C:\workspace\Python27_xp\python ./tools/home_recursion_copy.py
+
+
 
 
 运行

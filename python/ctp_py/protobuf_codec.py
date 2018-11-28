@@ -58,7 +58,7 @@ class ProtobufCodec:
     self.data = self.data[:] + data
     #self.data.write(data)
 
-    #print(self.data)
+
     while(True):
       buffer_size = len(self.data)
       if buffer_size > 4:
@@ -78,14 +78,12 @@ class ProtobufCodec:
 
 
   def GetTotalSize(self):
-    #print('unpack headsize')
     unpack_head = struct.Struct('I')
     size = unpack_head.unpack(self.data[:4])[0]
-    #print(size)
     return size
 
   def GetName(self):
-    #print('unpack name')
+
     unpack_name = struct.Struct('I')
     unpack_name_len = unpack_name.unpack(self.data[4:8])[0]
     format_string = str(unpack_name_len) + 's'
@@ -95,7 +93,7 @@ class ProtobufCodec:
     return name
 
   def GetMessage(self, name, total_size):
-    #print('unpack msg')
+
     ds = self.pool.FindMessageTypeByName(name)
     if ds:
       return reflection.ParseMessage(ds, self.data[8 + len(name):total_size + 4])
@@ -103,7 +101,7 @@ class ProtobufCodec:
   #20140222 TODO:memory leak by call"reflection.ParseMessage"
   #don't know why reduce call it times to avoid
   def GetMessage2(self, name, total_size):
-    #print('GetMessage2 ', name)
+
     try:
       if name == 'ctp.mq.BasicMQ':
         msg = pb.mq_protomsg_pb2.BasicMQ()
@@ -115,14 +113,13 @@ class ProtobufCodec:
         return msg
       elif name == 'ctp.cp.BacktestingResultSave2DBRequery':
         #嵌套自定义报错，原因不明
-        #print('BacktestingResultSave2DBRequery ', name)
         msg = pb.cp_comunication_pb2.BacktestingResultSave2DBRequery()
         msg.ParseFromString(self.data[8 + len(name):total_size + 4])
         return msg
       else:
         ds = self.pool.FindMessageTypeByName(name)
         if ds:
-          print('find ds', ds)
+
           #这个地方就是有问题的。你通过name拿到的只是外面那个message的des。如果里面嵌套message，
           #确实不知道ds是什么啊。。。
           #或者说，最外层的des，有携带内层des的义务吗？？
