@@ -392,8 +392,12 @@ namespace phone_module {
           data->op = L"全新/覆盖安装";
           if (data->error_code == ERROR_CODE_OK) {
             data->result = L"成功";
+            if (data->percent == L"Success") {
+              LOG(INFO) << "apk.CommandProgress succ  "<< data->package_name<<" "<< data->time_cost;
+            }
           } else {
             data->result = L"失败";
+            LOG(INFO) << "apk.CommandProgress fail  " << data->package_name << " " << data->error_code;
           }
           
 

@@ -44,7 +44,7 @@ def Init(prop):
   fileName = fileDir + '/' + midDir + '/' + fileName
   print("the log file process and name " + fileName)
 
-  logging.basicConfig(filename = fileName, level = logging.DEBUG)
+  logging.basicConfig(filename = fileName, level = logging.DEBUG, format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s', datefmt='%H:%M:%S')
   logging.info("the py version: " + config.Version())
   logging.debug("test debug output")
   logging.warning("test warn output %d", 123)

@@ -39,8 +39,10 @@ class Command(base.AdbCommandBase):
     List of devices attached
     aa1ee7d1               device product:LeMax2_CN model:Le_X820 device:le_x2
     '''
-    print(line)
-    self.log.info(line)
+    if len(line):
+      print(line)
+      self.log.info(line)
+      
     if 'error' in line:
       error = self.adb_error_re.search(line).group(1)
       return (False, error)
