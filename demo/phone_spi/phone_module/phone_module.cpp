@@ -394,6 +394,9 @@ namespace phone_module {
             data->result = L"成功";
             if (data->percent == L"Success") {
               LOG(INFO) << "apk.CommandProgress succ  "<< data->package_name<<" "<< data->time_cost;
+              double package_size;
+              base::StringToDouble(progress->info(4), &package_size);
+              data->speed = base::StringPrintf(L"%0.2f MB/秒", package_size / data->time_cost);
             }
           } else {
             data->result = L"失败";
@@ -422,6 +425,7 @@ namespace phone_module {
               info.brief = UTF8ToWide(apk_list->apk_list(i).brief());
               info.price = apk_list->apk_list(i).price();
               info.type = (PACKAGE_TYPE)apk_list->apk_list(i).type();
+              info.package_size = apk_list->apk_list(i).package_size();
               data->push_back(info);
             }
             PointerWrapper<std::vector< ApkInstallInfo>> tmp(data);

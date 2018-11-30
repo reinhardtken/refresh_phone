@@ -108,7 +108,7 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CommandResponse));
   OneApk_descriptor_ = file->message_type(3);
-  static const int OneApk_offsets_[11] = {
+  static const int OneApk_offsets_[12] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, id_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, url_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, md5_),
@@ -120,6 +120,7 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, apk_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, price_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, package_size_),
   };
   OneApk_reflection_ =
     new ::google::protobuf::internal::GeneratedMessageReflection(
@@ -244,18 +245,18 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
     "\005\022\021\n\ttime_cost\030\004 \001(\003\022\014\n\004info\030\005 \003(\t\"]\n\017Co"
     "mmandResponse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002"
     "(\005\022\014\n\004code\030\003 \002(\005\022\021\n\ttime_cost\030\004 \001(\003\022\014\n\004i"
-    "nfo\030\005 \003(\t\"\265\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030"
+    "nfo\030\005 \003(\t\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030"
     "\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005brie"
     "f\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_time\030"
     "\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_name\030\t"
-    " \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\"L\n\007Apk"
-    "List\022\"\n\004head\030\001 \002(\0132\024.apk.CommandResponse"
-    "\022\035\n\010apk_list\030\002 \003(\0132\013.apk.OneApk\"]\n\tAdbDe"
-    "vice\022\021\n\tserial_no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r"
-    "\n\005model\030\003 \001(\t\022\017\n\007product\030\004 \001(\t\022\016\n\006device"
-    "\030\005 \001(\t\"W\n\013DevicesList\022\"\n\004head\030\001 \002(\0132\024.ap"
-    "k.CommandResponse\022$\n\014devices_list\030\002 \003(\0132"
-    "\016.apk.AdbDevice", 735);
+    " \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022\024\n\014pac"
+    "kage_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head\030\001 \002(\013"
+    "2\024.apk.CommandResponse\022\035\n\010apk_list\030\002 \003(\013"
+    "2\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial_no\030"
+    "\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022\017\n\007p"
+    "roduct\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013DevicesL"
+    "ist\022\"\n\004head\030\001 \002(\0132\024.apk.CommandResponse\022"
+    "$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevice", 757);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -1438,6 +1439,7 @@ const int OneApk::kCreateTimeFieldNumber;
 const int OneApk::kApkNameFieldNumber;
 const int OneApk::kPriceFieldNumber;
 const int OneApk::kTypeFieldNumber;
+const int OneApk::kPackageSizeFieldNumber;
 #endif  // !_MSC_VER
 
 OneApk::OneApk()
@@ -1467,6 +1469,7 @@ void OneApk::SharedCtor() {
   apk_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   price_ = 0;
   type_ = 0;
+  package_size_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -1564,6 +1567,7 @@ void OneApk::Clear() {
     }
     price_ = 0;
     type_ = 0;
+    package_size_ = 0;
   }
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
   mutable_unknown_fields()->Clear();
@@ -1753,6 +1757,22 @@ bool OneApk::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
+        if (input->ExpectTag(97)) goto parse_package_size;
+        break;
+      }
+
+      // required double package_size = 12;
+      case 12: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
+         parse_package_size:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
+                 input, &package_size_)));
+          set_has_package_size();
+        } else {
+          goto handle_uninterpreted;
+        }
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1858,6 +1878,11 @@ void OneApk::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(11, this->type(), output);
   }
 
+  // required double package_size = 12;
+  if (has_package_size()) {
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(12, this->package_size(), output);
+  }
+
   if (!unknown_fields().empty()) {
     ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
         unknown_fields(), output);
@@ -1956,6 +1981,11 @@ void OneApk::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(11, this->type(), target);
   }
 
+  // required double package_size = 12;
+  if (has_package_size()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(12, this->package_size(), target);
+  }
+
   if (!unknown_fields().empty()) {
     target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
         unknown_fields(), target);
@@ -2044,6 +2074,11 @@ int OneApk::ByteSize() const {
           this->type());
     }
 
+    // required double package_size = 12;
+    if (has_package_size()) {
+      total_size += 1 + 8;
+    }
+
   }
   if (!unknown_fields().empty()) {
     total_size +=
@@ -2106,6 +2141,9 @@ void OneApk::MergeFrom(const OneApk& from) {
     if (from.has_type()) {
       set_type(from.type());
     }
+    if (from.has_package_size()) {
+      set_package_size(from.package_size());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -2123,7 +2161,7 @@ void OneApk::CopyFrom(const OneApk& from) {
 }
 
 bool OneApk::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000708) != 0x00000708) return false;
+  if ((_has_bits_[0] & 0x00000f08) != 0x00000f08) return false;
 
   return true;
 }
@@ -2141,6 +2179,7 @@ void OneApk::Swap(OneApk* other) {
     std::swap(apk_name_, other->apk_name_);
     std::swap(price_, other->price_);
     std::swap(type_, other->type_);
+    std::swap(package_size_, other->package_size_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
     std::swap(_cached_size_, other->_cached_size_);

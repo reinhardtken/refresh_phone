@@ -109,6 +109,9 @@ void InstallApkListTable::CreateExampleView(View* container) {
 
   columns2.push_back(ui::TableColumn(5, L"操作类型",
     ui::TableColumn::LEFT, 150));
+
+  columns2.push_back(ui::TableColumn(6, L"大小",
+    ui::TableColumn::LEFT, 150));
   
   
 
@@ -146,6 +149,8 @@ void InstallApkListTable::CreateExampleView(View* container) {
   columns.push_back(ui::TableColumn(8, L"结果",
     ui::TableColumn::LEFT, 100));
   columns.push_back(ui::TableColumn(9, L"错误码",
+    ui::TableColumn::LEFT, 200));
+  columns.push_back(ui::TableColumn(10, L"速度",
     ui::TableColumn::LEFT, 200));
 
   table_apk_ir_ = new TableView(&model_apk_ir_, columns, ICON_AND_TEXT, true, true, true);
@@ -239,6 +244,10 @@ string16 InstallApkListTable::GetText(int row, int column_id) {
         }
         break;
       }
+      case 6: {
+        return ASCIIToUTF16(base::DoubleToString(data_[row].package_size)) + L"MB";
+        break;
+      }
       default: {
         //DCHECK(false);
       }
@@ -296,6 +305,10 @@ string16 InstallApkListTable::GetText2(int row, int column_id) {
   }
   case 9: {
     return ASCIIToUTF16(base::IntToString(apk_ir_data_[row].error_code));
+    break;
+  }
+  case 10: {
+    return apk_ir_data_[row].speed;
     break;
   }
   default: {

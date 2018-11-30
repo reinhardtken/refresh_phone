@@ -601,6 +601,13 @@ class OneApk : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 type() const;
   inline void set_type(::google::protobuf::int32 value);
 
+  // required double package_size = 12;
+  inline bool has_package_size() const;
+  inline void clear_package_size();
+  static const int kPackageSizeFieldNumber = 12;
+  inline double package_size() const;
+  inline void set_package_size(double value);
+
   // @@protoc_insertion_point(class_scope:apk.OneApk)
  private:
   inline void set_has_id();
@@ -625,6 +632,8 @@ class OneApk : public ::google::protobuf::Message {
   inline void clear_has_price();
   inline void set_has_type();
   inline void clear_has_type();
+  inline void set_has_package_size();
+  inline void clear_has_package_size();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -638,10 +647,11 @@ class OneApk : public ::google::protobuf::Message {
   ::std::string* create_time_;
   ::std::string* apk_name_;
   double price_;
+  double package_size_;
   ::google::protobuf::int32 type_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(11 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(12 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -2104,6 +2114,28 @@ inline ::google::protobuf::int32 OneApk::type() const {
 inline void OneApk::set_type(::google::protobuf::int32 value) {
   set_has_type();
   type_ = value;
+}
+
+// required double package_size = 12;
+inline bool OneApk::has_package_size() const {
+  return (_has_bits_[0] & 0x00000800u) != 0;
+}
+inline void OneApk::set_has_package_size() {
+  _has_bits_[0] |= 0x00000800u;
+}
+inline void OneApk::clear_has_package_size() {
+  _has_bits_[0] &= ~0x00000800u;
+}
+inline void OneApk::clear_package_size() {
+  package_size_ = 0;
+  clear_has_package_size();
+}
+inline double OneApk::package_size() const {
+  return package_size_;
+}
+inline void OneApk::set_package_size(double value) {
+  set_has_package_size();
+  package_size_ = value;
 }
 
 // -------------------------------------------------------------------

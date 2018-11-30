@@ -178,6 +178,21 @@ def GetFileMD5(filename):
   return myhash.hexdigest()
 
 
+def GetFileSize(filePath):
+  # filePath = unicode(filePath,'utf8')
+  try:
+    if not os.path.isfile(filePath):
+      return 0
+    fsize = os.path.getsize(filePath)
+    fsize = fsize/float(1024*1024)
+    return round(fsize, 2)
+  
+  except Exception as e:
+    return 0
+
+
+
+
 def CreateDir(dir):
   try:
     if not os.path.isdir(dir):

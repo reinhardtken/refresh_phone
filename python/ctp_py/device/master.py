@@ -26,12 +26,20 @@ class Master(object):
     self.last_devices_list = []
     #记录所有已经成功安装的包，除非强制清空，不然不再重复安装
     self.installed_map = {}
+    
+    self.apk_map = {}
 
     self.log = util.log.GetLogger(self.__class__.__name__)
 
     self.thread = threading.Thread(target=self.Work)
     self._continue = True
     self.thread.setDaemon(True)
+    
+    
+  
+  def UpdateApkList(self, data):
+    for one in data:
+      self.apk_map[one.apk_name] = one
     
   
   def _Add(self, serial_number):
@@ -97,6 +105,14 @@ class Master(object):
       if command.info[1] == '完成'.decode('utf-8') and command.info[3] == 'Success'.decode('utf-8'):
         if command.info[0] in self.installed_map:
           self.installed_map[command.info[0]].add(command.info[2])
+
+          # 对于装包命令，在成功的情况下，在此处追加包的大小信息到command中，用于最终测算每秒装包size
+          key = command.info[2][:-4]
+          command.info.append(str(self.apk_map[key].package_size))
+
+          self.queue_out.put(command)
+          return False
+          
   
     return True
 

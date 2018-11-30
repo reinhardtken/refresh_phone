@@ -43,6 +43,7 @@ message OneApk {
   required string apk_name = 9;
   required double price = 10;
   required int32 type = 11;
+  required double package_size = 12;
 };
 
 message ApkList {

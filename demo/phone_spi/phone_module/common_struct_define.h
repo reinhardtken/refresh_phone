@@ -474,6 +474,7 @@ struct ApkIRStatus {
   std::wstring package_name;
   std::wstring percent;
   std::wstring result;
+  std::wstring speed;
   int error_code;
   int time_cost;//秒
   //std::wstring key;
@@ -526,7 +527,7 @@ struct ApkInstallInfo {
   std::wstring name;
   std::wstring brief;
   double price;
-
+  double package_size;
   PACKAGE_TYPE type;
 };
 

@@ -392,6 +392,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   def ProcessGetLocalPackageList(self, command):
     try:
       local_prop = self.LoadLocalProp()
+      
       apk_list = []
       if local_prop is not None:
         for one in local_prop['data']['install']:
@@ -402,6 +403,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           one_apk.apk_name = one['apkname']
           one_apk.price = one['price']
           one_apk.type = CheckUpdateApkList.PACKAGE_BOTH
+          one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['apkname'] + '.apk')
           apk_list.append(one_apk)
 
         for one in local_prop['data']['remove']:
@@ -412,7 +414,11 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           one_apk.apk_name = one['apkname']
           one_apk.price = one['price']
           one_apk.type = CheckUpdateApkList.PACKAGE_REMOVE
+          one_apk.package_size = 0
           apk_list.append(one_apk)
+
+
+        self.device.UpdateApkList(apk_list)
 
         self.SendApkList(command,
                          CheckUpdateApkList.ERROR_CODE_OK, apk_list)
@@ -565,6 +571,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         one_apk.apk_name = one.apk_name
         one_apk.price = one.price
         one_apk.type = one.type
+        one_apk.package_size = one.package_size
 
     self.Send(response)
     
