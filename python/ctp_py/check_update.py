@@ -488,7 +488,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
             new_package_name_set.add(new_one['apkname'])
             
           diff_set = new_package_name_set - old_package_name_set
-            
+          solved_package_name = set()
           for new_one in data['data']['install']:
             for old_one in self.local_prop['data']['install']:
               #1 如果包名在差集合，说明是新增，需要下载
@@ -500,7 +500,8 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
                   (new_one['apkname'] == old_one['apkname'] and new_one['apkmd5'] != old_one['apkmd5']) or \
                         (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) == False):
                 need_save_json = True
-                self.DownloadOneApk(new_one, command)
+                if new_one['apkname'] not in solved_package_name and self.DownloadOneApk(new_one, command):
+                  solved_package_name.add(new_one['apkname'])
 
           
         else:
@@ -656,6 +657,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   
   
   def DownloadOneApk(self, one, command):
+    result = False
     file_path = self.prop['apkPath'] + '/' + one['apkname'] + '.apk'
 
     #检查文件是否存在
@@ -666,7 +668,8 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         os.remove(file_path)
       else:
         self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['apkname']])
-        return
+        result = True
+        return result
 
 
     #开始下载
@@ -686,18 +689,21 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_MD5_APK_FAILED,
                                    ['包更新', CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_MD5_APK_FAILED),
                                     one['apkname']])
-          return
         else:
           self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_OK,
                                    ['包更新',
                                     '下载成功',
                                     one['apkname']])
+          result = True
       
     except Exception as e:
       self.SendCommandProgress(command, CheckUpdateApkList.ERROR_CODE_SAVE_APK_FILE_FAILED,
                                ['包更新',
                                 CheckUpdateApkList.error_string(CheckUpdateApkList.ERROR_CODE_SAVE_APK_FILE_FAILED),
                                 one['apkname']])
+      
+    
+    return result
          
     
     
