@@ -26,5 +26,14 @@ class AdbCommandBase(cmdtool.base.CommandBase):
       self.cmd_stack.append(AdbCommandBase.adb)
     else:
       self.log.error('adb path:  is null')
+      
+      
+  
+  def Execute(self):
+    if 'ANDROID_ADB_SERVER_PORT' in self.global_env:
+      self.log.info('ANDROID_ADB_SERVER_PORT  ' + self.global_env['ANDROID_ADB_SERVER_PORT'])
+    else:
+      self.log.error('ANDROID_ADB_SERVER_PORT  not exist')
+    return super(AdbCommandBase, self).Execute()
   
   

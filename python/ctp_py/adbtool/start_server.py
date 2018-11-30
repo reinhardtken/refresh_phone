@@ -36,12 +36,17 @@ class Command(base.AdbCommandBase):
 
 
   def NormalInit(self, port):
+    self.log.info('NormalInit  ' + str(port))
     self.suggest_port = port
     if self.suggest_port is None:
       self.suggest_port = Command.GenPort()
 
   def ZombieInit(self, ports):
     #在这种情况下，启动server其实已经没有任何意义了
+    self.log.warning('ZombieInit  ')
+    for one in ports:
+      self.log.warning(str(one))
+      
     self.zombie_mode = True
     Command.zombie_ports = ports
     # Command.zombie_ports_index = 0
@@ -60,8 +65,8 @@ class Command(base.AdbCommandBase):
   def Execute(self):
     if self.zombie_mode:
       self.port = self.NextZombiePort()
-      self.log.info('zombie_mode ANDROID_ADB_SERVER_PORT = ' + self.port)
-      base.AdbCommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = self.port
+      self.log.warning('zombie_mode ANDROID_ADB_SERVER_PORT = ' + str(self.port))
+      base.AdbCommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = str(self.port)
       return
     else:
       super(Command, self).Execute()

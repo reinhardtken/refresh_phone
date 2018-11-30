@@ -63,24 +63,33 @@ class Command(base.AdbCommandBase):
     '''
     
     if self.stop_parser == True:
-      return (True, 'Success')
+      #某些手机出现了一个success，后面又跟着failue的情况，猜测第一个是推包成功，第二个是装包失败
+      if 'Failure' in line:
+        error = self.adb_install_failure.search(line).group(1)
+        self.log.warning('Failure after success!!!!')
+        self.log.warning(error)
+        return (False, error)
+      else:
+        return (True, 'Success')
+    
     
     try:
       print(line)
       self.log.info(line)
       if 'error' in line:
         error = self.adb_error_re.search(line).group(1)
-        self.log.info(error)
+        self.log.warning(error)
         return (False, error)
       # if line.startswith('adb: error: '):
       #   return (False, line)
       elif 'Failure' in line:
         error = self.adb_install_failure.search(line).group(1)
-        self.log.info(error)
+        self.log.warning(error)
         return (False, error)
       elif line.startswith('pkg:') and self.package_name in line:
         return (True, 'push over: ')
       elif 'Failed' in line:
+        self.log.warning(line)
         return (False, line)
       else:
         # '[  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk'
