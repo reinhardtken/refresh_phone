@@ -177,11 +177,11 @@ class Proxy(object):
       package_size = util.utility.GetFileSize(apk_path)
       package_name = util.utility.GetPackageNameFromPath(apk_path)
       #目前看，最慢速度是0.5mb/s，所以按这个数值+30s作为超时时长
-      if 'air.tv.douyu' in package_name and self.debug_once and package_size > 30:
-        self.debug_once = False
-        time_max = package_size  - 30
-      else:
-        time_max = package_size * 2 + 30
+      # if 'air.tv.douyu' in package_name and self.debug_once and package_size > 30:
+      #   self.debug_once = False
+      #   time_max = package_size  - 30
+      # else:
+      time_max = package_size * 2 + 30
       self.StartCheckTimeOut(command, time_max)
       response = self.GenCommandResponse(t=self.queue_master, c=command, s=self.serial_number.encode('utf-8'),
                                          p=package_name, time_max=time_max, size=package_size)
