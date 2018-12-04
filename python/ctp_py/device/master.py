@@ -16,6 +16,95 @@ import callback
 import consts
 import pb.apk_protomsg_pb2
 # ====================================
+class OneDevice(object):
+  def __init__(self, queue_master, serial_number):
+    self.log = util.log.GetLogger(self.__class__.__name__)
+    self.log.info('OneDevice ' + serial_number)
+    print("OneDevice.init=======================================")
+    self.queue_master = queue_master
+    self.serial_number = serial_number
+    self.proxy = None
+
+    # 记录所有已经成功安装的包，除非强制清空，不然不再重复安装
+    self.installed_set = set()
+
+    # 记录所有超时的包，超时包会导致后续安装无法进行，除非强制，否转不再重复安装
+    self.installed_timeout_set = set()
+    
+    
+    #当发生过杀线程的事情，min id被设置成杀之前接收命令的最大id，确保如果无法正确杀死线程，也不会被线程后续回复干扰
+    self.min_command_id = 0
+    self.last_command_id = 0
+    
+   
+  def _Start(self):
+    self.proxy.Start()
+      
+      
+  def Stop(self):
+    self.min_command_id = self.last_command_id
+    if self.proxy is not None:
+      self.proxy.Stop()
+      self.proxy.ForceStop()
+      
+  
+  def Destroy(self):
+    self.proxy = None
+      
+      
+  
+  def _Create(self):
+      self.proxy = proxy.Proxy(self.queue_master, self.serial_number)
+      
+      
+  
+  def MaybeCreate(self):
+    if self.proxy is None:
+      self._Create()
+      self._Start()
+    
+      
+      
+  def IsInstalled(self, apk):
+    return apk in self.installed_set
+  
+  
+  def IsTimeOut(self, apk):
+    return apk in self.installed_timeout_set
+  
+  
+  def AddInstalled(self, apk):
+    self.log.info('AddInstalled ' + self.serial_number + ' ' + apk)
+    self.installed_set.add(apk)
+    
+  
+  def AddTimeOut(self, apk):
+    self.log.info('AddTimeOut ' + self.serial_number + ' ' + apk)
+    self.installed_timeout_set.add(apk)
+    
+    
+  def SendCommand(self, command):
+    if self.proxy is not None:
+      self.last_command_id = command.cmd_no
+      self.proxy.SendCommand(command)
+
+
+
+  def ProcessInstallApkResponse(self, command):
+    if command.cmd_no > self.min_command_id:
+      if len(command.info) >= 4:
+        if command.info[1] == '完成'.decode('utf-8') and command.info[3] == 'Success'.decode('utf-8'):
+          self.AddInstalled(command.info[2])
+          
+      return True
+    
+    else:
+      self.log.warning('ProcessInstallApkResponse  the min: %d  the one: %d', self.min_command_id, command.cmd_no)
+  
+
+  
+
+
 class Master(object):
   def __init__(self, queue_out):
     print("Master.init=======================================")
@@ -24,10 +113,16 @@ class Master(object):
     self.devices_map = {}
     # self.last_alive = {}
     self.last_devices_list = []
-    #记录所有已经成功安装的包，除非强制清空，不然不再重复安装
-    self.installed_map = {}
     
-    self.apk_map = {}
+    
+    # self.apk_map = {}
+    
+    
+    
+    
+    
+    #超时map
+    self.last_command_timeout = {}
 
     self.log = util.log.GetLogger(self.__class__.__name__)
 
@@ -37,24 +132,30 @@ class Master(object):
     
     
   
-  def UpdateApkList(self, data):
-    for one in data:
-      self.apk_map[one.apk_name] = one
+  # def UpdateApkList(self, data):
+  #   for one in data:
+  #     self.apk_map[one.apk_name] = one
     
   
   def _Add(self, serial_number):
     if serial_number in self.devices_map:
+      self.devices_map[serial_number].MaybeCreate()
       return self.devices_map[serial_number]
     else:
-      one = proxy.Proxy(self.queue_out, self.queue_in, serial_number)
+      one = OneDevice(self.queue_in, serial_number)
       self.devices_map[serial_number] = one
-      one.Start()
+      one.MaybeCreate()
       return one
+  
   
   def _Remove(self, serial_number):
     if serial_number in self.devices_map:
-      self.devices_map[serial_number].ForceStop()
-      self.devices_map.pop(serial_number)
+      self.devices_map[serial_number].Stop()
+      self.devices_map[serial_number].Destroy()
+      
+  
+  def _Get(self, serial_number):
+    return self.devices_map[serial_number]
       
   
   def ProcessCommand(self, serial_number, command):
@@ -62,22 +163,47 @@ class Master(object):
     self.CheckTimeout()
     
     one = self._Add(serial_number)
-    one.SendCommand(command)
+    if command.cmd == consts.COMMAND_INSTALL_APK:
+      type = command.param[0].encode('utf-8')
+      if 'force' in type:
+        self.log.info('ProcessInstallApk3  force ' + command.cmd)
+        one.SendCommand(command)
+      else:
+        self.log.info('ProcessInstallApk3 ' + command.cmd)
+        apk_path = command.param[1].encode('utf-8')
+        package_name = util.utility.GetPackageNameFromPath(apk_path)
+        if one.IsInstalled(package_name):
+          callback.SendCommandProgress(self.queue_out, command, consts.ERROR_CODE_OK,
+                                              [one.serial_number, '完成', package_name, '已经装过跳过安装', ''])
+        elif one.IsTimeOut(package_name):
+          callback.SendCommandProgress(self.queue_out, command, consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
+                                              [one.serial_number, '完成', package_name, '曾经超时跳过安装', ''])
+        else:
+          one.SendCommand(command)
+    else:
+      one.SendCommand(command)
     
     
   
   def CheckTimeout(self):
-    K_TIMEOUT = 120
+    # K_TIMEOUT = 120
     # 检查所有，干掉超时
-    tmp = self.devices_map.copy()
+    tmp = self.last_command_timeout.copy()
     for k, v in tmp.items():
-      if v.last_command['command'] is not None and time.time() - v.last_command['timestamp'] > K_TIMEOUT:
-        #目前应该只有装包会超时
-        if v.last_command['command'].cmd == 'pyadb_install_apk':
-          package_name = v.last_command['package_name']
-          callback.SendCommandProgress(self. queue_out, v.last_command['command'], consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
-                                 [k.encode('utf-8'), '完成', package_name, '超时', ])
+      if time.time() - tmp[k]['t'] > 0:
+        # 目前应该只有装包会超时
+        if v['c'].cmd == consts.COMMAND_INSTALL_APK:
+          self.last_command_timeout.pop(k)
+          apk_path =v['c'].param[1].encode('utf-8')
+          package_name = util.utility.GetPackageNameFromPath(apk_path)
+          #超时的包，记录超时失败，不再继续
+          self._Get(k).AddTimeOut(package_name)
+          callback.SendCommandProgress(self.queue_out, v['c'],
+                                       consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
+                                       [k.encode('utf-8'), '完成', package_name, '超时', str(tmp[k]['max'])])
+          
         self._Remove(k)
+      
         
         
     
@@ -92,8 +218,6 @@ class Master(object):
       one['model'] = one_device.model
       one['device'] = one_device.device
       self.last_devices_list.append(one)
-      if one_device.serial_no not in self.installed_map:
-        self.installed_map[one_device.serial_no] = set()
       
     
     return True
@@ -101,20 +225,8 @@ class Master(object):
 
 
   def ProcessInstallApkResponse(self, command):
-    if len(command.info)  == 4:
-      if command.info[1] == '完成'.decode('utf-8') and command.info[3] == 'Success'.decode('utf-8'):
-        if command.info[0] in self.installed_map:
-          self.installed_map[command.info[0]].add(command.info[2])
-
-          # 对于装包命令，在成功的情况下，在此处追加包的大小信息到command中，用于最终测算每秒装包size
-          key = command.info[2][:-4]
-          command.info.append(str(self.apk_map[key].package_size))
-
-          self.queue_out.put(command)
-          return False
-          
+    return self._Get(command.info[0]).ProcessInstallApkResponse(command)
   
-    return True
 
   
     
@@ -122,14 +234,38 @@ class Master(object):
     forword = True
     if isinstance(command, pb.apk_protomsg_pb2.DevicesList):
       forword = self.ProcessScanDevicesResponse(command)
-    elif command.cmd == 'pyadb_install_apk':
+    elif isinstance(command, dict):
+      if command['c'] == consts.COMMAND_INNER_START_CHECKOUT_TIMEOUT:
+        forword = self.ProcessStartCheckTimeOut(command)
+      elif command['c'] == consts.COMMAND_INNER_STOP_CHECKOUT_TIMEOUT:
+        forword = self.ProcessStopCheckTimeOut(command)
+    elif command.cmd == consts.COMMAND_INSTALL_APK:
       forword = self.ProcessInstallApkResponse(command)
-      
+    
       
     
-    if forword:
+    if forword is not None and forword == True:
       self.queue_out.put(command)
+      
+      
+  
+  def ProcessStartCheckTimeOut(self, command):
+    serial_number = command['s']
+    self.last_command_timeout[serial_number] = {}
+    self.last_command_timeout[serial_number]['c'] = command['command']
+    self.last_command_timeout[serial_number]['max'] = command['t']
+    self.last_command_timeout[serial_number]['t'] = time.time() + command['t']
     
+    self.log.info('ProcessStartCheckTimeOut ' + serial_number + ' ' + str(command['t']))
+    
+  
+  def ProcessStopCheckTimeOut(self, command):
+    try:
+      serial_number = command['s']
+      self.last_command_timeout.pop(serial_number)
+      self.log.info('ProcessStopCheckTimeOut ' + serial_number)
+    except Exception as e:
+      pass
         
 
   def Start(self):

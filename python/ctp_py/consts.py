@@ -20,6 +20,8 @@ ERROR_CODE_PYADB_INSTALL_APK_FAILED = 11
 
 ERROR_CODE_PYADB_OP_TIMEOUT_FAILED = 12
 
+
+
 ERROR_CODE_UNKNOWN = 100000
 
 ERROR_CODE_STRING = [
@@ -48,3 +50,14 @@ def error_string(code):
     info = '未知错误'
   
   return info
+
+
+
+
+COMMAND_SCAN_DEVICES = 'pyadb_scan_devices'
+COMMAND_INSTALL_APK = 'pyadb_install_apk'
+
+
+#inner
+COMMAND_INNER_START_CHECKOUT_TIMEOUT = 'inner.start_check_timeout'
+COMMAND_INNER_STOP_CHECKOUT_TIMEOUT = 'inner.stop_check_timeout'

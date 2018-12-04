@@ -17,12 +17,12 @@ import pb.apk_protomsg_pb2
 
 
 class CallbackObject():
-  def __init__(self, queue, command, serial_no, apk):
+  def __init__(self, queue, command, serial_no, gen_func):
     self.queue = queue
     self.command = command
     self.serial_no = serial_no
     self.last_progress = 0
-    self.apk = apk
+    self.gen_func = gen_func
   
   def Callback(self, apk, now, total):
     
@@ -30,7 +30,7 @@ class CallbackObject():
     if (progress - self.last_progress) > 0.05 or now == total:
       self.last_progress = progress
       SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
-                               [self.serial_no.encode('utf-8'), apk, str(progress), ])
+                          self.gen_func(progress=str(progress))['info'])
   
   def CallbackSucc(self, progress):
     stage = '进行中'
@@ -39,11 +39,11 @@ class CallbackObject():
     elif progress == 'push over: ':
       stage = '安装中'
     SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
-                                  [self.serial_no.encode('utf-8'), stage, self.apk, progress, ])
+                        self.gen_func(stage=stage, progress=str(progress))['info'])
   
   def CallbackFail(self, progress):
     SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
-                                  [self.serial_no.encode('utf-8'), '完成', self.apk, progress, ])
+                        self.gen_func(stage='完成', progress=str(progress))['info'])
     
     
     

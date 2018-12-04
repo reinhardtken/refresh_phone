@@ -389,13 +389,16 @@ namespace phone_module {
           data->stage = UTF8ToWide(progress->info(1));
           data->package_name = UTF8ToWide(progress->info(2));
           data->percent = UTF8ToWide(progress->info(3));
+
+          base::StringToInt(progress->info(4), &data->time_max);
+          
           data->op = L"全新/覆盖安装";
           if (data->error_code == ERROR_CODE_OK) {
             data->result = L"成功";
             if (data->percent == L"Success") {
               LOG(INFO) << "apk.CommandProgress succ  "<< data->package_name<<" "<< data->time_cost;
               double package_size;
-              base::StringToDouble(progress->info(4), &package_size);
+              base::StringToDouble(progress->info(5), &package_size);
               data->speed = base::StringPrintf(L"%0.2f MB/秒", package_size / data->time_cost);
             }
           } else {

@@ -69,6 +69,7 @@ def test_down():
 
 
 if __name__ == '__main__':
+  md5 = util.utility.GetFileMD5(r'C:\workspace\code\chromium24\src\build\out\adb\adb.exe')
   test_psutil()
   line = '* daemon not running. starting it now at tcp:5038 *'
   re_port = re.compile(r'^[\*\.: A-Za-z]*([0-9]*) \*$')
