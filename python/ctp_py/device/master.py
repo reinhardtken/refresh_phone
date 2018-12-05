@@ -36,7 +36,12 @@ class OneDevice(object):
     #当发生过杀线程的事情，min id被设置成杀之前接收命令的最大id，确保如果无法正确杀死线程，也不会被线程后续回复干扰
     self.min_command_id = 0
     self.last_command_id = 0
+
+    self.package_list = []
+    self.package_set = set()
     
+   
+   
    
   def _Start(self):
     self.proxy.Start()

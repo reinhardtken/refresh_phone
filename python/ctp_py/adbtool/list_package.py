@@ -13,10 +13,11 @@ class Command(base.AdbCommandBase):
   cmd = 'shell pm list packages'
   re_package = re.compile(r'package:(.*)')
   
-  def __init__(self, callback_exit):
+  def __init__(self, serial_no, callback_exit):
     super(Command, self).__init__(None, None, self._callback_wrapper)
     self.log = util.log.GetLogger(self.__class__.__name__)
-    
+
+    self.serial_no = serial_no
     self.step = 0
     self.package_list = []
     self.my_callback_exit = callback_exit
@@ -29,8 +30,16 @@ class Command(base.AdbCommandBase):
         pass
   
   def _BuildCmd(self):
+    self.cmd_stack.append(self._BuildSerialNo())
     self.cmd_stack.append(Command.cmd)
     return super(Command, self)._BuildCmd()
+  
+  
+  def _BuildSerialNo(self):
+    if self.serial_no is not None:
+      return ' -s {} '.format(self.serial_no)
+    else:
+      return ''
   
   def Parser(self, line):
     '''

@@ -111,10 +111,15 @@ class Command(base.AdbCommandBase):
   
   def Parser(self, line):
     '''
-    * daemon not running. starting it now at tcp:5038 *
-    * daemon started successfully *
-    my pc:
-    '* daemon not running. starting it now on port 5038 *'
+    1.0.39
+     * daemon not running. starting it now at tcp:5038 *
+     * daemon started successfully *
+      1.0.32
+     '* daemon not running. starting it now on port 5038 *'
+    1.0.40
+    * daemon not running; starting now at tcp:5678
+    * daemon started successfully
+
     '''
     try:
       print(line)

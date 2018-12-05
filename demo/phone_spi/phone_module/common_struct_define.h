@@ -3,7 +3,7 @@
 #include <list>
 
 #include "base/time.h"
-
+#include "base/string_number_conversions.h"
 #include "../ctp_api/ThostFtdcTraderApi.h"
 
 
@@ -478,18 +478,16 @@ struct ApkIRStatus {
   int error_code;
   int time_cost;//秒
   int time_max;//秒
-  //std::wstring key;
+  std::wstring key;
   int command_id;
-  //std::wstring get_key() {
-  //  if (key.size() == 0) {
-  //    key = serial_no + L"-" + package_name;
-  //  }
-  //  return key;
-  //}
-
-  int get_key() {
-    return command_id;
+  std::wstring get_key() {
+    if (key.size() == 0) {
+      key = serial_no + L"-" + base::IntToString16(command_id);
+    }
+    return key;
   }
+
+
 };
 
 

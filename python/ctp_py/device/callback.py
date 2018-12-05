@@ -60,11 +60,11 @@ class CallbackUninstallObject():
     if progress == 'Success':
       stage = '完成删除老包'
     SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
-                        self.gen_func(stage=stage, progress=str(progress))['info'])
+                        self.gen_func(stage=stage)['info'])
   
   def CallbackFail(self, progress):
     SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
-                        self.gen_func(stage='删除老包失败', progress=str(progress))['info'])
+                        self.gen_func(stage='删除老包失败')['info'])
     
     
     

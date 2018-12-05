@@ -1,3 +1,5 @@
+#-*- coding: UTF-8 -*-
+
 import datetime
 import time
 import json
@@ -5,6 +7,7 @@ import uuid
 import os
 import os.path
 import hashlib
+import platform
 #// The internal representation of Time uses FILETIME, whose epoch is 1601-01-01
 #// 00:00:00 UTC.  ((1970-1601)*365+89)*24*60*60*1000*1000, where 89 is the
 #// number of leap year days between 1601 and 1970: (1970-1601)/4 excluding
@@ -394,6 +397,19 @@ def Traversal(base_dir, action, ext):
         action(parent, filename)
 
 
+def isXP():
+  try:
+    version = platform.version()
+    if version.startswith('5'):
+      return True
+    
+    return False
+  except Exception as e:
+    #搞不清楚的时候，就默认低版本拉倒
+    return True
+
+
+XP = isXP()
 #=======================================================
 if __name__ == '__main__':
   print('<=============(__main__ utility.py)==================>')

@@ -1,5 +1,7 @@
-import os
+#-*- coding: UTF-8 -*-
 
+import os
+import util.utility
 #===========================================
 __MQ_PORT = 6788
 __TU_PORT = 6789
@@ -110,11 +112,18 @@ def ServerTest():
 
 def CreateProp(msg):
   prop = {}
+  
   prop['apkPath'] = msg.param[0] + '\\ctp_data\\apk'
   prop['localPath'] = msg.param[0] + '\\ctp_data\\apk_local'
   prop['logPath'] = msg.param[0] + '\\ctp_data\\log'
   prop['debugPath'] = msg.param[0] + '\\ctp_data\\log'
-  prop['adb_exe'] = msg.param[0] + '\\adb\\adb.exe'
+
+  # 判断操作系统版本，根据版本选择adb版本
+  if util.utility.XP:
+    prop['adb_exe'] = msg.param[0] + '\\adb_1.0.32\\adb.exe'
+  else:
+    prop['adb_exe'] = msg.param[0] + '\\adb_1.0.39\\adb.exe'
+  
   return prop
 
 

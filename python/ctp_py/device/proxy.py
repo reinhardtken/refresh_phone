@@ -301,7 +301,7 @@ class Proxy(object):
     
     
       self.log.info('before ProcessGetPackageList ')
-      worker = adbtool.list_package.Command(Callback)
+      worker = adbtool.list_package.Command(self.serial_number, Callback)
       worker.Execute()
     
       self.log.info('end ProcessGetPackageList')
