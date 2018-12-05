@@ -12,14 +12,20 @@ import base
 class Command(base.AdbCommandBase):
   
   def __init__(self, serial_no, package_name, apk, callback_succ, callback_fail):
-    super(Command, self).__init__(callback_succ, callback_fail)
+    super(Command, self).__init__(callback_succ, callback_fail, self.CallbackExit)
     self.log = util.log.GetLogger(self.__class__.__name__)
     self.serial_no = serial_no
     self.apk = apk
     self.package_name = package_name
+    
+    self.callback_succ = callback_succ
+    self.callback_fail = callback_fail
 
     # 接收到某条信息后，就认为后续信息无意义，不再解析避免干扰
     self.stop_parser = False
+    #1.0.39版本的adb，再小米等多个手机上，没有任何返回结果
+    #简单的设计为如果没有明确返回错误，同时退出值为0，则认为成功
+    self.happend_error = False
   
   def _BuildCmd(self):
     self.cmd_stack.append(self._BuildSerialNo())
@@ -34,6 +40,19 @@ class Command(base.AdbCommandBase):
   
   def _BuildInstall(self):
     return ' install -r {}'.format(self.apk)
+  
+  
+  def CallbackExit(self, exitcode):
+    #正常不需要这个函数回报数据
+    if self.stop_parser is False:
+      try:
+        if exitcode == 0 and self.happend_error is False and self.callback_succ is not None:
+           self.callback_succ('Success')
+        elif self.callback_fail is not None:
+          self.callback_fail('错误码 ： ' + str(exitcode))
+      except Exception as e:
+        pass
+      pass
   
   # 这块后面可能需要根据不同手机设置parser
   # 可以通过装完后枚举package list的方式来判断是不是装成功了
@@ -60,6 +79,10 @@ class Command(base.AdbCommandBase):
   拔线：Failed to install
 
   包无效：Invalid APK file: H:\refresh_phone_out_1.0.0.3\ctp_data\apk\com.youku.phone.apk
+  
+  签名无法通过
+  Failed to install C:\workspace\code\chromium24\src\build\Release\ctp_data\apk\com.taobao.trip.apk:
+  Failure [INSTALL_PARSE_FAILED_NO_CERTIFICATES: Failed to collect certificates from /data/app/vmdl617260616.tmp/base.apk using APK Signature Scheme v2: SHA-256 digest of contents did not verify]
     '''
     
     if self.stop_parser == True:
@@ -79,17 +102,20 @@ class Command(base.AdbCommandBase):
       if 'error' in line:
         error = self.adb_error_re.search(line).group(1)
         self.log.warning(error)
+        self.happend_error = True
         return (False, error)
       # if line.startswith('adb: error: '):
       #   return (False, line)
       elif 'Failure' in line:
         error = self.adb_install_failure.search(line).group(1)
         self.log.warning(error)
+        self.happend_error = True
         return (False, error)
       elif line.startswith('pkg:') and self.package_name in line:
         return (True, 'push over: ')
       elif 'Failed' in line:
         self.log.warning(line)
+        self.happend_error = True
         return (False, line)
       else:
         # '[  0%] /data/local/tmp/com.tencent.android.qqdownloader.apk'
@@ -106,4 +132,5 @@ class Command(base.AdbCommandBase):
       exstr = traceback.format_exc()
       print(exstr)
       self.log.info(exstr)
+      self.happend_error = True
       return (False, e)

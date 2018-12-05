@@ -675,6 +675,10 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           result = True
       
     except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      self.log.info(exstr)
+      
       self.SendCommandProgress(command, consts.ERROR_CODE_SAVE_APK_FILE_FAILED,
                                ['包更新',
                                 consts.error_string(consts.ERROR_CODE_SAVE_APK_FILE_FAILED),

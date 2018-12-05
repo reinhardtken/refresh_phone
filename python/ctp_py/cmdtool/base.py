@@ -20,10 +20,10 @@ class CommandBase(object):
   def __init__(self, callback_succ=None, callback_fail=None, callback_exit=None, callback_exception=None):
     self.log = util.log.GetLogger(self.__class__.__name__)
     
-    self.callback_succ = callback_succ
-    self.callback_fail = callback_fail
-    self.callback_exit = callback_exit
-    self.callback_exception = callback_exception
+    self.__callback_succ = callback_succ
+    self.__callback_fail = callback_fail
+    self.__callback_exit = callback_exit
+    self.__callback_exception = callback_exception
     self.cmd_stack = []
     self.env = None
     self.use_global_env = True
@@ -39,30 +39,30 @@ class CommandBase(object):
   
   
   def CallbackSucc(self, content):
-    if self.callback_succ is not None:
+    if self.__callback_succ is not None:
       try:
-        self.callback_succ(content)
+        self.__callback_succ(content)
       except Exception as e:
         pass
   
   def CallbackFail(self, content):
-    if self.callback_fail is not None:
+    if self.__callback_fail is not None:
       try:
-        self.callback_fail(content)
+        self.__callback_fail(content)
       except Exception as e:
         pass
   
   def CallbackExit(self, code):
-    if self.callback_exit is not None:
+    if self.__callback_exit is not None:
       try:
-        self.callback_exit(code)
+        self.__callback_exit(code)
       except Exception as e:
         pass
   
   def CallbackException(self, e):
-    if self.callback_exception is not None:
+    if self.__callback_exception is not None:
       try:
-        self.callback_exception(e)
+        self.__callback_exception(e)
       except Exception as e:
         pass
   

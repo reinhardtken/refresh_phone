@@ -123,6 +123,8 @@ def CreateProp(msg):
     prop['adb_exe'] = msg.param[0] + '\\adb_1.0.32\\adb.exe'
   else:
     prop['adb_exe'] = msg.param[0] + '\\adb_1.0.39\\adb.exe'
+
+  # prop['adb_exe'] = msg.param[0] + '\\adb_1.0.32\\adb.exe'
   
   return prop
 
