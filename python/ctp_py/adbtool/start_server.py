@@ -122,15 +122,19 @@ class Command(base.AdbCommandBase):
 
     '''
     try:
-      print(line)
-      self.log.info(line)
-      if 'daemon not running' in line:
-        self.port = int(self.re_port.search(line).group(1))
-        return (True, self.port)
-      elif 'daemon started successfully' in line:
-        return (True, base.AdbCommandBase.SUCCESS)
+      if len(line):
+        print(line)
+        self.log.info(line)
+        if 'daemon not running' in line:
+          self.port = int(self.re_port.search(line).group(1))
+          return (True, self.port)
+        elif 'daemon started successfully' in line:
+          return (True, base.AdbCommandBase.SUCCESS)
+        else:
+          return (False, line)
       
-      return (False, None)
+      #返回空串不认为是错误
+      return (True, None)
     except Exception as e:
       exstr = traceback.format_exc()
       print(exstr)

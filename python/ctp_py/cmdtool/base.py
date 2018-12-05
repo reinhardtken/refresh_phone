@@ -117,6 +117,7 @@ class CommandBase(object):
           self.CallbackSucc(content)
         else:
           self.CallbackFail(content)
+          self.log.warning('CommandBase kill happen: ' + cmd)
           p.kill()
           break
 
