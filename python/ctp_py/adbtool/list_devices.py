@@ -43,25 +43,25 @@ class Command(base.AdbCommandBase):
       print(line)
       self.log.info(line)
       
-    if 'error' in line:
-      error = self.adb_error_re.search(line).group(1)
-      return (False, error)
-    # if line.startswith('adb: error: '):
-    #   return (False, line)
-    elif 'List of devices attached' in line:
-      self.step = 1
-    elif self.step == 1:
-      one_device = {}
-      first_space = line.find(' ')
-      if first_space != -1:
-        one_device['serial_no'] = line[:first_space]
-        rest = line[first_space:].strip()
-        part = rest.split(' ')
-        if len(part) >= 4:
-          one_device['product'] = part[1].split(':')[1]
-          one_device['model'] = part[2].split(':')[1]
-          one_device['device'] = part[3].split(':')[1]
-          self.devices_list.append(one_device)
-          return (True, None)
+      if 'error' in line:
+        error = self.adb_error_re.search(line).group(1)
+        return (False, error)
+      # if line.startswith('adb: error: '):
+      #   return (False, line)
+      elif 'List of devices attached' in line:
+        self.step = 1
+      elif self.step == 1:
+        one_device = {}
+        first_space = line.find(' ')
+        if first_space != -1:
+          one_device['serial_no'] = line[:first_space]
+          rest = line[first_space:].strip()
+          part = rest.split(' ')
+          if len(part) >= 4:
+            one_device['product'] = part[1].split(':')[1]
+            one_device['model'] = part[2].split(':')[1]
+            one_device['device'] = part[3].split(':')[1]
+            self.devices_list.append(one_device)
+            return (True, None)
     
     return (True, None)

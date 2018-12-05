@@ -36,36 +36,36 @@ import device.callback
 #=======================================================
 
 
-class CallbackObject():
-  def __init__(self, host, command, serial_no, apk):
-    self.host = host
-    self.command = command
-    self.serial_no = serial_no
-    self.last_progress = 0
-    self.apk = apk
-  
-  def Callback(self, apk, now, total):
-    
-    progress = float(now) / total
-    if (progress - self.last_progress) > 0.05 or now == total:
-      self.last_progress = progress
-      self.SendCommandProgress(self.command, consts.ERROR_CODE_OK,
-                               [self.serial_no.encode('utf-8'), apk, str(progress), ])
-
-      
-  def CallbackSucc(self, progress):
-    stage = '进行中'
-    if progress == 'Success':
-      stage = '完成'
-    elif progress == 'push over: ':
-      stage = '安装中'
-    self.host.SendCommandProgress(self.command, consts.ERROR_CODE_OK,
-                             [self.serial_no.encode('utf-8'), stage, self.apk, progress, ])
-    
-  
-  def CallbackFail(self, progress):
-    self.host.SendCommandProgress(self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
-                                  [self.serial_no.encode('utf-8'), '完成', self.apk, progress, ])
+# class CallbackObject():
+#   def __init__(self, host, command, serial_no, apk):
+#     self.host = host
+#     self.command = command
+#     self.serial_no = serial_no
+#     self.last_progress = 0
+#     self.apk = apk
+#
+#   def Callback(self, apk, now, total):
+#
+#     progress = float(now) / total
+#     if (progress - self.last_progress) > 0.05 or now == total:
+#       self.last_progress = progress
+#       self.SendCommandProgress(self.command, consts.ERROR_CODE_OK,
+#                                [self.serial_no.encode('utf-8'), apk, str(progress), ])
+#
+#
+#   def CallbackSucc(self, progress):
+#     stage = '进行中'
+#     if progress == 'Success':
+#       stage = '完成'
+#     elif progress == 'push over: ':
+#       stage = '安装中'
+#     self.host.SendCommandProgress(self.command, consts.ERROR_CODE_OK,
+#                              [self.serial_no.encode('utf-8'), stage, self.apk, progress, ])
+#
+#
+#   def CallbackFail(self, progress):
+#     self.host.SendCommandProgress(self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
+#                                   [self.serial_no.encode('utf-8'), '完成', self.apk, progress, ])
       
 
 
@@ -228,6 +228,8 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.ProcessInstallApk3(msg)
         elif msg.cmd == consts.COMMAND_SCAN_DEVICES:
           self.ProcessScanDevices3(msg)
+        elif msg.cmd == consts.COMMAND_GET_PACKAGE_LIST:
+          self.ProcessGetPackageList(msg)
 
 
 
@@ -265,37 +267,34 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   def ProcessScanDevices3(self, command):
     self.device.ProcessCommand('-', command)
     
+    
+  
+  def ProcessGetPackageList(self, command):
+    # 此处有并发隐患
+    for one in self.device.last_devices_list:
+      self.device.ProcessCommand(one['serial_no'], command)
 
   
     
 
    
-  def ProcessScanDevices(self, command):
-    succ, device_list = self.device.ListDevices()
-    if succ:
-      out = []
-      for one in device_list:
-        device = {}
-        device['serial_no'] = one
-        out.append(device)
-        
-      self.SendDevicesList(command, consts.ERROR_CODE_OK, out)
-    else:
-      #self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
-      pass
-      
+  # def ProcessScanDevices(self, command):
+  #   succ, device_list = self.device.ListDevices()
+  #   if succ:
+  #     out = []
+  #     for one in device_list:
+  #       device = {}
+  #       device['serial_no'] = one
+  #       out.append(device)
+  #
+  #     self.SendDevicesList(command, consts.ERROR_CODE_OK, out)
+  #   else:
+  #     #self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
+  #     pass
 
 
-  def GetPackageNameFromPath(self, apk):
-    index = apk.rfind('\\')
-    if index != -1:
-      return apk[index + 1:]
-    else:
-      index = apk.rfind('/')
-      if index != -1:
-        return apk[index + 1:]
 
-    return ''
+
 
 
   def ProcessInstallApk3(self, command):
@@ -306,65 +305,65 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       
       
 
-  def ProcessInstallApk2(self, command):
-    try:
-      apk_path = command.param[1].encode('utf-8')
-      package_name = self.GetPackageNameFromPath(apk_path)
-
-      if command.param[0].encode('utf-8') == 'all':
-        if self.last_devices_list is not None:
-          for one in self.last_devices_list:
-
-            callback = CallbackObject(self, command, one['serial_no'], package_name)
-            install = adbtool.install.Command(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
-
-            self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
-            self.SendCommandProgress(command, consts.ERROR_CODE_OK,
-                                          [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
-
-            install.Execute()
-
-            self.log.info('end ProcessInstallApk2')
-
-      elif command.param[0].encode('utf-8') == 'first':
-        #apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
-        if self.last_devices_list is not None:
-          for one in self.last_devices_list:
-            callback = CallbackObject(self, command, one['serial_no'], package_name)
-            install = adbtool.install.Command(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
-            self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
-            self.SendCommandProgress(command, consts.ERROR_CODE_OK,
-                                     [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
-            install.Execute()
-            self.log.info('end ProcessInstallApk2')
-            break
-      else:
-        pass
-
-    except Exception as e:
-      pass
+  # def ProcessInstallApk2(self, command):
+  #   try:
+  #     apk_path = command.param[1].encode('utf-8')
+  #     package_name = self.GetPackageNameFromPath(apk_path)
+  #
+  #     if command.param[0].encode('utf-8') == 'all':
+  #       if self.last_devices_list is not None:
+  #         for one in self.last_devices_list:
+  #
+  #           callback = CallbackObject(self, command, one['serial_no'], package_name)
+  #           install = adbtool.install.Command(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
+  #
+  #           self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
+  #           self.SendCommandProgress(command, consts.ERROR_CODE_OK,
+  #                                         [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
+  #
+  #           install.Execute()
+  #
+  #           self.log.info('end ProcessInstallApk2')
+  #
+  #     elif command.param[0].encode('utf-8') == 'first':
+  #       #apk = r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\apk\com.tencent.android.qqdownloader.apk'
+  #       if self.last_devices_list is not None:
+  #         for one in self.last_devices_list:
+  #           callback = CallbackObject(self, command, one['serial_no'], package_name)
+  #           install = adbtool.install.Command(one['serial_no'], package_name, apk_path, callback.CallbackSucc, callback.CallbackFail)
+  #           self.log.info('before ProcessInstallApk2 ' + one['serial_no'] + ' : ' + apk_path)
+  #           self.SendCommandProgress(command, consts.ERROR_CODE_OK,
+  #                                    [one['serial_no'].encode('utf-8'), '开始', package_name, '', ])
+  #           install.Execute()
+  #           self.log.info('end ProcessInstallApk2')
+  #           break
+  #     else:
+  #       pass
+  #
+  #   except Exception as e:
+  #     pass
     
 
-  def ProcessInstallApk(self, command):
-    try:
-      if command.param[0] == 'all':
-        succ, device_list = self.device.ListDevices()
-        if succ:
-          for one in device_list:
-            self.device.ConnectDevice(one)
-            callback = CallbackObject(command, one)
-            self.device.Install(command.param[1], callback.Callback)
-      elif command.param[0] == 'default':
-        self.device.ConnectDevice()
-        callback = CallbackObject(command, 'default')
-        self.device.Install(command.param[1], callback.Callback)
-      else:
-        self.device.ConnectDevice(command.param[0])
-        callback = CallbackObject(command, command.param[0])
-        self.device.Install(command.param[1], callback.Callback)
-
-    except Exception as e:
-      pass
+  # def ProcessInstallApk(self, command):
+  #   try:
+  #     if command.param[0] == 'all':
+  #       succ, device_list = self.device.ListDevices()
+  #       if succ:
+  #         for one in device_list:
+  #           self.device.ConnectDevice(one)
+  #           callback = CallbackObject(command, one)
+  #           self.device.Install(command.param[1], callback.Callback)
+  #     elif command.param[0] == 'default':
+  #       self.device.ConnectDevice()
+  #       callback = CallbackObject(command, 'default')
+  #       self.device.Install(command.param[1], callback.Callback)
+  #     else:
+  #       self.device.ConnectDevice(command.param[0])
+  #       callback = CallbackObject(command, command.param[0])
+  #       self.device.Install(command.param[1], callback.Callback)
+  #
+  #   except Exception as e:
+  #     pass
 
 
 

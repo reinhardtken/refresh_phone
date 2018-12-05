@@ -8,6 +8,7 @@ import asyncore
 import logging
 import socket
 import time
+from collections import deque
 # ====================================
 
 import proxy
@@ -103,8 +104,58 @@ class OneDevice(object):
   
 
   
+  def ProcessPackageListResponse(self, command):
+    self.package_list = command['package_list']
+    self.package_set = set(self.package_list)
+    self.log.info(self.serial_number + ' package list:')
+    for one in self.package_list:
+      self.log.info(one)
+      
+      
+      
+  def IsInPackageList(self, package):
+    return package in self.package_set
+  
+  
+  
+  def TriggerProcessPackageList(self):
+    pass
+    # MIN_INTERVAL = 5 * 60
+    # if len(self.package_list) == 0:
+    #   self.ProcessPackageList()
+    # elif self.last_get_package_list is None or time.time() - self.last_get_package_list > MIN_INTERVAL:
+    #   self.ProcessPackageList()
 
 
+  def ProcessInstallApk(self, command):
+    type = command.param[0].encode('utf-8')
+    apk_path = command.param[1].encode('utf-8')
+    package_name = util.utility.GetPackageNameNoApkExt(apk_path)
+
+    if package_name in self.package_set:
+      self.log.info('ProcessInstallApk delete first')
+      command.param.append(consts.INSTALL_TYPE_DELTE_FIRST.decode('utf-8'))
+    else:
+      self.log.info('ProcessInstallApk new install')
+      command.param.append(consts.INSTALL_TYPE_JUST_INSTALL.decode('utf-8'))
+  
+    if 'force' in type:
+      self.log.info('ProcessInstallApk  force ' + command.cmd)
+      self.SendCommand(command)
+    else:
+      self.log.info('ProcessInstallApk ' + command.cmd)
+    
+      if self.IsInstalled(package_name):
+        callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
+                                     [self.serial_number, '完成', package_name, '已经装过跳过安装', ''])
+      elif self.IsTimeOut(package_name):
+        callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
+                                     [self.serial_number, '完成', package_name, '曾经超时跳过安装', ''])
+      else:
+        self.SendCommand(command)
+        
+    
+#########################################################
 class Master(object):
   def __init__(self, queue_out):
     print("Master.init=======================================")
@@ -113,6 +164,8 @@ class Master(object):
     self.devices_map = {}
     # self.last_alive = {}
     self.last_devices_list = []
+    
+    self.pending_task_list = deque()
     
     
     # self.apk_map = {}
@@ -164,22 +217,7 @@ class Master(object):
     
     one = self._Add(serial_number)
     if command.cmd == consts.COMMAND_INSTALL_APK:
-      type = command.param[0].encode('utf-8')
-      if 'force' in type:
-        self.log.info('ProcessInstallApk3  force ' + command.cmd)
-        one.SendCommand(command)
-      else:
-        self.log.info('ProcessInstallApk3 ' + command.cmd)
-        apk_path = command.param[1].encode('utf-8')
-        package_name = util.utility.GetPackageNameFromPath(apk_path)
-        if one.IsInstalled(package_name):
-          callback.SendCommandProgress(self.queue_out, command, consts.ERROR_CODE_OK,
-                                              [one.serial_number, '完成', package_name, '已经装过跳过安装', ''])
-        elif one.IsTimeOut(package_name):
-          callback.SendCommandProgress(self.queue_out, command, consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
-                                              [one.serial_number, '完成', package_name, '曾经超时跳过安装', ''])
-        else:
-          one.SendCommand(command)
+      one.ProcessInstallApk(command)
     else:
       one.SendCommand(command)
     
@@ -195,7 +233,7 @@ class Master(object):
         if v['c'].cmd == consts.COMMAND_INSTALL_APK:
           self.last_command_timeout.pop(k)
           apk_path =v['c'].param[1].encode('utf-8')
-          package_name = util.utility.GetPackageNameFromPath(apk_path)
+          package_name = util.utility.GetPackageNameNoApkExt(apk_path)
           #超时的包，记录超时失败，不再继续
           self._Get(k).AddTimeOut(package_name)
           callback.SendCommandProgress(self.queue_out, v['c'],
@@ -219,6 +257,13 @@ class Master(object):
       one['device'] = one_device.device
       self.last_devices_list.append(one)
       
+      
+    
+    #对于所有手机，枚举已经安装的包
+    for one in self.last_devices_list:
+      d = self._Add(one['serial_no'])
+      d.TriggerProcessPackageList()
+      
     
     return True
 
@@ -239,6 +284,8 @@ class Master(object):
         forword = self.ProcessStartCheckTimeOut(command)
       elif command['c'] == consts.COMMAND_INNER_STOP_CHECKOUT_TIMEOUT:
         forword = self.ProcessStopCheckTimeOut(command)
+      elif command['c'] == consts.COMMAND_INNER_PACKAGE_LIST:
+        forword = self.ProcessPackageListResponse(command)
     elif command.cmd == consts.COMMAND_INSTALL_APK:
       forword = self.ProcessInstallApkResponse(command)
     
@@ -257,6 +304,13 @@ class Master(object):
     self.last_command_timeout[serial_number]['t'] = time.time() + command['t']
     
     self.log.info('ProcessStartCheckTimeOut ' + serial_number + ' ' + str(command['t']))
+    
+    
+    
+  def ProcessPackageListResponse(self, command):
+    serial_number = command['s']
+    return self._Get(serial_number).ProcessPackageListResponse(command)
+    pass
     
   
   def ProcessStopCheckTimeOut(self, command):
@@ -283,11 +337,18 @@ class Master(object):
     while self._continue:
       self.DealWithIncomeQueue()
       self.CheckTimeout()
+      self.CheckPendingTask()
       time.sleep(1)
   
   def Join(self):
     self.thread.join()
-
+    
+    
+  
+  def CheckPendingTask(self):
+    while len(self.pending_task_list):
+      if self.pending_task_list[0][0] < time.time():
+        pass
 
 # ======================================
 if __name__ == '__main__':

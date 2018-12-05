@@ -16,7 +16,7 @@ import util.utility
 import pb.apk_protomsg_pb2
 
 
-class CallbackObject():
+class CallbackInstallObject():
   def __init__(self, queue, command, serial_no, gen_func):
     self.queue = queue
     self.command = command
@@ -44,6 +44,27 @@ class CallbackObject():
   def CallbackFail(self, progress):
     SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
                         self.gen_func(stage='完成', progress=str(progress))['info'])
+
+
+class CallbackUninstallObject():
+  def __init__(self, queue, command, serial_no, gen_func):
+    self.queue = queue
+    self.command = command
+    self.serial_no = serial_no
+    self.last_progress = 0
+    self.gen_func = gen_func
+  
+  
+  def CallbackSucc(self, progress):
+    stage = '进行中'
+    if progress == 'Success':
+      stage = '完成删除老包'
+    SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
+                        self.gen_func(stage=stage, progress=str(progress))['info'])
+  
+  def CallbackFail(self, progress):
+    SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
+                        self.gen_func(stage='删除老包失败', progress=str(progress))['info'])
     
     
     

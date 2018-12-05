@@ -213,7 +213,7 @@ def RemoveDir(dir):
 
 
 
-def GetPackageNameFromPath(apk):
+def _GetPackageNameFromPath(apk):
   index = apk.rfind('\\')
   if index != -1:
     return apk[index + 1:]
@@ -223,6 +223,19 @@ def GetPackageNameFromPath(apk):
       return apk[index + 1:]
 
   return ''
+
+
+
+  #'''xxx.apk return xxx'''
+def GetPackageNameNoApkExt(apk):
+  try:
+    apk = _GetPackageNameFromPath(apk)
+    return apk[:-4]
+  except Exception as e:
+    pass
+
+  return ''
+
 #==============================================================
 def SomeDayStartLine(type, microSeconds):
   microSecondsFrom1970 = microSeconds - __kTimeTToMicrosecondsOffse

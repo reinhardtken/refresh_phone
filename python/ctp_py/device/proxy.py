@@ -18,6 +18,8 @@ import ctypes
 
 import consts
 import adbtool.list_devices
+import adbtool.list_package
+import adbtool.uninstall
 import callback
 
 import util.log
@@ -103,6 +105,8 @@ class Proxy(object):
       self.ProcessScanDevices(command)
     elif command.cmd == consts.COMMAND_INSTALL_APK:
       self.ProcessInstallApk(command)
+    elif command.cmd == consts.COMMAND_GET_PACKAGE_LIST:
+      self.ProcessGetPackageList(command)
     
     self.AfterCommand(command)
   
@@ -175,7 +179,8 @@ class Proxy(object):
     if command.cmd == consts.COMMAND_INSTALL_APK:
       apk_path = command.param[1].encode('utf-8')
       package_size = util.utility.GetFileSize(apk_path)
-      package_name = util.utility.GetPackageNameFromPath(apk_path)
+      package_name = util.utility.GetPackageNameNoApkExt(apk_path)
+      op = command.param[2].encode('utf-8')
       #目前看，最慢速度是0.5mb/s，所以按这个数值+30s作为超时时长
       # if 'air.tv.douyu' in package_name and self.debug_once and package_size > 30:
       #   self.debug_once = False
@@ -184,7 +189,7 @@ class Proxy(object):
       time_max = package_size * 2 + 30
       self.StartCheckTimeOut(command, time_max)
       response = self.GenCommandResponse(t=self.queue_master, c=command, s=self.serial_number.encode('utf-8'),
-                                         p=package_name, time_max=time_max, size=package_size)
+                                         p=package_name, time_max=time_max, size=package_size, op=op)
       callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
                                    response['info'])
       pass
@@ -201,7 +206,7 @@ class Proxy(object):
   
   
   def GenCommandResponse(self, t=None, c=None, err=None, s=None, stage=None, p=None, progress=None, time_max=None,
-                         size=None):
+                         size=None, op=None):
     
     if t is not None:
       self.current_response['target'] = t
@@ -231,6 +236,9 @@ class Proxy(object):
     if size is not None:
       self.current_response['info'][5] = str(size)
       
+    if op is not None:
+      self.current_response['info'][6] = str(op)
+      
     
     return self.current_response
   
@@ -240,7 +248,12 @@ class Proxy(object):
     try:
       
       apk_path = command.param[1].encode('utf-8')
-      package_name = util.utility.GetPackageNameFromPath(apk_path)
+      package_name = util.utility.GetPackageNameNoApkExt(apk_path)
+      op = command.param[2].encode('utf-8')
+      if op == consts.INSTALL_TYPE_DELTE_FIRST:
+        #先要做删除操作
+        self.ProcessUninstallApk(command)
+      
       # self.last_command['package_name'] = package_name
       self.log.info(self)
       self.log.info('command ' + command.cmd)
@@ -249,7 +262,7 @@ class Proxy(object):
       self.log.info('command package_name ' + package_name)
       
 
-      cb = callback.CallbackObject(self.queue_master, command, self.serial_number, self.GenCommandResponse)
+      cb = callback.CallbackInstallObject(self.queue_master, command, self.serial_number, self.GenCommandResponse)
       install = adbtool.install.Command(self.serial_number, package_name, apk_path, cb.CallbackSucc,
                                         cb.CallbackFail)
 
@@ -271,6 +284,60 @@ class Proxy(object):
 
 
 
+  def ProcessGetPackageList(self, command):
+    try:
+
+      self.log.info(self)
+      self.log.info('command ' + command.cmd)
+      self.log.info('command id ' + str(command.cmd_no))
+      
+
+      def Callback(data):
+        out = {}
+        out['c'] = consts.COMMAND_INNER_PACKAGE_LIST
+        out['s'] = self.serial_number
+        out['package_list'] = data
+        self.queue_master.put(out)
+    
+    
+      self.log.info('before ProcessGetPackageList ')
+      worker = adbtool.list_package.Command(Callback)
+      worker.Execute()
+    
+      self.log.info('end ProcessGetPackageList')
+  
+    except Exception as e:
+      pass
+
+
+
+  def ProcessUninstallApk(self, command):
+    try:
+  
+      apk_path = command.param[1].encode('utf-8')
+      package_name = util.utility.GetPackageNameNoApkExt(apk_path)
+      # self.last_command['package_name'] = package_name
+      self.log.info(self)
+      self.log.info('command ' + command.cmd)
+      self.log.info('command id ' + str(command.cmd_no))
+      self.log.info('command package_name ' + package_name)
+    
+      cb = callback.CallbackUninstallObject(self.queue_master, command, self.serial_number, self.GenCommandResponse)
+      uninstall = adbtool.uninstall.Command(self.serial_number, package_name, cb.CallbackSucc,
+                                        cb.CallbackFail)
+    
+      self.log.info('before ProcessUninstallApk ' + self.serial_number + ' : ' + package_name)
+      callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
+                                   self.GenCommandResponse(stage='开始删除老包')['info'])
+
+      uninstall.Execute()
+    
+      self.log.info('end ProcessUninstallApk')
+  
+    except Exception as e:
+      pass
+    
+    
 # ======================================
 if __name__ == '__main__':
   pass

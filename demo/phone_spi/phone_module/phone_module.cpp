@@ -392,7 +392,12 @@ namespace phone_module {
 
           base::StringToInt(progress->info(4), &data->time_max);
           
-          data->op = L"全新/覆盖安装";
+          if (progress->info_size() >= 7) {
+            data->op = UTF8ToWide(progress->info(6));
+          } else {
+            data->op = L"全新安装";
+          }
+          
           if (data->error_code == ERROR_CODE_OK) {
             data->result = L"成功";
             if (data->percent == L"Success") {

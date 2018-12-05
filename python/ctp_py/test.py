@@ -5,6 +5,9 @@ import subprocess
 import adbtool.start_server
 import cmdtool.netstat
 import cmdtool.taskkill
+import cmdtool.base
+import adbtool.uninstall
+import adbtool.base
 import os
 import psutil
 import re
@@ -69,6 +72,23 @@ def test_down():
 
 
 if __name__ == '__main__':
+  
+  def CallbackSucc(progress):
+    pass
+  
+  
+  def CallbackFail(progress):
+    pass
+
+  cmdtool.base.CommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = '5038'
+  adbtool.base.AdbCommandBase.adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
+  uninstall = adbtool.uninstall.Command('aa1ee7d1', 'com.anroid.mylockscreen', CallbackSucc,
+                                        CallbackFail)
+  
+  
+  uninstall.Execute()
+  
+  
   md5 = util.utility.GetFileMD5(r'C:\workspace\code\chromium24\src\build\out\adb\adb.exe')
   test_psutil()
   line = '* daemon not running. starting it now at tcp:5038 *'

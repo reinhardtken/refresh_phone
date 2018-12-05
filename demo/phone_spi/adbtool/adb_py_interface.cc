@@ -56,6 +56,14 @@ namespace phone_module {
         FROM_HERE,
         base::Bind(&PythonAdbInterface::ScanDevicesNow, base::Unretained(this)),
         3 * 1000);
+    } else if (scan_times_ == 0) {
+      //触发获取包列表操作，讲道理这些东西不该放在c++这边了
+      apk::Command * cmd = new apk::Command;
+      cmd->set_cmd(command::kPyAdbGetPackageList);
+      cmd->set_timestamp(base::Time::Now().ToInternalValue());
+      cmd->set_cmd_no(core_->cmd_no());
+      codec::MessagePtr ptr(cmd);
+      core_->channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
     }
   }
 

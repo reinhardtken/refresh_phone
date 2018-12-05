@@ -98,8 +98,9 @@ namespace command {
   const char kPYConfig[] = "py_config";
   //const char kInstallApk[] = "install_apk";
 
-  const char kPyAdbInstallApk[] = "pyadb_install_apk";
-  const char kPyAdbGetPackageList[] = "pyadb_get_package_list";
-  const char kPyAdbScanDevices[] = "pyadb_scan_devices";
-  const char kPyAdbRemoveApk[] = "pyadb_remove_apk";
+  const char kPyAdbInstallApk[] = "pyadb.install_apk";
+  const char kPyAdbGetPackageList[] = "pyadb.get_package_list";
+  const char kPyAdbScanDevices[] = "pyadb.scan_devices";
+  const char kPyAdbRemoveApk[] = "pyadb.remove_apk";
+
 }

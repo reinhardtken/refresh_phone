@@ -54,10 +54,16 @@ def error_string(code):
 
 
 
-COMMAND_SCAN_DEVICES = 'pyadb_scan_devices'
-COMMAND_INSTALL_APK = 'pyadb_install_apk'
+COMMAND_SCAN_DEVICES = 'pyadb.scan_devices'
+COMMAND_INSTALL_APK = 'pyadb.install_apk'
+COMMAND_GET_PACKAGE_LIST = 'pyadb.get_package_list'
 
 
 #inner
 COMMAND_INNER_START_CHECKOUT_TIMEOUT = 'inner.start_check_timeout'
 COMMAND_INNER_STOP_CHECKOUT_TIMEOUT = 'inner.stop_check_timeout'
+COMMAND_INNER_PACKAGE_LIST = 'inner.package_list'
+
+
+INSTALL_TYPE_DELTE_FIRST = r'先删除\后安装'
+INSTALL_TYPE_JUST_INSTALL = r'全新安装'
