@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-
+import subprocess
 import re
 import traceback
 
@@ -44,11 +44,11 @@ class Command(base.AdbCommandBase):
   
   def CallbackExit(self, exitcode):
     #正常不需要这个函数回报数据
-    if self.stop_parser is False:
+    if self.stop_parser is False and self.happend_error is False:
       try:
-        if exitcode == 0 and self.happend_error is False and self.callback_succ is not None:
+        if exitcode == 0 and self.callback_succ is not None:
            self.callback_succ('Success')
-        elif self.callback_fail is not None:
+        elif exitcode != 0 and self.callback_fail is not None:
           self.callback_fail('错误码 ： ' + str(exitcode))
       except Exception as e:
         pass
@@ -104,8 +104,6 @@ class Command(base.AdbCommandBase):
         self.log.warning(error)
         self.happend_error = True
         return (False, error)
-      # if line.startswith('adb: error: '):
-      #   return (False, line)
       elif 'Failure' in line:
         error = self.adb_install_failure.search(line).group(1)
         self.log.warning(error)
@@ -134,3 +132,49 @@ class Command(base.AdbCommandBase):
       self.log.info(exstr)
       self.happend_error = True
       return (False, e)
+
+  # def Execute(self):
+  #   try:
+  #     #cmd = r'C:\workspace\code\chromium24\src\build\out\adb_1.0.40\adb -s  aa1ee7d1 install -r   C:\workspace\code\chromium24\src\build\Release\ctp_data\apk\com.anroid.mylockscreen.apk'
+  #     #cmd = cmd.decode('utf-8')
+  #     cmd = self._BuildCmd()
+  #     env = self._BuildEnv()
+  #     self.log.info('CommandBase cmd: ' + cmd)
+  #     p = subprocess.Popen(cmd, env=env, shell=self.shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+  #     while p.poll() is None:
+  #       p.stdout.flush()
+  #       line = p.stdout.readline()
+  #       line = line.strip()
+  #       if not len(line):
+  #         p.stderr.flush()
+  #         line = p.stderr.readline()
+  #         line = line.strip()
+  #
+  #       succ, content = self.Parser(line)
+  #       if succ:
+  #         self.CallbackSucc(content)
+  #       else:
+  #         self.CallbackFail(content)
+  #         # p.kill()
+  #         break
+  #
+  #     line = p.stdout.readline()
+  #     while len(line) > 0:
+  #       line = line.strip()
+  #       succ, content = self.Parser(line)
+  #       if succ:
+  #         self.CallbackSucc(content)
+  #       else:
+  #         self.CallbackFail(content)
+  #         break
+  #       line = p.stdout.readline()
+  #
+  #     self.returncode = p.returncode
+  #     self.CallbackExit(p.returncode)
+  #
+  #   except Exception as e:
+  #     exstr = traceback.format_exc()
+  #     print(exstr)
+  #     self.log.info(exstr)
+  #     self.CallbackException(e)
+  #     pass

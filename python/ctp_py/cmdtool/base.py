@@ -87,6 +87,20 @@ class CommandBase(object):
     else:
       return None
     
+   
+  @staticmethod
+  def __ReadLine(p):
+    p.stdout.flush()
+    line = p.stdout.readline()
+    line = line.strip()
+    if not len(line):
+      p.stderr.flush()
+      line = p.stderr.readline()
+      line = line.strip()
+    
+    return line
+    
+    
   
   def Execute(self):
     try:
@@ -95,8 +109,9 @@ class CommandBase(object):
       self.log.info('CommandBase cmd: ' + cmd)
       p = subprocess.Popen(cmd, env=env, shell=self.shell, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
       while p.poll() is None:
-        line = p.stdout.readline()
-        line = line.strip()
+  
+        line = CommandBase.__ReadLine(p)
+        
         succ, content = self.Parser(line)
         if succ:
           self.CallbackSucc(content)
@@ -104,8 +119,8 @@ class CommandBase(object):
           self.CallbackFail(content)
           p.kill()
           break
-      
-      line = p.stdout.readline()
+
+      line = CommandBase.__ReadLine(p)
       while len(line) > 0:
         line = line.strip()
         succ, content = self.Parser(line)
@@ -114,7 +129,7 @@ class CommandBase(object):
         else:
           self.CallbackFail(content)
           break
-        line = p.stdout.readline()
+        line = CommandBase.__ReadLine(p)
       
       self.returncode = p.returncode
       self.CallbackExit(p.returncode)

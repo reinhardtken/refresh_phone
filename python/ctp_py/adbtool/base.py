@@ -10,6 +10,9 @@ import util.log
 
 import cmdtool.base
 
+#这文章和我遇到的问题很像，重载流的时候，无法获得足够的数据
+#https://www.jianshu.com/p/afdb55040b3f
+
 
 class AdbCommandBase(cmdtool.base.CommandBase):
   adb_error_re = re.compile(r'error: (.*)')

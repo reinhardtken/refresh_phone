@@ -7,12 +7,14 @@ import cmdtool.netstat
 import cmdtool.taskkill
 import cmdtool.base
 import adbtool.uninstall
+import adbtool.install
 import adbtool.base
+import adbtool.start_server
 import os
 import psutil
 import re
 import util.utility
-
+import adbtool.find_server
 
 import requests
 # import progressbar
@@ -73,20 +75,31 @@ def test_down():
 
 if __name__ == '__main__':
   
-  # def CallbackSucc(progress):
-  #   pass
-  #
-  #
-  # def CallbackFail(progress):
-  #   pass
-  #
+  live = adbtool.find_server.FindAllServer()
+  adbtool.find_server.KillAllServer(live)
+  live = adbtool.find_server.FindAllServer()
+  adbtool.base.AdbCommandBase.adb = r'C:\workspace\code\chromium24\src\build\out\adb_1.0.39\adb'
+
+  port = adbtool.start_server.Command.GenPort()
+  # 产生新server
+  start_server = adbtool.start_server.Command(port)
+  start_server.Execute()
+  
+  def CallbackSucc(progress):
+    pass
+
+
+  def CallbackFail(progress):
+    pass
+
   # cmdtool.base.CommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = '5038'
-  # adbtool.base.AdbCommandBase.adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
-  # uninstall = adbtool.uninstall.Command('aa1ee7d1', 'com.anroid.mylockscreen', CallbackSucc,
-  #                                       CallbackFail)
-  #
-  #
-  # uninstall.Execute()
+  device = 'b6341ede'.decode('utf-8')
+  # device = 'aa1ee7d1'
+  uninstall = adbtool.install.Command(device, 'com.anroid.mylockscreen', r'C:\workspace\code\chromium24\src\build\Release\ctp_data\apk\com.taobao.trip.apk', CallbackSucc,
+                                        CallbackFail)
+
+
+  uninstall.Execute()
   
   #Android Debug Bridge version 1.0.32
   #'d06664ec2c78e6532f53e654b424cab4'

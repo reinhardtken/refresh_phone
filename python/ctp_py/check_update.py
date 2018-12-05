@@ -657,7 +657,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     
     
     try:
-      dc = consts.DownloadCallbck(command, one, self)
+      dc = CheckUpdateApkList.DownloadCallbck(command, one, self)
       ret = self.DownloadFile(command, one, file_path, dc.callback_progress)
       if ret:
         md5 = util.utility.GetFileMD5(file_path)
