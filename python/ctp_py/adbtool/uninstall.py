@@ -43,6 +43,8 @@ class Command(base.AdbCommandBase):
     Failure [DELETE_FAILED_INTERNAL_ERROR]
     '''
 
+    if self.stop_parser:
+      return (True, 'Success')
     
     try:
       if len(line):
@@ -55,8 +57,8 @@ class Command(base.AdbCommandBase):
           error = self.adb_install_failure.search(line).group(1)
           self.log.warning(error)
           return (False, error)
-        else:
-          return (False, None)
+
+      return (False, None)
     except Exception as e:
       exstr = traceback.format_exc()
       print(exstr)

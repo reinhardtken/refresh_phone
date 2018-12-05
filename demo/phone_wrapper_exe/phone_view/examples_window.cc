@@ -103,7 +103,7 @@ class CTPWindowContents : public WidgetDelegateView,
   virtual bool CanMaximize() const OVERRIDE { return true; }
   virtual string16 GetWindowTitle() const OVERRIDE {
     
-    std::wstring head = L"刷包大师 (1.0.0.12) ";    
+    std::wstring head = L"刷包大师 (1.0.0.14) ";    
     return head;
   }
   virtual View* GetContentsView() OVERRIDE { return this; }

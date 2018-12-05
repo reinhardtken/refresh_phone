@@ -73,23 +73,35 @@ def test_down():
 
 if __name__ == '__main__':
   
-  def CallbackSucc(progress):
-    pass
+  # def CallbackSucc(progress):
+  #   pass
+  #
+  #
+  # def CallbackFail(progress):
+  #   pass
+  #
+  # cmdtool.base.CommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = '5038'
+  # adbtool.base.AdbCommandBase.adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
+  # uninstall = adbtool.uninstall.Command('aa1ee7d1', 'com.anroid.mylockscreen', CallbackSucc,
+  #                                       CallbackFail)
+  #
+  #
+  # uninstall.Execute()
   
+  #Android Debug Bridge version 1.0.32
+  #'d06664ec2c78e6532f53e654b424cab4'
   
-  def CallbackFail(progress):
-    pass
-
-  cmdtool.base.CommandBase.global_env['ANDROID_ADB_SERVER_PORT'] = '5038'
-  adbtool.base.AdbCommandBase.adb = r'C:\workspace\code\chromium24\src\build\Debug\adb\adb'
-  uninstall = adbtool.uninstall.Command('aa1ee7d1', 'com.anroid.mylockscreen', CallbackSucc,
-                                        CallbackFail)
-  
-  
-  uninstall.Execute()
-  
-  
-  md5 = util.utility.GetFileMD5(r'C:\workspace\code\chromium24\src\build\out\adb\adb.exe')
+  #以后版本不支持xp
+  #Android Debug Bridge version 1.0.36
+  #'03596ed3833e08880030e1e1a0136e88'
+  #Android Debug Bridge version 1.0.39
+  # 'dec7e5e645aded51f9d7f02d60e9ed41'
+  #Android Debug Bridge version 1.0.40
+  #'c94a562536ca23a1936d4892b0d9d735'
+  path = r'C:\prog\adb\adb 1.0.36 and fastboot\adb.exe'
+  # path = r'C:\Users\liuqingping\AppData\Local\Android\Sdk\platform-tools\adb.exe'
+  #path = r'C:\workspace\code\chromium24\src\build\release\adb\adb.exe'
+  md5 = util.utility.GetFileMD5(path)
   test_psutil()
   line = '* daemon not running. starting it now at tcp:5038 *'
   re_port = re.compile(r'^[\*\.: A-Za-z]*([0-9]*) \*$')
