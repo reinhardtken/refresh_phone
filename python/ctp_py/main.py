@@ -8,7 +8,7 @@ import time
 import os
 #=====================================
 import network
-import check_update
+import phone
 import config
 import util.log
 
@@ -32,10 +32,10 @@ def CheckUpdateMode(param):
   msg_queue2 = Queue.Queue()
 
   network_object = network.Network(msg_queue, config.CheckUpdateParams(param), None)
-  checkUpdate = check_update.CheckUpdateApkList(param, msg_queue2, msg_queue)
-  checkUpdate.Init()
-  checkUpdate.RegisterHandler(network_object.asyn_pb_client)
-  checkUpdate.Run()
+  pl = phone.PhoneLogic(param, msg_queue2, msg_queue)
+  pl.Init()
+  pl.RegisterHandler(network_object.asyn_pb_client)
+  pl.Run()
 
   network_object.Run()
   print('after network_object.Run()========================')

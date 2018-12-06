@@ -15,6 +15,7 @@
 #include "third_party/skia/include/core/SkBitmap.h"
 #include "third_party/skia/include/core/SkCanvas.h"
 #include "ui/gfx/image/image_skia.h"
+#include "ui/views/widget/widget.h"
 #include "ui/views/controls/button/checkbox.h"
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/controls/textfield/textfield.h"
@@ -47,6 +48,10 @@ namespace examples {
     return gfx::ImageSkia();
   }
 
+  void DeviceModel::OnDoubleClick() {
+    delegate_->OnDoubleClick();
+  }
+
   //=====================================================
   void MakeupDeviceColunms(std::vector<ui::TableColumn> &columns) {
 
@@ -65,6 +70,7 @@ namespace examples {
     
   }
 
+  
   //-====================================
   int StatusModel::RowCount() {
     return table_->status_info_data_.size();
@@ -82,6 +88,7 @@ namespace examples {
     DCHECK(false);
     return gfx::ImageSkia();
   }
+
  
   //===========================================================
   
@@ -166,14 +173,30 @@ void MainView::CreateExampleView(View* container) {
 
   ++index;
 
+
+  //refresh_ = new TextButton(this, L"刷机-选中");
+  //refresh_->set_alignment(TextButton::ALIGN_CENTER);
+  //refresh_->SetEnabled(false);
+
+  refresh_all_ = new TextButton(this, L"刷机-所有");
+  refresh_all_->set_alignment(TextButton::ALIGN_CENTER);
+  refresh_all_->SetEnabled(false);
+
   clear_table_ = new TextButton(this, L"清除显示");
   clear_table_->set_alignment(TextButton::ALIGN_CENTER);
+  
 
   column_set = layout->AddColumnSet(index);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
     1.0f, GridLayout::USE_PREF, 0, 0);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+    1.0f, GridLayout::USE_PREF, 0, 0);
+  //column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+  //  1.0f, GridLayout::USE_PREF, 0, 0);
 
   layout->StartRow(0 /* expand */, index);
+  //layout->AddView(refresh_);
+  layout->AddView(refresh_all_);
   layout->AddView(clear_table_);
 
 
@@ -264,7 +287,10 @@ void MainView::OnSelectionChanged() {
 }
 
 void MainView::OnDoubleClick() {
-
+  uint32 index = table_device_->FirstSelectedRow();
+  if (index < device_data_.size()) {
+    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Refresh(device_data_[index].serial_no));
+  }
 }
 
 void MainView::OnMiddleClick() {}
@@ -279,6 +305,8 @@ void MainView::ButtonPressed(Button* sender, const ui::Event& event) {
   if (sender == clear_table_) {
     status_info_data_.clear();
     table_order_->OnModelChanged();
+  }else if (sender == refresh_all_) {
+    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Refresh(L"all"));
   }
 }
 
@@ -366,6 +394,33 @@ void MainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const &
   }
 
   
+}
+
+
+void MainView::ShowContextMenuForView(views::View* source,
+  const gfx::Point& point) {
+  //UpdateStatsCounters();
+  if (source == table_device_) {
+    scoped_ptr<views::Menu> menu(views::Menu::Create(
+      this, views::Menu::TOPLEFT, source->GetWidget()->GetNativeView()));
+
+    if (device_data_.size()) {
+      int index = 0;
+      for (auto it = device_data_.begin(); it != device_data_.end(); ++it) {
+        menu->AppendMenuItem(index, L"一键刷机：" + it->serial_no,
+          views::Menu::NORMAL);
+        index++;
+      }
+      menu->RunMenuAt(point.x(), point.y());
+    }
+  }
+  
+}
+
+void MainView::ExecuteCommand(int id) {
+  //tab_table_->SetColumnVisibility(id, !tab_table_->IsColumnVisible(id));
+  if (device_data_.size() > (uint32)id) {
+  }
 }
 
 

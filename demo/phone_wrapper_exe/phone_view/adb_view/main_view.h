@@ -29,6 +29,8 @@
 #include "ui/views/controls/button/text_button.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/combobox/combobox.h"
+#include "ui/views/context_menu_controller.h"
+#include "ui/views/controls/menu/menu.h"
 #include "ui/views/controls/combobox/combobox_listener.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
 
@@ -95,11 +97,11 @@ namespace examples {
 
   class OrderResultTable;
 
-  class DeviceDelegate {
-  public:
-    virtual int size() = 0;
-    virtual string16 text(int row, int column_id) = 0;
-  };
+  //class DeviceDelegate {
+  //public:
+  //  virtual int size() = 0;
+  //  virtual string16 text(int row, int column_id) = 0;
+  //};
 
 
 
@@ -107,24 +109,24 @@ namespace examples {
   class DeviceModel : public ui::TableModel,
     public TableViewObserver {
   public:
-    DeviceModel(DeviceDelegate *p)
+    DeviceModel(MainView *p)
       :delegate_(p) {}
     // ui::TableModel:
     virtual int RowCount() OVERRIDE;
     virtual string16 GetText(int row, int column_id) OVERRIDE;
     virtual gfx::ImageSkia GetIcon(int row) OVERRIDE;
     virtual void SetObserver(ui::TableModelObserver* observer) OVERRIDE {}
-
+    virtual void OnDoubleClick() OVERRIDE;
     // TableViewObserver:
     virtual void OnSelectionChanged() OVERRIDE {}
-    virtual void OnDoubleClick() OVERRIDE {}
+    
     virtual void OnMiddleClick() OVERRIDE {}
     virtual void OnKeyDown(ui::KeyboardCode virtual_keycode) OVERRIDE {}
     virtual void OnTableViewDelete(TableView* table_view) OVERRIDE {}
     virtual void OnTableView2Delete(TableView2* table_view) OVERRIDE {}
 
   private:
-    DeviceDelegate *delegate_;
+    MainView *delegate_;
   };
 
 
@@ -142,7 +144,9 @@ class MainView : public CTPViewBase,
                      public ThreadMessageFilter,
                      public content::NotificationObserver,
                      public CCTableView::Delegate,
-                     public DeviceDelegate,
+                     //public DeviceDelegate,
+                     public views::ContextMenuController,
+                     public views::Menu::Delegate,
                      public ComboboxListener {
  public:
    //所有品种，所有策略=
@@ -190,6 +194,11 @@ class MainView : public CTPViewBase,
   //
   virtual void OnSelectedIndexChanged(Combobox* combobox) OVERRIDE;
 
+  virtual void ShowContextMenuForView(views::View* source,
+    const gfx::Point& point) OVERRIDE;
+  virtual void ExecuteCommand(int id) OVERRIDE;
+
+
 
   virtual bool GetCellColors(
     CCTableView* who,
@@ -207,8 +216,8 @@ class MainView : public CTPViewBase,
   void OnStatusInfo(PointerWrapper<phone_module::StatusInfo> const & p);
   
 
-  virtual int size() OVERRIDE;
-  virtual string16 text(int row, int column_id) OVERRIDE;
+  int size() ;
+  string16 text(int row, int column_id);
 
 
   std::string const bc_;
@@ -231,6 +240,8 @@ class MainView : public CTPViewBase,
 
 
   TextButton* clear_table_;
+  TextButton* refresh_;
+  TextButton* refresh_all_;
 
   TextButton * clear_order_button_;
   Label * cash_label_;

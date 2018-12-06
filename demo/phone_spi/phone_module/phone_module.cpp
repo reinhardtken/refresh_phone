@@ -656,7 +656,15 @@ namespace phone_module {
   }
 
 
-  void CTPModule::OnRefresh(std::string const & id) {
+  void CTPModule::OnRefresh(std::wstring const & id) {
+    apk::Command * cmd = new apk::Command;
+    cmd->set_cmd(command::kPyAdbRefresh);
+    cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
+    codec::MessagePtr ptr(cmd);
+    current_cmd_no_set_.insert(cmd->cmd_no());
+    cmd->add_param(WideToUTF8(id));
+    channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
   }
 
   void CTPModule::OnDeviceChange(int const) {

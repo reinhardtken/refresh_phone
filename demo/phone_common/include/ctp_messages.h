@@ -327,7 +327,7 @@ IPC_MESSAGE_ROUTED1(CTP_CONSOLE_RoutedCommandRsp,
 //L2U logic to ui
 
 IPC_MESSAGE_CONTROL0(U2L_ScanDevices)
-IPC_MESSAGE_CONTROL1(U2L_Refresh, std::string)//设备id
+IPC_MESSAGE_CONTROL1(U2L_Refresh, std::wstring)//设备id
 IPC_MESSAGE_CONTROL2(L2U_AdbInfo, std::string, std::wstring)//设备id
 IPC_MESSAGE_CONTROL1(U2L_DeviceChange, int)//设备id
 

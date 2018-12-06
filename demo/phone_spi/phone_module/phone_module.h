@@ -95,7 +95,7 @@ private:
     //void OnLoginAll();
 	void ScanDevices();
 	void InitConnectedDevice();
-	void OnRefresh(std::string const & id);
+	void OnRefresh(std::wstring const & id);
 	void OnDeviceChange(int const);
 	void OnGetPackageList(std::wstring const &);
 	void OnGetLocalInstallApkList();

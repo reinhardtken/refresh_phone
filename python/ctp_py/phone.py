@@ -16,12 +16,12 @@ import requests.exceptions
 # 对于python自带的 urllib库  解决办法
 # import ssl
 # ssl.match_hostname = lambda cert, hostname: True
-#====================================
+# ====================================
 import util.thread_class
 import pb.mq_protomsg_pb2
 import pb.cp_comunication_pb2
 import pb.apk_protomsg_pb2
-#import util
+# import util
 import tempfile
 import config
 import util.log
@@ -33,7 +33,9 @@ import adbtool.list_devices
 import adbtool.find_server
 import device.master
 import device.callback
-#=======================================================
+
+
+# =======================================================
 
 
 # class CallbackObject():
@@ -66,33 +68,77 @@ import device.callback
 #   def CallbackFail(self, progress):
 #     self.host.SendCommandProgress(self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
 #                                   [self.serial_no.encode('utf-8'), '完成', self.apk, progress, ])
-      
 
 
-#======================================================================
-class CheckUpdateApkList(util.thread_class.ThreadClass):
-
+# ======================================================================
+class PhoneLogic(util.thread_class.ThreadClass):
+  # ERROR_CODE_OK = 0
+  # ERROR_CODE_PULL_JSON_FAILED = 1
+  # ERROR_CODE_PARSE_JSON_FAILED = 2
+  # ERROR_CODE_DOWNLOAD_APK_FAILED = 3
+  # ERROR_CODE_MD5_APK_FAILED = 4
+  # ERROR_CODE_SAVE_JSON_FILE_FAILED = 5
+  # ERROR_CODE_SAVE_APK_FILE_FAILED = 6
+  #
+  # ERROR_CODE_REMOVE_JSON_FILE_FAILED = 7
+  # ERROR_CODE_REMOVE_APK_DIR_FAILED = 8
+  #
+  # ERROR_CODE_LOAD_LOCAL_APKLIST_FAILED = 9
+  #
+  # ERROR_CODE_PYADB_SCAN_DEVICES_FAILED = 10
+  # ERROR_CODE_PYADB_INSTALL_APK_FAILED = 11
+  #
+  #
+  # ERROR_CODE_UNKNOWN = 100000
+  #
+  #
+  # ERROR_CODE_STRING = [
+  #   '成功',#0
+  #   '拉取配置文件失败',
+  #   '解析配置文件失败',
+  #   '下载apk文件失败',
+  #   '校验apk文件失败',
+  #   '保存配置文件失败',
+  #   '保存apk文件失败',
+  #   '删除配置文件失败',
+  #   '删除apk目录失败',
+  #   '加载本地配置文件失败'
+  # ]
+  #
+  # PACKAGE_INSTALL = 0#只安装
+  # PACKAGE_REMOVE = 1#只卸载
+  # PACKAGE_BOTH = 2#若存在，先卸载后安装
+  #
+  # @staticmethod
+  # def error_string(code):
+  #   if len(PhoneLogic.ERROR_CODE_STRING) > code:
+  #     info = PhoneLogic.ERROR_CODE_STRING[code]
+  #   else:
+  #     info = '未知错误'
+  #
+  #   return info
+  
   def InitGlobalLogByFile(self, prop_file):
     if os.path.exists(prop_file):
       prop = util.utility.ReadJsonProp(prop_file)
       self.InitGlobalLogByParam(prop)
-      
+  
   def InitGlobalLogByParam(self, prop):
     util.prop.Init(prop)
     util.log.Init(prop)
-
+  
   def __init__(self, prop_file, queue_in, queue_out):
+    self.log = None
     if prop_file is not None and os.path.exists(prop_file):
       self.InitGlobalLogByFile(prop_file)
       prop = util.utility.ReadJsonProp(prop_file)
       self.prop = prop
     else:
-      #prop是none，说明启动参水里面只有一个port，要等c++把配置信息通过socket传过来
+      # prop是none，说明启动参水里面只有一个port，要等c++把配置信息通过socket传过来
       self.prop = None
-      
+    
     util.thread_class.ThreadClass.__init__(self, queue_in)
     self.queue_out = queue_out
-    
     
     self.local_prop = None
     self.apk_dir = None
@@ -103,17 +149,13 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     
     self.device = device.master.Master(queue_out)
     self.device.Start()
-    
-    
-
+  
   def Send(self, data):
     self.queue_out.put(data)
-
-
+  
   def RegisterHandler(self, src):
     src.RegisterMessageHandlerWithName(self, 'apk.Command')
-
-
+  
   def LoadLocalProp(self):
     try:
       tmp = util.utility.ReadJsonProp(self.prop['localPath'])
@@ -122,56 +164,53 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         return self.local_prop
     except Exception as e:
       return None
-
-
-
+  
   def Init2(self, prop):
     self.prop = prop
     self.Init()
-
+  
   def Init(self):
     if self.prop is not None:
       self.log = util.log.GetLogger(self.__class__.__name__)
-      self.log.info('CheckUpdateApkList init')
+      self.log.info('PhoneLogic init')
       self.log.info(str(self.prop))
       try:
         self.apk_dir = self.prop['apkPath']
         self.LoadLocalProp()
       except Exception as e:
         pass
-  
+      
       self.debugPath = self.prop['debugPath']
       util.utility.CreateDir(self.prop['apkPath'])
-      
-      #设置adbexe文件
+
+      # 设置adbexe文件
       adbtool.base.AdbCommandBase.adb = self.prop['adb_exe']
-
-
+  
   def Work(self):
     time.sleep(1)
-
-
+  
   def Handle(self, msg):
-    #print(msg)
+    # print(msg)
     self.queue.put(msg)
-
+  
   def Name(self):
     return 'ctp.mq.QueryLevelMQ'
-
-
-
-
+  
   def DealMsg(self, msg):
+    if self.log:
+      self.log.info('DealMsg  ' + msg.DESCRIPTOR.full_name)
+      self.log.info(msg.cmd)
+      
     if msg.DESCRIPTOR.full_name == 'apk.Command':
       if msg.cmd == 'py_config':
-        #完成初始化
+        # 完成初始化
         if self.prop is None:
           self.InitGlobalLogByParam(config.CreateProp(msg))
           self.Init2(config.CreateProp(msg))
-          #先尝试把自己的adb server启动起来
+          # 先尝试把自己的adb server启动起来
           self.ProcessStartServer(None)
       elif self.prop is not None:
-        #只有完成了初始化才能响应业务请求
+        # 只有完成了初始化才能响应业务请求
         if msg.cmd == 'check_net_package_list':
           self.ProcessCheckUpdatePackageList(msg)
         elif msg.cmd == 'remove_local_package_list':
@@ -184,11 +223,11 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.ProcessScanDevices3(msg)
         elif msg.cmd == consts.COMMAND_GET_PACKAGE_LIST:
           self.ProcessGetPackageList(msg)
-
-
-
+        elif msg.cmd == consts.COMMAND_REFRESH:
+          self.ProcessRefresh(msg)
+  
   def ProcessStartServer(self, command):
-    #遍历所有的server，尝试kill，保留kill不掉的
+    # 遍历所有的server，尝试kill，保留kill不掉的
     live = adbtool.find_server.FindAllServer()
     adbtool.find_server.KillAllServer(live)
     live = adbtool.find_server.FindAllServer()
@@ -205,7 +244,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       start_server = adbtool.start_server.Command(port)
       start_server.Execute()
       succ, pid = start_server.GetReturnCode()
-  
+    
     # # 总是尝试先看看这个port有没有人用
     # netstat = cmdtool.netstat.Command(port)
     # netstat.Execute()
@@ -215,23 +254,26 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     # if succ:
     #   kill = cmdtool.taskkill.Command(pid)
     #   kill.Execute()
-    
-    
-   
+  
   def ProcessScanDevices3(self, command):
     self.device.ProcessCommand('-', command)
     
+  
+  def ProcessRefresh(self, command):
+    id = command.param[0].encode('utf-8')
+    if id == 'all':
+      for one in self.device.last_devices_list:
+        self.device.ProcessCommand(one['serial_no'], command)
+    elif id in self.device.last_devices_set:
+      self.device.ProcessCommand(id, command)
     
+  
   
   def ProcessGetPackageList(self, command):
     # 此处有并发隐患
     for one in self.device.last_devices_list:
       self.device.ProcessCommand(one['serial_no'], command)
-
   
-    
-
-   
   # def ProcessScanDevices(self, command):
   #   succ, device_list = self.device.ListDevices()
   #   if succ:
@@ -243,22 +285,15 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   #
   #     self.SendDevicesList(command, consts.ERROR_CODE_OK, out)
   #   else:
-  #     #self.SendDevicesList(command, CheckUpdateApkList.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
+  #     #self.SendDevicesList(command, PhoneLogic.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
   #     pass
-
-
-
-
-
-
+  
   def ProcessInstallApk3(self, command):
-    #此处有并发隐患
+    # 此处有并发隐患
     # tmp = self.device.last_devices_list.copy()
     for one in self.device.last_devices_list:
       self.device.ProcessCommand(one['serial_no'], command)
-      
-      
-
+  
   # def ProcessInstallApk2(self, command):
   #   try:
   #     apk_path = command.param[1].encode('utf-8')
@@ -296,8 +331,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   #
   #   except Exception as e:
   #     pass
-    
-
+  
   # def ProcessInstallApk(self, command):
   #   try:
   #     if command.param[0] == 'all':
@@ -318,9 +352,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   #
   #   except Exception as e:
   #     pass
-
-
-
+  
   def ProcessGetLocalPackageList(self, command):
     try:
       local_prop = self.LoadLocalProp()
@@ -337,7 +369,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           one_apk.type = consts.PACKAGE_BOTH
           one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['apkname'] + '.apk')
           apk_list.append(one_apk)
-
+        
         for one in local_prop['data']['remove']:
           one_apk = pb.apk_protomsg_pb2.OneApk()
           one_apk.md5 = ''.decode('utf-8')
@@ -348,10 +380,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           one_apk.type = consts.PACKAGE_REMOVE
           one_apk.package_size = 0
           apk_list.append(one_apk)
-
-
+        
         # self.device.UpdateApkList(apk_list)
-
+        
         self.SendApkList(command,
                          consts.ERROR_CODE_OK, apk_list)
       else:
@@ -359,8 +390,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
                          consts.ERROR_CODE_LOAD_LOCAL_APKLIST_FAILED)
     except Exception as e:
       self.SendCommandProgress(command, consts.ERROR_CODE_UNKNOWN, ['获取本地包列表', ])
-
-
+  
   def ProcessRemoveLocalPackageList(self, command):
     try:
       if os.path.exists(self.prop['localPath']):
@@ -372,7 +402,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       self.SendCommandProgress(command,
                                consts.ERROR_CODE_REMOVE_JSON_FILE_FAILED,
                                [consts.error_string(consts.ERROR_CODE_REMOVE_JSON_FILE_FAILED), ])
-
+    
     try:
       if os.path.isdir(self.prop['apkPath']):
         util.utility.RemoveDir(self.prop['apkPath'])
@@ -384,24 +414,21 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
                                consts.ERROR_CODE_REMOVE_APK_DIR_FAILED,
                                [consts.error_string(
                                  consts.ERROR_CODE_REMOVE_APK_DIR_FAILED), ])
-
+    
     try:
-      #无论如何，最后要把目录再创建下
+      # 无论如何，最后要把目录再创建下
       util.utility.CreateDir(self.prop['apkPath'])
     except Exception as e:
       pass
-
-
+  
   def ProcessCheckUpdatePackageList(self, command):
     re, data = self.PullJsonFile()
     if re == consts.ERROR_CODE_OK:
       self.CheckUpdate(data, command)
       pass
     else:
-      #失败了，通知c++侧
+      # 失败了，通知c++侧
       self.SendCommandResponse(command, re, [consts.error_string(re), ])
-
-
   
   def CheckUpdate(self, data, command):
     self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
@@ -411,61 +438,58 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '解析网络配置成功', ])
         need_save_json = False
         if self.local_prop is not None:
-          #检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
+          # 检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
           old_package_name_set = set()
           for old_one in self.local_prop['data']['install']:
             old_package_name_set.add(old_one['apkname'])
           new_package_name_set = set()
           for new_one in data['data']['install']:
             new_package_name_set.add(new_one['apkname'])
-            
+          
           diff_set = new_package_name_set - old_package_name_set
           solved_package_name = set()
           for new_one in data['data']['install']:
             for old_one in self.local_prop['data']['install']:
-              #1 如果包名在差集合，说明是新增，需要下载
+              # 1 如果包名在差集合，说明是新增，需要下载
               # 2 如果包名不在差集，说明不是新增，但md5不一致，说明换包了，需要下载
-              #3 如果包名不在差集，说明不是新增，md5一致，但是本地没文件，需要下载
+              # 3 如果包名不在差集，说明不是新增，md5一致，但是本地没文件，需要下载
               file_path = self.prop['apkPath'] + '/' + new_one['apkname'] + '.apk'
-
+              
               if new_one['apkname'] in diff_set or \
                   (new_one['apkname'] == old_one['apkname'] and new_one['apkmd5'] != old_one['apkmd5']) or \
-                        (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) == False):
+                  (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) == False):
                 need_save_json = True
                 if new_one['apkname'] not in solved_package_name and self.DownloadOneApk(new_one, command):
                   solved_package_name.add(new_one['apkname'])
-
-          
+        
+        
         else:
-          #不存在本地配置
+          # 不存在本地配置
           need_save_json = True
           for new_one in data['data']['install']:
             self.DownloadOneApk(new_one, command)
-            
-        
         
         if need_save_json == True:
-          #保存最新的json文件到本地
+          # 保存最新的json文件到本地
           if util.utility.WriteJsonFile(self.prop['localPath'], data):
             self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
           else:
-            self.SendCommandProgress(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED, ['配置更新', consts.error_string(response.code), ])
+            self.SendCommandProgress(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED,
+                                     ['配置更新', consts.error_string(response.code), ])
         else:
           self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '无需更新配置文件', ])
           pass
-
+      
       else:
         self.SendCommandProgress(command, consts.ERROR_CODE_PARSE_JSON_FAILED, ['配置更新', '解析网络配置失败', ])
         return
-
+    
     except Exception as e:
       self.SendCommandProgress(command, consts.ERROR_CODE_UNKNOWN, ['检查更新', ])
-  
+    
     return
     pass
   
-
-
   def SendCommandProgress(self, cmd, code, info=None):
     response = pb.apk_protomsg_pb2.CommandProgress()
     response.cmd = cmd.cmd
@@ -474,10 +498,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     if info is not None:
       for one in info:
         response.info.append(one.decode('utf-8'))
-
+    
     self.Send(response)
-
-
+  
   def SendCommandResponse(self, cmd, code, info=None):
     response = pb.apk_protomsg_pb2.CommandResponse()
     response.cmd = cmd.cmd
@@ -486,10 +509,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     if info is not None:
       for one in info:
         response.info.append(one.decode('utf-8'))
-
+    
     self.Send(response)
-
-
+  
   def SendApkList(self, cmd, code, package_list=None):
     response = pb.apk_protomsg_pb2.ApkList()
     response.head.cmd = cmd.cmd
@@ -505,11 +527,9 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         one_apk.price = one.price
         one_apk.type = one.type
         one_apk.package_size = one.package_size
-
+    
     self.Send(response)
-    
-    
-    
+  
   def SendDevicesList(self, cmd, code, device_list=None, info=None):
     response = pb.apk_protomsg_pb2.DevicesList()
     response.head.cmd = cmd.cmd
@@ -525,14 +545,12 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           one_device.device = one['device']
         except Exception as e:
           pass
-
+    
     if info is not None:
       response.head.info.append(info)
-
+    
     self.Send(response)
-
-
-
+  
   def DownloadFile(self, command, one, file_path, callback):
     url = one['apkurl']
     
@@ -545,7 +563,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         response = requests.request("GET", url, stream=True, data=None, headers=headers)
       except requests.exceptions.SSLError as e:
         response = requests.request("GET", url, stream=True, data=None, headers=headers, verify=False)
-        
+      
       total_length = int(response.headers.get("Content-Length"))
       now = 0
       with open(file_path, 'wb') as f:
@@ -568,33 +586,28 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
                                 one['apkname']])
     return ret
   
-  
   class DownloadCallbck(object):
     def __init__(self, command, one, host):
       self.host = host
       self.last_report = 0
       self.command = command
       self.one = one
-
+    
     def callback_progress(self, now, total):
       percent = float(now) / total
       if percent - self.last_report > 0.05 or now == total:
         self.last_report = percent
-        data = ("%.2f%%" % (percent *100))
+        data = ("%.2f%%" % (percent * 100))
         self.host.SendCommandProgress(self.command, consts.ERROR_CODE_OK, ['包更新', '下载中', self.one['apkname'], data])
       pass
- 
-  
-  
-  
   
   def DownloadOneApk(self, one, command):
     result = False
     file_path = self.prop['apkPath'] + '/' + one['apkname'] + '.apk'
 
-    #检查文件是否存在
+    # 检查文件是否存在
     if os.path.exists(file_path):
-      #文件存在判断md5是否匹配
+      # 文件存在判断md5是否匹配
       md5 = util.utility.GetFileMD5(file_path)
       if md5 != one['apkmd5']:
         os.remove(file_path)
@@ -602,16 +615,12 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['apkname']])
         result = True
         return result
-
-
-    #开始下载
+    
+    # 开始下载
     self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['包更新', '开始下载', one['apkname']])
     
-    
-    
-    
     try:
-      dc = CheckUpdateApkList.DownloadCallbck(command, one, self)
+      dc = PhoneLogic.DownloadCallbck(command, one, self)
       ret = self.DownloadFile(command, one, file_path, dc.callback_progress)
       if ret:
         md5 = util.utility.GetFileMD5(file_path)
@@ -627,7 +636,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
                                     '下载成功',
                                     one['apkname']])
           result = True
-      
+    
     except Exception as e:
       exstr = traceback.format_exc()
       print(exstr)
@@ -637,14 +646,10 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
                                ['包更新',
                                 consts.error_string(consts.ERROR_CODE_SAVE_APK_FILE_FAILED),
                                 one['apkname']])
-      
     
     return result
-         
-    
-    
   
-  #//检查json是否符合要求，该有的字段都有效，都存在
+  # //检查json是否符合要求，该有的字段都有效，都存在
   def ParseJson(self, data):
     """
     {"code": 0,
@@ -665,29 +670,27 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
     try:
       if data['code'] == 0:
         for one in data['data']['install']:
-          if 'apkname' not in one or 'apkurl'  not in one or 'apkmd5' not in one or 'name' not in one or 'price' not in one:
+          if 'apkname' not in one or 'apkurl' not in one or 'apkmd5' not in one or 'name' not in one or 'price' not in one:
             return False
-
+        
         for one in data['data']['remove']:
-          if 'apkname'  not in one:
+          if 'apkname' not in one:
             return False
-
+        
         return True
-
+    
     except Exception as e:
       print(e)
-
-    return result
     
-
-
+    return result
+  
   def PullJsonFile(self):
     URL = 'https://www.ppndj.com/jc/user/apkinstall?ch=1234'
     # URL = 'https://www.xppndj.com/jc/user/apkinstall?ch=1234'
     headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
     }
-
+    
     s = requests.Session()
     s.mount('http://', requests.adapters.HTTPAdapter(max_retries=5))
     s.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
@@ -706,9 +709,10 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       print('Error', e.args)
     return (consts.ERROR_CODE_PULL_JSON_FAILED, None)
 
-#======================================================
+
+# ======================================================
 if __name__ == '__main__':
   msg_queue = Queue.Queue()
   msg_queue2 = Queue.Queue()
-  checkUpdate = CheckUpdateApkList('ctp', msg_queue2, msg_queue)
+  checkUpdate = PhoneLogic('ctp', msg_queue2, msg_queue)
   checkUpdate.CheckPackageList()

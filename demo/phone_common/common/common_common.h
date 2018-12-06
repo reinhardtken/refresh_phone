@@ -103,4 +103,5 @@ namespace command {
   PHONE_COMMON_EXPORT extern const char kPyAdbGetPackageList[];
   PHONE_COMMON_EXPORT extern const char kPyAdbScanDevices[];
   PHONE_COMMON_EXPORT extern const char kPyAdbRemoveApk[];
+  PHONE_COMMON_EXPORT extern const char kPyAdbRefresh[];
 }

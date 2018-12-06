@@ -383,6 +383,8 @@ namespace channel {
 
   void ChannelHost::SendProtobufMsg(std::string const& name, codec::MessagePtr const & p) {
     DCHECK_RLOG(CommonThread::CurrentlyOn(id()));
+    LOG(INFO) << name<<" "<<p->GetTypeName();
+
     auto it = name_socket_map_.find(name);
     if (it != name_socket_map_.end()) {
       DCHECK(it->second->IsConnected());

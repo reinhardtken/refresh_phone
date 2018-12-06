@@ -57,6 +57,7 @@ def error_string(code):
 COMMAND_SCAN_DEVICES = 'pyadb.scan_devices'
 COMMAND_INSTALL_APK = 'pyadb.install_apk'
 COMMAND_GET_PACKAGE_LIST = 'pyadb.get_package_list'
+COMMAND_REFRESH = 'pyadb.refresh'
 
 
 #inner

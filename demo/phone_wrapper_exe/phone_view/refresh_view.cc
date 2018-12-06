@@ -128,7 +128,7 @@ void RefreshView::ButtonPressed(Button* sender, const ui::Event& event) {
   } else if (sender == reconnect_) {
     ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_ScanDevices());
   } else if (sender == refresh_) {
-	  ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Refresh(std::string()));
+	  //ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Refresh(std::string()));
   } else if (sender == calc_password_) {
     std::string in = WideToASCII(password_in_->text());
     if (in.size() > 0) {

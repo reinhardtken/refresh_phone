@@ -20,6 +20,7 @@ import consts
 import adbtool.list_devices
 import adbtool.list_package
 import adbtool.uninstall
+import adbtool.recovery
 import callback
 
 import util.log
@@ -107,6 +108,8 @@ class Proxy(object):
       self.ProcessInstallApk(command)
     elif command.cmd == consts.COMMAND_GET_PACKAGE_LIST:
       self.ProcessGetPackageList(command)
+    elif command.cmd == consts.COMMAND_REFRESH:
+      self.ProcessRefresh(command)
     
     self.AfterCommand(command)
   
@@ -337,6 +340,26 @@ class Proxy(object):
     except Exception as e:
       pass
     
+  
+  
+  def ProcessRefresh(self, command):
+    try:
+  
+      self.log.info(self)
+      self.log.info('command ' + command.cmd)
+      self.log.info('command id ' + str(command.cmd_no))
+  
+      def Callback(data):
+        self.log.info(data)
+  
+      self.log.info('before ProcessRefresh ')
+      worker = adbtool.recovery.Command(self.serial_number, Callback, Callback)
+      worker.Execute()
+  
+      self.log.info('end ProcessRefresh')
+
+    except Exception as e:
+      pass
     
 # ======================================
 if __name__ == '__main__':

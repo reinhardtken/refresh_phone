@@ -169,6 +169,7 @@ class Master(object):
     self.devices_map = {}
     # self.last_alive = {}
     self.last_devices_list = []
+    self.last_devices_set = set()
     
     self.pending_task_list = deque()
     
@@ -254,6 +255,7 @@ class Master(object):
   
   def ProcessScanDevicesResponse(self, command):
     self.last_devices_list = []
+    self.last_devices_set = set()
     for one_device in command.devices_list:
       one = {}
       one['serial_no'] = one_device.serial_no
@@ -261,13 +263,13 @@ class Master(object):
       one['model'] = one_device.model
       one['device'] = one_device.device
       self.last_devices_list.append(one)
-      
+      self.last_devices_set.add(one['serial_no'])
       
     
     #对于所有手机，枚举已经安装的包
-    for one in self.last_devices_list:
-      d = self._Add(one['serial_no'])
-      d.TriggerProcessPackageList()
+    # for one in self.last_devices_list:
+    #   d = self._Add(one['serial_no'])
+    #   d.TriggerProcessPackageList()
       
     
     return True
