@@ -193,7 +193,7 @@ class Proxy(object):
       self.StartCheckTimeOut(command, time_max)
       response = self.GenCommandResponse(t=self.queue_master, c=command, s=self.serial_number.encode('utf-8'),
                                          p=package_name, time_max=time_max, size=package_size, op=op)
-      callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
+      callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
                                    response['info'])
       pass
     
@@ -275,7 +275,7 @@ class Proxy(object):
       #   time.sleep(10000)
 
       self.log.info('before ProcessInstallApk ' + self.serial_number + ' : ' + apk_path)
-      callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
+      callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
                                    self.GenCommandResponse(stage='开始')['info'])
 
       install.Execute()
@@ -330,7 +330,7 @@ class Proxy(object):
                                         cb.CallbackFail)
     
       self.log.info('before ProcessUninstallApk ' + self.serial_number + ' : ' + package_name)
-      callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
+      callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
                                    self.GenCommandResponse(stage='开始删除老包')['info'])
 
       uninstall.Execute()

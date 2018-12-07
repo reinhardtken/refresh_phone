@@ -23,12 +23,12 @@ namespace {
 const ::google::protobuf::Descriptor* Command_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   Command_reflection_ = NULL;
-const ::google::protobuf::Descriptor* CommandProgress_descriptor_ = NULL;
-const ::google::protobuf::internal::GeneratedMessageReflection*
-  CommandProgress_reflection_ = NULL;
 const ::google::protobuf::Descriptor* CommandResponse_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   CommandResponse_reflection_ = NULL;
+const ::google::protobuf::Descriptor* CommandInstallApkResponse_descriptor_ = NULL;
+const ::google::protobuf::internal::GeneratedMessageReflection*
+  CommandInstallApkResponse_reflection_ = NULL;
 const ::google::protobuf::Descriptor* OneApk_descriptor_ = NULL;
 const ::google::protobuf::internal::GeneratedMessageReflection*
   OneApk_reflection_ = NULL;
@@ -69,29 +69,11 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(Command));
-  CommandProgress_descriptor_ = file->message_type(1);
-  static const int CommandProgress_offsets_[5] = {
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, cmd_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, cmd_no_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, code_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, time_cost_),
-    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, info_),
-  };
-  CommandProgress_reflection_ =
-    new ::google::protobuf::internal::GeneratedMessageReflection(
-      CommandProgress_descriptor_,
-      CommandProgress::default_instance_,
-      CommandProgress_offsets_,
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, _has_bits_[0]),
-      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandProgress, _unknown_fields_),
-      -1,
-      ::google::protobuf::DescriptorPool::generated_pool(),
-      ::google::protobuf::MessageFactory::generated_factory(),
-      sizeof(CommandProgress));
-  CommandResponse_descriptor_ = file->message_type(2);
-  static const int CommandResponse_offsets_[5] = {
+  CommandResponse_descriptor_ = file->message_type(1);
+  static const int CommandResponse_offsets_[6] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, cmd_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, cmd_no_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, sub_cmd_no_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, code_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, time_cost_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandResponse, info_),
@@ -107,6 +89,34 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::DescriptorPool::generated_pool(),
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CommandResponse));
+  CommandInstallApkResponse_descriptor_ = file->message_type(2);
+  static const int CommandInstallApkResponse_offsets_[14] = {
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, cmd_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, cmd_no_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, sub_cmd_no_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, code_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, time_cost_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, package_name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, progress_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, type_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, serial_number_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, time_max_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, package_size_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, adb_message_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, stage_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, info_),
+  };
+  CommandInstallApkResponse_reflection_ =
+    new ::google::protobuf::internal::GeneratedMessageReflection(
+      CommandInstallApkResponse_descriptor_,
+      CommandInstallApkResponse::default_instance_,
+      CommandInstallApkResponse_offsets_,
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, _has_bits_[0]),
+      GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkResponse, _unknown_fields_),
+      -1,
+      ::google::protobuf::DescriptorPool::generated_pool(),
+      ::google::protobuf::MessageFactory::generated_factory(),
+      sizeof(CommandInstallApkResponse));
   OneApk_descriptor_ = file->message_type(3);
   static const int OneApk_offsets_[12] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(OneApk, id_),
@@ -199,9 +209,9 @@ void protobuf_RegisterTypes(const ::std::string&) {
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     Command_descriptor_, &Command::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
-    CommandProgress_descriptor_, &CommandProgress::default_instance());
-  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     CommandResponse_descriptor_, &CommandResponse::default_instance());
+  ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
+    CommandInstallApkResponse_descriptor_, &CommandInstallApkResponse::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
     OneApk_descriptor_, &OneApk::default_instance());
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedMessage(
@@ -217,10 +227,10 @@ void protobuf_RegisterTypes(const ::std::string&) {
 void protobuf_ShutdownFile_apk_5fprotomsg_2eproto() {
   delete Command::default_instance_;
   delete Command_reflection_;
-  delete CommandProgress::default_instance_;
-  delete CommandProgress_reflection_;
   delete CommandResponse::default_instance_;
   delete CommandResponse_reflection_;
+  delete CommandInstallApkResponse::default_instance_;
+  delete CommandInstallApkResponse_reflection_;
   delete OneApk::default_instance_;
   delete OneApk_reflection_;
   delete ApkList::default_instance_;
@@ -240,35 +250,41 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
     "\n\022apk_protomsg.proto\022\003apk\"H\n\007Command\022\013\n\003"
     "cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\021\n\ttimestamp\030\003"
-    " \002(\003\022\r\n\005param\030\004 \003(\t\"]\n\017CommandProgress\022\013"
-    "\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\014\n\004code\030\003 \002("
-    "\005\022\021\n\ttime_cost\030\004 \001(\003\022\014\n\004info\030\005 \003(\t\"]\n\017Co"
-    "mmandResponse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002"
-    "(\005\022\014\n\004code\030\003 \002(\005\022\021\n\ttime_cost\030\004 \001(\003\022\014\n\004i"
-    "nfo\030\005 \003(\t\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030"
-    "\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005brie"
-    "f\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_time\030"
-    "\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_name\030\t"
-    " \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022\024\n\014pac"
-    "kage_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head\030\001 \002(\013"
-    "2\024.apk.CommandResponse\022\035\n\010apk_list\030\002 \003(\013"
-    "2\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial_no\030"
-    "\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022\017\n\007p"
-    "roduct\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013DevicesL"
-    "ist\022\"\n\004head\030\001 \002(\0132\024.apk.CommandResponse\022"
-    "$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevice", 757);
+    " \002(\003\022\r\n\005param\030\004 \003(\t\"q\n\017CommandResponse\022\013"
+    "\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\022\n\nsub_cmd_n"
+    "o\030\003 \002(\005\022\014\n\004code\030\004 \002(\005\022\021\n\ttime_cost\030\005 \001(\003"
+    "\022\014\n\004info\030\006 \003(\t\"\224\002\n\031CommandInstallApkResp"
+    "onse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\022\n\nsub"
+    "_cmd_no\030\003 \002(\005\022\014\n\004code\030\004 \002(\005\022\021\n\ttime_cost"
+    "\030\005 \001(\003\022\024\n\014package_name\030\006 \002(\t\022\020\n\010progress"
+    "\030\007 \002(\t\022\014\n\004type\030\010 \002(\t\022\025\n\rserial_number\030\t "
+    "\002(\t\022\020\n\010time_max\030\n \002(\005\022\024\n\014package_size\030\013 "
+    "\002(\005\022\023\n\013adb_message\030\014 \002(\t\022\r\n\005stage\030\r \002(\t\022"
+    "\014\n\004info\030\016 \003(\t\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003"
+    "url\030\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005"
+    "brief\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_t"
+    "ime\030\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_na"
+    "me\030\t \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022\024\n"
+    "\014package_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head\030\001"
+    " \002(\0132\024.apk.CommandResponse\022\035\n\010apk_list\030\002"
+    " \003(\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial"
+    "_no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022"
+    "\017\n\007product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013Devi"
+    "cesList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRespo"
+    "nse\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevic"
+    "e", 961);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
-  CommandProgress::default_instance_ = new CommandProgress();
   CommandResponse::default_instance_ = new CommandResponse();
+  CommandInstallApkResponse::default_instance_ = new CommandInstallApkResponse();
   OneApk::default_instance_ = new OneApk();
   ApkList::default_instance_ = new ApkList();
   AdbDevice::default_instance_ = new AdbDevice();
   DevicesList::default_instance_ = new DevicesList();
   Command::default_instance_->InitAsDefaultInstance();
-  CommandProgress::default_instance_->InitAsDefaultInstance();
   CommandResponse::default_instance_->InitAsDefaultInstance();
+  CommandInstallApkResponse::default_instance_->InitAsDefaultInstance();
   OneApk::default_instance_->InitAsDefaultInstance();
   ApkList::default_instance_->InitAsDefaultInstance();
   AdbDevice::default_instance_->InitAsDefaultInstance();
@@ -640,402 +656,9 @@ void Command::Swap(Command* other) {
 // ===================================================================
 
 #ifndef _MSC_VER
-const int CommandProgress::kCmdFieldNumber;
-const int CommandProgress::kCmdNoFieldNumber;
-const int CommandProgress::kCodeFieldNumber;
-const int CommandProgress::kTimeCostFieldNumber;
-const int CommandProgress::kInfoFieldNumber;
-#endif  // !_MSC_VER
-
-CommandProgress::CommandProgress()
-  : ::google::protobuf::Message() {
-  SharedCtor();
-}
-
-void CommandProgress::InitAsDefaultInstance() {
-}
-
-CommandProgress::CommandProgress(const CommandProgress& from)
-  : ::google::protobuf::Message() {
-  SharedCtor();
-  MergeFrom(from);
-}
-
-void CommandProgress::SharedCtor() {
-  _cached_size_ = 0;
-  cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
-  cmd_no_ = 0;
-  code_ = 0;
-  time_cost_ = GOOGLE_LONGLONG(0);
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-}
-
-CommandProgress::~CommandProgress() {
-  SharedDtor();
-}
-
-void CommandProgress::SharedDtor() {
-  if (cmd_ != &::google::protobuf::internal::kEmptyString) {
-    delete cmd_;
-  }
-  if (this != default_instance_) {
-  }
-}
-
-void CommandProgress::SetCachedSize(int size) const {
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-}
-const ::google::protobuf::Descriptor* CommandProgress::descriptor() {
-  protobuf_AssignDescriptorsOnce();
-  return CommandProgress_descriptor_;
-}
-
-const CommandProgress& CommandProgress::default_instance() {
-  if (default_instance_ == NULL) protobuf_AddDesc_apk_5fprotomsg_2eproto();
-  return *default_instance_;
-}
-
-CommandProgress* CommandProgress::default_instance_ = NULL;
-
-CommandProgress* CommandProgress::New() const {
-  return new CommandProgress;
-}
-
-void CommandProgress::Clear() {
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (has_cmd()) {
-      if (cmd_ != &::google::protobuf::internal::kEmptyString) {
-        cmd_->clear();
-      }
-    }
-    cmd_no_ = 0;
-    code_ = 0;
-    time_cost_ = GOOGLE_LONGLONG(0);
-  }
-  info_.Clear();
-  ::memset(_has_bits_, 0, sizeof(_has_bits_));
-  mutable_unknown_fields()->Clear();
-}
-
-bool CommandProgress::MergePartialFromCodedStream(
-    ::google::protobuf::io::CodedInputStream* input) {
-#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
-  ::google::protobuf::uint32 tag;
-  while ((tag = input->ReadTag()) != 0) {
-    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
-      // required string cmd = 1;
-      case 1: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->mutable_cmd()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->cmd().data(), this->cmd().length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(16)) goto parse_cmd_no;
-        break;
-      }
-
-      // required int32 cmd_no = 2;
-      case 2: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_cmd_no:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &cmd_no_)));
-          set_has_cmd_no();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(24)) goto parse_code;
-        break;
-      }
-
-      // required int32 code = 3;
-      case 3: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_code:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
-                 input, &code_)));
-          set_has_code();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(32)) goto parse_time_cost;
-        break;
-      }
-
-      // optional int64 time_cost = 4;
-      case 4: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
-         parse_time_cost:
-          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
-                 input, &time_cost_)));
-          set_has_time_cost();
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_info;
-        break;
-      }
-
-      // repeated string info = 5;
-      case 5: {
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
-         parse_info:
-          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
-                input, this->add_info()));
-          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-            this->info(this->info_size() - 1).data(),
-            this->info(this->info_size() - 1).length(),
-            ::google::protobuf::internal::WireFormat::PARSE);
-        } else {
-          goto handle_uninterpreted;
-        }
-        if (input->ExpectTag(42)) goto parse_info;
-        if (input->ExpectAtEnd()) return true;
-        break;
-      }
-
-      default: {
-      handle_uninterpreted:
-        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
-          return true;
-        }
-        DO_(::google::protobuf::internal::WireFormat::SkipField(
-              input, tag, mutable_unknown_fields()));
-        break;
-      }
-    }
-  }
-  return true;
-#undef DO_
-}
-
-void CommandProgress::SerializeWithCachedSizes(
-    ::google::protobuf::io::CodedOutputStream* output) const {
-  // required string cmd = 1;
-  if (has_cmd()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->cmd().data(), this->cmd().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      1, this->cmd(), output);
-  }
-
-  // required int32 cmd_no = 2;
-  if (has_cmd_no()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->cmd_no(), output);
-  }
-
-  // required int32 code = 3;
-  if (has_code()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->code(), output);
-  }
-
-  // optional int64 time_cost = 4;
-  if (has_time_cost()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->time_cost(), output);
-  }
-
-  // repeated string info = 5;
-  for (int i = 0; i < this->info_size(); i++) {
-  ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-    this->info(i).data(), this->info(i).length(),
-    ::google::protobuf::internal::WireFormat::SERIALIZE);
-    ::google::protobuf::internal::WireFormatLite::WriteString(
-      5, this->info(i), output);
-  }
-
-  if (!unknown_fields().empty()) {
-    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
-        unknown_fields(), output);
-  }
-}
-
-::google::protobuf::uint8* CommandProgress::SerializeWithCachedSizesToArray(
-    ::google::protobuf::uint8* target) const {
-  // required string cmd = 1;
-  if (has_cmd()) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->cmd().data(), this->cmd().length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target =
-      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        1, this->cmd(), target);
-  }
-
-  // required int32 cmd_no = 2;
-  if (has_cmd_no()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->cmd_no(), target);
-  }
-
-  // required int32 code = 3;
-  if (has_code()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->code(), target);
-  }
-
-  // optional int64 time_cost = 4;
-  if (has_time_cost()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->time_cost(), target);
-  }
-
-  // repeated string info = 5;
-  for (int i = 0; i < this->info_size(); i++) {
-    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
-      this->info(i).data(), this->info(i).length(),
-      ::google::protobuf::internal::WireFormat::SERIALIZE);
-    target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(5, this->info(i), target);
-  }
-
-  if (!unknown_fields().empty()) {
-    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
-        unknown_fields(), target);
-  }
-  return target;
-}
-
-int CommandProgress::ByteSize() const {
-  int total_size = 0;
-
-  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    // required string cmd = 1;
-    if (has_cmd()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::StringSize(
-          this->cmd());
-    }
-
-    // required int32 cmd_no = 2;
-    if (has_cmd_no()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->cmd_no());
-    }
-
-    // required int32 code = 3;
-    if (has_code()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->code());
-    }
-
-    // optional int64 time_cost = 4;
-    if (has_time_cost()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int64Size(
-          this->time_cost());
-    }
-
-  }
-  // repeated string info = 5;
-  total_size += 1 * this->info_size();
-  for (int i = 0; i < this->info_size(); i++) {
-    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
-      this->info(i));
-  }
-
-  if (!unknown_fields().empty()) {
-    total_size +=
-      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
-        unknown_fields());
-  }
-  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
-  _cached_size_ = total_size;
-  GOOGLE_SAFE_CONCURRENT_WRITES_END();
-  return total_size;
-}
-
-void CommandProgress::MergeFrom(const ::google::protobuf::Message& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  const CommandProgress* source =
-    ::google::protobuf::internal::dynamic_cast_if_available<const CommandProgress*>(
-      &from);
-  if (source == NULL) {
-    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
-  } else {
-    MergeFrom(*source);
-  }
-}
-
-void CommandProgress::MergeFrom(const CommandProgress& from) {
-  GOOGLE_CHECK_NE(&from, this);
-  info_.MergeFrom(from.info_);
-  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
-    if (from.has_cmd()) {
-      set_cmd(from.cmd());
-    }
-    if (from.has_cmd_no()) {
-      set_cmd_no(from.cmd_no());
-    }
-    if (from.has_code()) {
-      set_code(from.code());
-    }
-    if (from.has_time_cost()) {
-      set_time_cost(from.time_cost());
-    }
-  }
-  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
-}
-
-void CommandProgress::CopyFrom(const ::google::protobuf::Message& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-void CommandProgress::CopyFrom(const CommandProgress& from) {
-  if (&from == this) return;
-  Clear();
-  MergeFrom(from);
-}
-
-bool CommandProgress::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
-
-  return true;
-}
-
-void CommandProgress::Swap(CommandProgress* other) {
-  if (other != this) {
-    std::swap(cmd_, other->cmd_);
-    std::swap(cmd_no_, other->cmd_no_);
-    std::swap(code_, other->code_);
-    std::swap(time_cost_, other->time_cost_);
-    info_.Swap(&other->info_);
-    std::swap(_has_bits_[0], other->_has_bits_[0]);
-    _unknown_fields_.Swap(&other->_unknown_fields_);
-    std::swap(_cached_size_, other->_cached_size_);
-  }
-}
-
-::google::protobuf::Metadata CommandProgress::GetMetadata() const {
-  protobuf_AssignDescriptorsOnce();
-  ::google::protobuf::Metadata metadata;
-  metadata.descriptor = CommandProgress_descriptor_;
-  metadata.reflection = CommandProgress_reflection_;
-  return metadata;
-}
-
-
-// ===================================================================
-
-#ifndef _MSC_VER
 const int CommandResponse::kCmdFieldNumber;
 const int CommandResponse::kCmdNoFieldNumber;
+const int CommandResponse::kSubCmdNoFieldNumber;
 const int CommandResponse::kCodeFieldNumber;
 const int CommandResponse::kTimeCostFieldNumber;
 const int CommandResponse::kInfoFieldNumber;
@@ -1059,6 +682,7 @@ void CommandResponse::SharedCtor() {
   _cached_size_ = 0;
   cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   cmd_no_ = 0;
+  sub_cmd_no_ = 0;
   code_ = 0;
   time_cost_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
@@ -1105,6 +729,7 @@ void CommandResponse::Clear() {
       }
     }
     cmd_no_ = 0;
+    sub_cmd_no_ = 0;
     code_ = 0;
     time_cost_ = GOOGLE_LONGLONG(0);
   }
@@ -1147,12 +772,28 @@ bool CommandResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(24)) goto parse_code;
+        if (input->ExpectTag(24)) goto parse_sub_cmd_no;
         break;
       }
 
-      // required int32 code = 3;
+      // required int32 sub_cmd_no = 3;
       case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_sub_cmd_no:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &sub_cmd_no_)));
+          set_has_sub_cmd_no();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_code;
+        break;
+      }
+
+      // required int32 code = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_code:
@@ -1163,12 +804,12 @@ bool CommandResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(32)) goto parse_time_cost;
+        if (input->ExpectTag(40)) goto parse_time_cost;
         break;
       }
 
-      // optional int64 time_cost = 4;
-      case 4: {
+      // optional int64 time_cost = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_time_cost:
@@ -1179,12 +820,12 @@ bool CommandResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(42)) goto parse_info;
+        if (input->ExpectTag(50)) goto parse_info;
         break;
       }
 
-      // repeated string info = 5;
-      case 5: {
+      // repeated string info = 6;
+      case 6: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_info:
@@ -1197,7 +838,7 @@ bool CommandResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(42)) goto parse_info;
+        if (input->ExpectTag(50)) goto parse_info;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -1234,23 +875,28 @@ void CommandResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->cmd_no(), output);
   }
 
-  // required int32 code = 3;
+  // required int32 sub_cmd_no = 3;
+  if (has_sub_cmd_no()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->sub_cmd_no(), output);
+  }
+
+  // required int32 code = 4;
   if (has_code()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->code(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->code(), output);
   }
 
-  // optional int64 time_cost = 4;
+  // optional int64 time_cost = 5;
   if (has_time_cost()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->time_cost(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->time_cost(), output);
   }
 
-  // repeated string info = 5;
+  // repeated string info = 6;
   for (int i = 0; i < this->info_size(); i++) {
   ::google::protobuf::internal::WireFormat::VerifyUTF8String(
     this->info(i).data(), this->info(i).length(),
     ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      5, this->info(i), output);
+      6, this->info(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -1276,23 +922,28 @@ void CommandResponse::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->cmd_no(), target);
   }
 
-  // required int32 code = 3;
+  // required int32 sub_cmd_no = 3;
+  if (has_sub_cmd_no()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->sub_cmd_no(), target);
+  }
+
+  // required int32 code = 4;
   if (has_code()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->code(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->code(), target);
   }
 
-  // optional int64 time_cost = 4;
+  // optional int64 time_cost = 5;
   if (has_time_cost()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->time_cost(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->time_cost(), target);
   }
 
-  // repeated string info = 5;
+  // repeated string info = 6;
   for (int i = 0; i < this->info_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->info(i).data(), this->info(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(5, this->info(i), target);
+      WriteStringToArray(6, this->info(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -1320,14 +971,21 @@ int CommandResponse::ByteSize() const {
           this->cmd_no());
     }
 
-    // required int32 code = 3;
+    // required int32 sub_cmd_no = 3;
+    if (has_sub_cmd_no()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->sub_cmd_no());
+    }
+
+    // required int32 code = 4;
     if (has_code()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
           this->code());
     }
 
-    // optional int64 time_cost = 4;
+    // optional int64 time_cost = 5;
     if (has_time_cost()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int64Size(
@@ -1335,7 +993,7 @@ int CommandResponse::ByteSize() const {
     }
 
   }
-  // repeated string info = 5;
+  // repeated string info = 6;
   total_size += 1 * this->info_size();
   for (int i = 0; i < this->info_size(); i++) {
     total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -1375,6 +1033,9 @@ void CommandResponse::MergeFrom(const CommandResponse& from) {
     if (from.has_cmd_no()) {
       set_cmd_no(from.cmd_no());
     }
+    if (from.has_sub_cmd_no()) {
+      set_sub_cmd_no(from.sub_cmd_no());
+    }
     if (from.has_code()) {
       set_code(from.code());
     }
@@ -1398,7 +1059,7 @@ void CommandResponse::CopyFrom(const CommandResponse& from) {
 }
 
 bool CommandResponse::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
 
   return true;
 }
@@ -1407,6 +1068,7 @@ void CommandResponse::Swap(CommandResponse* other) {
   if (other != this) {
     std::swap(cmd_, other->cmd_);
     std::swap(cmd_no_, other->cmd_no_);
+    std::swap(sub_cmd_no_, other->sub_cmd_no_);
     std::swap(code_, other->code_);
     std::swap(time_cost_, other->time_cost_);
     info_.Swap(&other->info_);
@@ -1421,6 +1083,868 @@ void CommandResponse::Swap(CommandResponse* other) {
   ::google::protobuf::Metadata metadata;
   metadata.descriptor = CommandResponse_descriptor_;
   metadata.reflection = CommandResponse_reflection_;
+  return metadata;
+}
+
+
+// ===================================================================
+
+#ifndef _MSC_VER
+const int CommandInstallApkResponse::kCmdFieldNumber;
+const int CommandInstallApkResponse::kCmdNoFieldNumber;
+const int CommandInstallApkResponse::kSubCmdNoFieldNumber;
+const int CommandInstallApkResponse::kCodeFieldNumber;
+const int CommandInstallApkResponse::kTimeCostFieldNumber;
+const int CommandInstallApkResponse::kPackageNameFieldNumber;
+const int CommandInstallApkResponse::kProgressFieldNumber;
+const int CommandInstallApkResponse::kTypeFieldNumber;
+const int CommandInstallApkResponse::kSerialNumberFieldNumber;
+const int CommandInstallApkResponse::kTimeMaxFieldNumber;
+const int CommandInstallApkResponse::kPackageSizeFieldNumber;
+const int CommandInstallApkResponse::kAdbMessageFieldNumber;
+const int CommandInstallApkResponse::kStageFieldNumber;
+const int CommandInstallApkResponse::kInfoFieldNumber;
+#endif  // !_MSC_VER
+
+CommandInstallApkResponse::CommandInstallApkResponse()
+  : ::google::protobuf::Message() {
+  SharedCtor();
+}
+
+void CommandInstallApkResponse::InitAsDefaultInstance() {
+}
+
+CommandInstallApkResponse::CommandInstallApkResponse(const CommandInstallApkResponse& from)
+  : ::google::protobuf::Message() {
+  SharedCtor();
+  MergeFrom(from);
+}
+
+void CommandInstallApkResponse::SharedCtor() {
+  _cached_size_ = 0;
+  cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  cmd_no_ = 0;
+  sub_cmd_no_ = 0;
+  code_ = 0;
+  time_cost_ = GOOGLE_LONGLONG(0);
+  package_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  progress_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  type_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  serial_number_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  time_max_ = 0;
+  package_size_ = 0;
+  adb_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  stage_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+}
+
+CommandInstallApkResponse::~CommandInstallApkResponse() {
+  SharedDtor();
+}
+
+void CommandInstallApkResponse::SharedDtor() {
+  if (cmd_ != &::google::protobuf::internal::kEmptyString) {
+    delete cmd_;
+  }
+  if (package_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete package_name_;
+  }
+  if (progress_ != &::google::protobuf::internal::kEmptyString) {
+    delete progress_;
+  }
+  if (type_ != &::google::protobuf::internal::kEmptyString) {
+    delete type_;
+  }
+  if (serial_number_ != &::google::protobuf::internal::kEmptyString) {
+    delete serial_number_;
+  }
+  if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
+    delete adb_message_;
+  }
+  if (stage_ != &::google::protobuf::internal::kEmptyString) {
+    delete stage_;
+  }
+  if (this != default_instance_) {
+  }
+}
+
+void CommandInstallApkResponse::SetCachedSize(int size) const {
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+}
+const ::google::protobuf::Descriptor* CommandInstallApkResponse::descriptor() {
+  protobuf_AssignDescriptorsOnce();
+  return CommandInstallApkResponse_descriptor_;
+}
+
+const CommandInstallApkResponse& CommandInstallApkResponse::default_instance() {
+  if (default_instance_ == NULL) protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  return *default_instance_;
+}
+
+CommandInstallApkResponse* CommandInstallApkResponse::default_instance_ = NULL;
+
+CommandInstallApkResponse* CommandInstallApkResponse::New() const {
+  return new CommandInstallApkResponse;
+}
+
+void CommandInstallApkResponse::Clear() {
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (has_cmd()) {
+      if (cmd_ != &::google::protobuf::internal::kEmptyString) {
+        cmd_->clear();
+      }
+    }
+    cmd_no_ = 0;
+    sub_cmd_no_ = 0;
+    code_ = 0;
+    time_cost_ = GOOGLE_LONGLONG(0);
+    if (has_package_name()) {
+      if (package_name_ != &::google::protobuf::internal::kEmptyString) {
+        package_name_->clear();
+      }
+    }
+    if (has_progress()) {
+      if (progress_ != &::google::protobuf::internal::kEmptyString) {
+        progress_->clear();
+      }
+    }
+    if (has_type()) {
+      if (type_ != &::google::protobuf::internal::kEmptyString) {
+        type_->clear();
+      }
+    }
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (has_serial_number()) {
+      if (serial_number_ != &::google::protobuf::internal::kEmptyString) {
+        serial_number_->clear();
+      }
+    }
+    time_max_ = 0;
+    package_size_ = 0;
+    if (has_adb_message()) {
+      if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
+        adb_message_->clear();
+      }
+    }
+    if (has_stage()) {
+      if (stage_ != &::google::protobuf::internal::kEmptyString) {
+        stage_->clear();
+      }
+    }
+  }
+  info_.Clear();
+  ::memset(_has_bits_, 0, sizeof(_has_bits_));
+  mutable_unknown_fields()->Clear();
+}
+
+bool CommandInstallApkResponse::MergePartialFromCodedStream(
+    ::google::protobuf::io::CodedInputStream* input) {
+#define DO_(EXPRESSION) if (!(EXPRESSION)) return false
+  ::google::protobuf::uint32 tag;
+  while ((tag = input->ReadTag()) != 0) {
+    switch (::google::protobuf::internal::WireFormatLite::GetTagFieldNumber(tag)) {
+      // required string cmd = 1;
+      case 1: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_cmd()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->cmd().data(), this->cmd().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(16)) goto parse_cmd_no;
+        break;
+      }
+
+      // required int32 cmd_no = 2;
+      case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_cmd_no:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &cmd_no_)));
+          set_has_cmd_no();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(24)) goto parse_sub_cmd_no;
+        break;
+      }
+
+      // required int32 sub_cmd_no = 3;
+      case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_sub_cmd_no:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &sub_cmd_no_)));
+          set_has_sub_cmd_no();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_code;
+        break;
+      }
+
+      // required int32 code = 4;
+      case 4: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_code:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &code_)));
+          set_has_code();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(40)) goto parse_time_cost;
+        break;
+      }
+
+      // optional int64 time_cost = 5;
+      case 5: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_time_cost:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int64, ::google::protobuf::internal::WireFormatLite::TYPE_INT64>(
+                 input, &time_cost_)));
+          set_has_time_cost();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(50)) goto parse_package_name;
+        break;
+      }
+
+      // required string package_name = 6;
+      case 6: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_package_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_package_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->package_name().data(), this->package_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(58)) goto parse_progress;
+        break;
+      }
+
+      // required string progress = 7;
+      case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_progress:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_progress()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->progress().data(), this->progress().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(66)) goto parse_type;
+        break;
+      }
+
+      // required string type = 8;
+      case 8: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_type:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_type()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->type().data(), this->type().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(74)) goto parse_serial_number;
+        break;
+      }
+
+      // required string serial_number = 9;
+      case 9: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_serial_number:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_serial_number()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->serial_number().data(), this->serial_number().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(80)) goto parse_time_max;
+        break;
+      }
+
+      // required int32 time_max = 10;
+      case 10: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_time_max:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &time_max_)));
+          set_has_time_max();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(88)) goto parse_package_size;
+        break;
+      }
+
+      // required int32 package_size = 11;
+      case 11: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_package_size:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &package_size_)));
+          set_has_package_size();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(98)) goto parse_adb_message;
+        break;
+      }
+
+      // required string adb_message = 12;
+      case 12: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_adb_message:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_adb_message()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->adb_message().data(), this->adb_message().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(106)) goto parse_stage;
+        break;
+      }
+
+      // required string stage = 13;
+      case 13: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_stage:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_stage()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->stage().data(), this->stage().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(114)) goto parse_info;
+        break;
+      }
+
+      // repeated string info = 14;
+      case 14: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_info:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->add_info()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->info(this->info_size() - 1).data(),
+            this->info(this->info_size() - 1).length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(114)) goto parse_info;
+        if (input->ExpectAtEnd()) return true;
+        break;
+      }
+
+      default: {
+      handle_uninterpreted:
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_END_GROUP) {
+          return true;
+        }
+        DO_(::google::protobuf::internal::WireFormat::SkipField(
+              input, tag, mutable_unknown_fields()));
+        break;
+      }
+    }
+  }
+  return true;
+#undef DO_
+}
+
+void CommandInstallApkResponse::SerializeWithCachedSizes(
+    ::google::protobuf::io::CodedOutputStream* output) const {
+  // required string cmd = 1;
+  if (has_cmd()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->cmd().data(), this->cmd().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      1, this->cmd(), output);
+  }
+
+  // required int32 cmd_no = 2;
+  if (has_cmd_no()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->cmd_no(), output);
+  }
+
+  // required int32 sub_cmd_no = 3;
+  if (has_sub_cmd_no()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->sub_cmd_no(), output);
+  }
+
+  // required int32 code = 4;
+  if (has_code()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->code(), output);
+  }
+
+  // optional int64 time_cost = 5;
+  if (has_time_cost()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(5, this->time_cost(), output);
+  }
+
+  // required string package_name = 6;
+  if (has_package_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->package_name().data(), this->package_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      6, this->package_name(), output);
+  }
+
+  // required string progress = 7;
+  if (has_progress()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->progress().data(), this->progress().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      7, this->progress(), output);
+  }
+
+  // required string type = 8;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      8, this->type(), output);
+  }
+
+  // required string serial_number = 9;
+  if (has_serial_number()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->serial_number().data(), this->serial_number().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      9, this->serial_number(), output);
+  }
+
+  // required int32 time_max = 10;
+  if (has_time_max()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->time_max(), output);
+  }
+
+  // required int32 package_size = 11;
+  if (has_package_size()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(11, this->package_size(), output);
+  }
+
+  // required string adb_message = 12;
+  if (has_adb_message()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->adb_message().data(), this->adb_message().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      12, this->adb_message(), output);
+  }
+
+  // required string stage = 13;
+  if (has_stage()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->stage().data(), this->stage().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      13, this->stage(), output);
+  }
+
+  // repeated string info = 14;
+  for (int i = 0; i < this->info_size(); i++) {
+  ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+    this->info(i).data(), this->info(i).length(),
+    ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      14, this->info(i), output);
+  }
+
+  if (!unknown_fields().empty()) {
+    ::google::protobuf::internal::WireFormat::SerializeUnknownFields(
+        unknown_fields(), output);
+  }
+}
+
+::google::protobuf::uint8* CommandInstallApkResponse::SerializeWithCachedSizesToArray(
+    ::google::protobuf::uint8* target) const {
+  // required string cmd = 1;
+  if (has_cmd()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->cmd().data(), this->cmd().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        1, this->cmd(), target);
+  }
+
+  // required int32 cmd_no = 2;
+  if (has_cmd_no()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->cmd_no(), target);
+  }
+
+  // required int32 sub_cmd_no = 3;
+  if (has_sub_cmd_no()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->sub_cmd_no(), target);
+  }
+
+  // required int32 code = 4;
+  if (has_code()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->code(), target);
+  }
+
+  // optional int64 time_cost = 5;
+  if (has_time_cost()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(5, this->time_cost(), target);
+  }
+
+  // required string package_name = 6;
+  if (has_package_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->package_name().data(), this->package_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        6, this->package_name(), target);
+  }
+
+  // required string progress = 7;
+  if (has_progress()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->progress().data(), this->progress().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        7, this->progress(), target);
+  }
+
+  // required string type = 8;
+  if (has_type()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->type().data(), this->type().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        8, this->type(), target);
+  }
+
+  // required string serial_number = 9;
+  if (has_serial_number()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->serial_number().data(), this->serial_number().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        9, this->serial_number(), target);
+  }
+
+  // required int32 time_max = 10;
+  if (has_time_max()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->time_max(), target);
+  }
+
+  // required int32 package_size = 11;
+  if (has_package_size()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(11, this->package_size(), target);
+  }
+
+  // required string adb_message = 12;
+  if (has_adb_message()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->adb_message().data(), this->adb_message().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        12, this->adb_message(), target);
+  }
+
+  // required string stage = 13;
+  if (has_stage()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->stage().data(), this->stage().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        13, this->stage(), target);
+  }
+
+  // repeated string info = 14;
+  for (int i = 0; i < this->info_size(); i++) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->info(i).data(), this->info(i).length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target = ::google::protobuf::internal::WireFormatLite::
+      WriteStringToArray(14, this->info(i), target);
+  }
+
+  if (!unknown_fields().empty()) {
+    target = ::google::protobuf::internal::WireFormat::SerializeUnknownFieldsToArray(
+        unknown_fields(), target);
+  }
+  return target;
+}
+
+int CommandInstallApkResponse::ByteSize() const {
+  int total_size = 0;
+
+  if (_has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    // required string cmd = 1;
+    if (has_cmd()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->cmd());
+    }
+
+    // required int32 cmd_no = 2;
+    if (has_cmd_no()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->cmd_no());
+    }
+
+    // required int32 sub_cmd_no = 3;
+    if (has_sub_cmd_no()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->sub_cmd_no());
+    }
+
+    // required int32 code = 4;
+    if (has_code()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->code());
+    }
+
+    // optional int64 time_cost = 5;
+    if (has_time_cost()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int64Size(
+          this->time_cost());
+    }
+
+    // required string package_name = 6;
+    if (has_package_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->package_name());
+    }
+
+    // required string progress = 7;
+    if (has_progress()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->progress());
+    }
+
+    // required string type = 8;
+    if (has_type()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->type());
+    }
+
+  }
+  if (_has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    // required string serial_number = 9;
+    if (has_serial_number()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->serial_number());
+    }
+
+    // required int32 time_max = 10;
+    if (has_time_max()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->time_max());
+    }
+
+    // required int32 package_size = 11;
+    if (has_package_size()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->package_size());
+    }
+
+    // required string adb_message = 12;
+    if (has_adb_message()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->adb_message());
+    }
+
+    // required string stage = 13;
+    if (has_stage()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->stage());
+    }
+
+  }
+  // repeated string info = 14;
+  total_size += 1 * this->info_size();
+  for (int i = 0; i < this->info_size(); i++) {
+    total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
+      this->info(i));
+  }
+
+  if (!unknown_fields().empty()) {
+    total_size +=
+      ::google::protobuf::internal::WireFormat::ComputeUnknownFieldsSize(
+        unknown_fields());
+  }
+  GOOGLE_SAFE_CONCURRENT_WRITES_BEGIN();
+  _cached_size_ = total_size;
+  GOOGLE_SAFE_CONCURRENT_WRITES_END();
+  return total_size;
+}
+
+void CommandInstallApkResponse::MergeFrom(const ::google::protobuf::Message& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  const CommandInstallApkResponse* source =
+    ::google::protobuf::internal::dynamic_cast_if_available<const CommandInstallApkResponse*>(
+      &from);
+  if (source == NULL) {
+    ::google::protobuf::internal::ReflectionOps::Merge(from, this);
+  } else {
+    MergeFrom(*source);
+  }
+}
+
+void CommandInstallApkResponse::MergeFrom(const CommandInstallApkResponse& from) {
+  GOOGLE_CHECK_NE(&from, this);
+  info_.MergeFrom(from.info_);
+  if (from._has_bits_[0 / 32] & (0xffu << (0 % 32))) {
+    if (from.has_cmd()) {
+      set_cmd(from.cmd());
+    }
+    if (from.has_cmd_no()) {
+      set_cmd_no(from.cmd_no());
+    }
+    if (from.has_sub_cmd_no()) {
+      set_sub_cmd_no(from.sub_cmd_no());
+    }
+    if (from.has_code()) {
+      set_code(from.code());
+    }
+    if (from.has_time_cost()) {
+      set_time_cost(from.time_cost());
+    }
+    if (from.has_package_name()) {
+      set_package_name(from.package_name());
+    }
+    if (from.has_progress()) {
+      set_progress(from.progress());
+    }
+    if (from.has_type()) {
+      set_type(from.type());
+    }
+  }
+  if (from._has_bits_[8 / 32] & (0xffu << (8 % 32))) {
+    if (from.has_serial_number()) {
+      set_serial_number(from.serial_number());
+    }
+    if (from.has_time_max()) {
+      set_time_max(from.time_max());
+    }
+    if (from.has_package_size()) {
+      set_package_size(from.package_size());
+    }
+    if (from.has_adb_message()) {
+      set_adb_message(from.adb_message());
+    }
+    if (from.has_stage()) {
+      set_stage(from.stage());
+    }
+  }
+  mutable_unknown_fields()->MergeFrom(from.unknown_fields());
+}
+
+void CommandInstallApkResponse::CopyFrom(const ::google::protobuf::Message& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+void CommandInstallApkResponse::CopyFrom(const CommandInstallApkResponse& from) {
+  if (&from == this) return;
+  Clear();
+  MergeFrom(from);
+}
+
+bool CommandInstallApkResponse::IsInitialized() const {
+  if ((_has_bits_[0] & 0x00001fef) != 0x00001fef) return false;
+
+  return true;
+}
+
+void CommandInstallApkResponse::Swap(CommandInstallApkResponse* other) {
+  if (other != this) {
+    std::swap(cmd_, other->cmd_);
+    std::swap(cmd_no_, other->cmd_no_);
+    std::swap(sub_cmd_no_, other->sub_cmd_no_);
+    std::swap(code_, other->code_);
+    std::swap(time_cost_, other->time_cost_);
+    std::swap(package_name_, other->package_name_);
+    std::swap(progress_, other->progress_);
+    std::swap(type_, other->type_);
+    std::swap(serial_number_, other->serial_number_);
+    std::swap(time_max_, other->time_max_);
+    std::swap(package_size_, other->package_size_);
+    std::swap(adb_message_, other->adb_message_);
+    std::swap(stage_, other->stage_);
+    info_.Swap(&other->info_);
+    std::swap(_has_bits_[0], other->_has_bits_[0]);
+    _unknown_fields_.Swap(&other->_unknown_fields_);
+    std::swap(_cached_size_, other->_cached_size_);
+  }
+}
+
+::google::protobuf::Metadata CommandInstallApkResponse::GetMetadata() const {
+  protobuf_AssignDescriptorsOnce();
+  ::google::protobuf::Metadata metadata;
+  metadata.descriptor = CommandInstallApkResponse_descriptor_;
+  metadata.reflection = CommandInstallApkResponse_reflection_;
   return metadata;
 }
 

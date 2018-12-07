@@ -475,6 +475,7 @@ struct ApkIRStatus {
   std::wstring percent;
   std::wstring result;
   std::wstring speed;
+  int sub_command_id;
   int error_code;
   int time_cost;//秒
   int time_max;//秒

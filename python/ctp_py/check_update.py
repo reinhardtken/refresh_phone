@@ -358,29 +358,29 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         self.SendApkList(command,
                          consts.ERROR_CODE_LOAD_LOCAL_APKLIST_FAILED)
     except Exception as e:
-      self.SendCommandProgress(command, consts.ERROR_CODE_UNKNOWN, ['获取本地包列表', ])
+      self.SendCommandResponse(command, consts.ERROR_CODE_UNKNOWN, ['获取本地包列表', ])
 
 
   def ProcessRemoveLocalPackageList(self, command):
     try:
       if os.path.exists(self.prop['localPath']):
         os.remove(self.prop['localPath'])
-      self.SendCommandProgress(command,
+      self.SendCommandResponse(command,
                                consts.ERROR_CODE_OK,
                                ['删除配置文件成功', ])
     except Exception as e:
-      self.SendCommandProgress(command,
+      self.SendCommandResponse(command,
                                consts.ERROR_CODE_REMOVE_JSON_FILE_FAILED,
                                [consts.error_string(consts.ERROR_CODE_REMOVE_JSON_FILE_FAILED), ])
 
     try:
       if os.path.isdir(self.prop['apkPath']):
         util.utility.RemoveDir(self.prop['apkPath'])
-      self.SendCommandProgress(command,
+      self.SendCommandResponse(command,
                                consts.ERROR_CODE_OK,
                                ['删除包目录成功', ])
     except Exception as e:
-      self.SendCommandProgress(command,
+      self.SendCommandResponse(command,
                                consts.ERROR_CODE_REMOVE_APK_DIR_FAILED,
                                [consts.error_string(
                                  consts.ERROR_CODE_REMOVE_APK_DIR_FAILED), ])
@@ -404,11 +404,11 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
   
   def CheckUpdate(self, data, command):
-    self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
     try:
       util.utility.CreateDir(self.prop['apkPath'])
       if self.ParseJson(data):
-        self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '解析网络配置成功', ])
+        self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '解析网络配置成功', ])
         need_save_json = False
         if self.local_prop is not None:
           #检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
@@ -447,35 +447,35 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         if need_save_json == True:
           #保存最新的json文件到本地
           if util.utility.WriteJsonFile(self.prop['localPath'], data):
-            self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
+            self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
           else:
-            self.SendCommandProgress(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED, ['配置更新', consts.error_string(response.code), ])
+            self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED, ['配置更新', consts.error_string(response.code), ])
         else:
-          self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['配置更新', '无需更新配置文件', ])
+          self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '无需更新配置文件', ])
           pass
 
       else:
-        self.SendCommandProgress(command, consts.ERROR_CODE_PARSE_JSON_FAILED, ['配置更新', '解析网络配置失败', ])
+        self.SendCommandResponse(command, consts.ERROR_CODE_PARSE_JSON_FAILED, ['配置更新', '解析网络配置失败', ])
         return
 
     except Exception as e:
-      self.SendCommandProgress(command, consts.ERROR_CODE_UNKNOWN, ['检查更新', ])
+      self.SendCommandResponse(command, consts.ERROR_CODE_UNKNOWN, ['检查更新', ])
   
     return
     pass
   
 
 
-  def SendCommandProgress(self, cmd, code, info=None):
-    response = pb.apk_protomsg_pb2.CommandProgress()
-    response.cmd = cmd.cmd
-    response.cmd_no = cmd.cmd_no
-    response.code = code
-    if info is not None:
-      for one in info:
-        response.info.append(one.decode('utf-8'))
-
-    self.Send(response)
+  # def SendCommandProgress(self, cmd, code, info=None):
+  #   response = pb.apk_protomsg_pb2.CommandProgress()
+  #   response.cmd = cmd.cmd
+  #   response.cmd_no = cmd.cmd_no
+  #   response.code = code
+  #   if info is not None:
+  #     for one in info:
+  #       response.info.append(one.decode('utf-8'))
+  #
+  #   self.Send(response)
 
 
   def SendCommandResponse(self, cmd, code, info=None):
@@ -562,7 +562,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       exstr = traceback.format_exc()
       print(exstr)
       self.log.info(exstr)
-      self.SendCommandProgress(command, consts.ERROR_CODE_DOWNLOAD_APK_FAILED,
+      self.SendCommandResponse(command, consts.ERROR_CODE_DOWNLOAD_APK_FAILED,
                                ['包更新',
                                 consts.error_string(consts.ERROR_CODE_DOWNLOAD_APK_FAILED),
                                 one['apkname']])
@@ -581,7 +581,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       if percent - self.last_report > 0.05 or now == total:
         self.last_report = percent
         data = ("%.2f%%" % (percent *100))
-        self.host.SendCommandProgress(self.command, consts.ERROR_CODE_OK, ['包更新', '下载中', self.one['apkname'], data])
+        self.host.SendCommandResponse(self.command, consts.ERROR_CODE_OK, ['包更新', '下载中', self.one['apkname'], data])
       pass
  
   
@@ -599,13 +599,13 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       if md5 != one['apkmd5']:
         os.remove(file_path)
       else:
-        self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['apkname']])
+        self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['apkname']])
         result = True
         return result
 
 
     #开始下载
-    self.SendCommandProgress(command, consts.ERROR_CODE_OK, ['包更新', '开始下载', one['apkname']])
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '开始下载', one['apkname']])
     
     
     
@@ -618,11 +618,11 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         if md5 != one['apkmd5']:
           # 删除文件
           os.remove(file_path)
-          self.SendCommandProgress(command, consts.ERROR_CODE_MD5_APK_FAILED,
+          self.SendCommandResponse(command, consts.ERROR_CODE_MD5_APK_FAILED,
                                    ['包更新', consts.error_string(consts.ERROR_CODE_MD5_APK_FAILED),
                                     one['apkname']])
         else:
-          self.SendCommandProgress(command, consts.ERROR_CODE_OK,
+          self.SendCommandResponse(command, consts.ERROR_CODE_OK,
                                    ['包更新',
                                     '下载成功',
                                     one['apkname']])
@@ -633,7 +633,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       print(exstr)
       self.log.info(exstr)
       
-      self.SendCommandProgress(command, consts.ERROR_CODE_SAVE_APK_FILE_FAILED,
+      self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_APK_FILE_FAILED,
                                ['包更新',
                                 consts.error_string(consts.ERROR_CODE_SAVE_APK_FILE_FAILED),
                                 one['apkname']])

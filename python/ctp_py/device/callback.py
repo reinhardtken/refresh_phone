@@ -29,7 +29,7 @@ class CallbackInstallObject():
     progress = float(now) / total
     if (progress - self.last_progress) > 0.05 or now == total:
       self.last_progress = progress
-      SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
+      SendCommandResponse(self.queue, self.command, consts.ERROR_CODE_OK,
                           self.gen_func(progress=str(progress))['info'])
   
   def CallbackSucc(self, progress):
@@ -38,11 +38,11 @@ class CallbackInstallObject():
       stage = '完成'
     elif progress == 'push over: ':
       stage = '安装中'
-    SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
+    SendCommandResponse(self.queue, self.command, consts.ERROR_CODE_OK,
                         self.gen_func(stage=stage, progress=str(progress))['info'])
   
   def CallbackFail(self, progress):
-    SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
+    SendCommandResponse(self.queue, self.command, consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
                         self.gen_func(stage='完成', progress=str(progress))['info'])
 
 
@@ -59,11 +59,11 @@ class CallbackUninstallObject():
     stage = '进行中'
     if progress == 'Success':
       stage = '完成删除老包'
-    SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
+    SendCommandResponse(self.queue, self.command, consts.ERROR_CODE_OK,
                         self.gen_func(stage=stage)['info'])
   
   def CallbackFail(self, progress):
-    SendCommandProgress(self.queue, self.command, consts.ERROR_CODE_OK,
+    SendCommandResponse(self.queue, self.command, consts.ERROR_CODE_OK,
                         self.gen_func(stage='删除老包失败')['info'])
     
     
@@ -78,8 +78,8 @@ def Send(queue, data):
 
 
 
-def SendCommandProgress(queue, cmd, code, info=None):
-  response = pb.apk_protomsg_pb2.CommandProgress()
+def SendCommandResponse(queue, cmd, code, info=None):
+  response = pb.apk_protomsg_pb2.CommandResponse()
   response.cmd = cmd.cmd
   response.cmd_no = cmd.cmd_no
   start_timestamp = cmd.timestamp
@@ -92,16 +92,16 @@ def SendCommandProgress(queue, cmd, code, info=None):
   Send(queue, response)
 
 
-def SendCommandResponse(queue, cmd, code, info=None):
-  response = pb.apk_protomsg_pb2.CommandResponse()
-  response.cmd = cmd.cmd
-  response.cmd_no = cmd.cmd_no
-  response.code = code
-  if info is not None:
-    for one in info:
-      response.info.append(one.decode('utf-8'))
-
-  Send(queue, response)
+# def SendCommandResponse(queue, cmd, code, info=None):
+#   response = pb.apk_protomsg_pb2.CommandResponse()
+#   response.cmd = cmd.cmd
+#   response.cmd_no = cmd.cmd_no
+#   response.code = code
+#   if info is not None:
+#     for one in info:
+#       response.info.append(one.decode('utf-8'))
+#
+#   Send(queue, response)
 
 
 

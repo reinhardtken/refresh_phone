@@ -14,21 +14,34 @@ message Command {
  repeated string param = 4;
 };
 
-message CommandProgress {
-  required string cmd = 1;
-  required int32 cmd_no = 2;
-  required int32 code = 3;
-  optional int64 time_cost = 4;
-  repeated string info = 5;
-};
-
 message CommandResponse {
   required string cmd = 1;
   required int32 cmd_no = 2;
-  required int32 code = 3;
-  optional int64 time_cost = 4;
-  repeated string info = 5;
+  required int32 sub_cmd_no = 3;
+  required int32 code = 4;
+  optional int64 time_cost = 5;
+  repeated string info = 6;
 };
+
+
+message CommandInstallApkResponse {
+  required string cmd = 1;
+  required int32 cmd_no = 2;
+  required int32 sub_cmd_no = 3;
+  required int32 code = 4;
+  optional int64 time_cost = 5;
+  required string package_name = 6;
+  required string progress = 7;
+  required string type = 8;//操作类型
+  required string serial_number = 9;
+  required int32 time_max = 10;
+  required int32 package_size = 11;
+  required string adb_message = 12;
+  required string stage = 13;
+  repeated string info = 14;
+};
+
+
 
 
 message OneApk {

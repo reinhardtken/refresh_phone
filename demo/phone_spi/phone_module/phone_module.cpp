@@ -361,65 +361,62 @@ namespace phone_module {
     if (name == switches::kCommunicatePyUpdateApkAlive) {
       DCHECK(false);
     } else if (name == switches::kCommunicatePyUpdateApk) {
-      if (p->GetTypeName() == "apk.CommandProgress") {
-        apk::CommandProgress const* progress = static_cast<apk::CommandProgress const*>(p.get());
-        if (std::string(command::kCheckNetPackageList) == progress->cmd() ||
-          std::string(command::kRemoveLocalPackageList) == progress->cmd()) {
-          ApkUpdateInfo * data = new ApkUpdateInfo(progress->code());
+      if (p->GetTypeName() == "apk.CommandResponse") {
+        apk::CommandResponse const* response = static_cast<apk::CommandResponse const*>(p.get());
+        if (std::string(command::kCheckNetPackageList) == response->cmd() ||
+          std::string(command::kRemoveLocalPackageList) == response->cmd()) {
+          ApkUpdateInfo * data = new ApkUpdateInfo(response->code());
           //auto result = StringPrintf(L"成功：信息：%ls", UTF8ToWide(progress->info()).c_str());
-          data->op = UTF8ToWide(progress->info(0));
-          if (progress->info_size() > 1) {
-            data->info = UTF8ToWide(progress->info(1));
+          data->op = UTF8ToWide(response->info(0));
+          if (response->info_size() > 1) {
+            data->info = UTF8ToWide(response->info(1));
           }
-          if (progress->info_size() > 2) {
-            data->package_name = UTF8ToWide(progress->info(2));
+          if (response->info_size() > 2) {
+            data->package_name = UTF8ToWide(response->info(2));
           }
           if (data->info == L"下载中") {
             //这种情况下，字段会比其他的多一个下载进度的字符串
-            data->progress = UTF8ToWide(progress->info(3));
+            data->progress = UTF8ToWide(response->info(3));
           }
           PointerWrapper<ApkUpdateInfo> tmp(data);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_ApkUpdateInfo(tmp));
-        } else if (std::string(command::kRemoveLocalPackageList) == progress->cmd()) {
-        } else if (std::string(command::kPyAdbInstallApk) == progress->cmd()) {
-          ApkIRStatus * data = new ApkIRStatus(UTF8ToWide(progress->info(0)), progress->cmd_no());
-          data->error_code = progress->code();
-          data->time_cost = (int)base::TimeDelta::FromMicroseconds(progress->time_cost()).InSeconds();
-          data->stage = UTF8ToWide(progress->info(1));
-          data->package_name = UTF8ToWide(progress->info(2));
-          data->percent = UTF8ToWide(progress->info(3));
+        } else if (std::string(command::kRemoveLocalPackageList) == response->cmd()) {
+        } 
+      } else if (p->GetTypeName() == "apk.CommandInstallApkResponse") {
+        apk::CommandInstallApkResponse const* response = static_cast<apk::CommandInstallApkResponse const*>(p.get());
+        if (std::string(command::kPyAdbInstallApk) == response->cmd()) {
+          ApkIRStatus * data = new ApkIRStatus(UTF8ToWide(response->serial_number()), response->cmd_no());
+          data->error_code = response->code();
+          data->sub_command_id = response->sub_cmd_no();
+          data->time_cost = (int)base::TimeDelta::FromMicroseconds(response->time_cost()).InSeconds();
+          data->stage = UTF8ToWide(response->stage());
+          data->package_name = UTF8ToWide(response->package_name());
+          data->percent = UTF8ToWide(response->progress());
 
-          base::StringToInt(progress->info(4), &data->time_max);
+          data->time_max = response->time_max();
+          data->op = UTF8ToWide(response->type());
           
-          if (progress->info_size() >= 7) {
-            data->op = UTF8ToWide(progress->info(6));
-          } else {
-            data->op = L"全新安装";
-          }
-          
+
           if (data->error_code == ERROR_CODE_OK) {
             data->result = L"成功";
             if (data->percent == L"Success") {
-              LOG(INFO) << "apk.CommandProgress succ  "<< data->package_name<<" "<< data->time_cost;
+              LOG(INFO) << "apk.CommandProgress succ  " << data->package_name << " " << data->time_cost;
               double package_size;
-              base::StringToDouble(progress->info(5), &package_size);
+              package_size = response->package_size();
               data->speed = base::StringPrintf(L"%0.2f MB/秒", package_size / data->time_cost);
             }
           } else {
             data->result = L"失败";
             LOG(INFO) << "apk.CommandProgress fail  " << data->package_name << " " << data->error_code;
           }
-          
+
 
           PointerWrapper<ApkIRStatus> tmp(data);
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
             new L2U_ApkIRStatus(tmp));
 
         }
-      } else if (p->GetTypeName() == "apk.CommandResponse") {
-        apk::CommandResponse const* response = static_cast<apk::CommandResponse const*>(p.get());
-        
       } else if (p->GetTypeName() == "apk.ApkList") {
         apk::ApkList const* apk_list = static_cast<apk::ApkList const*>(p.get());
         if (std::string(command::kGetLocalPackageList) == apk_list->head().cmd()) {

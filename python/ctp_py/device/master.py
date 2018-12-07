@@ -151,10 +151,10 @@ class OneDevice(object):
       self.log.info('ProcessInstallApk ' + command.cmd)
     
       if self.IsInstalled(package_name):
-        callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_OK,
+        callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
                                      [self.serial_number, '完成', package_name, '已经装过跳过安装', ''])
       elif self.IsTimeOut(package_name):
-        callback.SendCommandProgress(self.queue_master, command, consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
+        callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
                                      [self.serial_number, '完成', package_name, '曾经超时跳过安装', ''])
       else:
         self.SendCommand(command)
@@ -242,7 +242,7 @@ class Master(object):
           package_name = util.utility.GetPackageNameNoApkExt(apk_path)
           #超时的包，记录超时失败，不再继续
           self._Get(k).AddTimeOut(package_name)
-          callback.SendCommandProgress(self.queue_out, v['c'],
+          callback.SendCommandResponse(self.queue_out, v['c'],
                                        consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
                                        [k.encode('utf-8'), '完成', package_name, '超时', str(tmp[k]['max'])])
           
