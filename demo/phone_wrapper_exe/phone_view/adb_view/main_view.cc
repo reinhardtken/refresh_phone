@@ -180,7 +180,7 @@ void MainView::CreateExampleView(View* container) {
 
   refresh_all_ = new TextButton(this, L"刷机-所有");
   refresh_all_->set_alignment(TextButton::ALIGN_CENTER);
-  refresh_all_->SetEnabled(false);
+  //refresh_all_->SetEnabled(false);
 
   clear_table_ = new TextButton(this, L"清除显示");
   clear_table_->set_alignment(TextButton::ALIGN_CENTER);
