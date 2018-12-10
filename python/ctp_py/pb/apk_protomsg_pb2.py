@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='apk_protomsg.proto',
   package='apk',
-  serialized_pb='\n\x12\x61pk_protomsg.proto\x12\x03\x61pk\"H\n\x07\x43ommand\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x11\n\ttimestamp\x18\x03 \x02(\x03\x12\r\n\x05param\x18\x04 \x03(\t\"q\n\x0f\x43ommandResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x0c\n\x04info\x18\x06 \x03(\t\"\x94\x02\n\x19\x43ommandInstallApkResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x14\n\x0cpackage_name\x18\x06 \x02(\t\x12\x10\n\x08progress\x18\x07 \x02(\t\x12\x0c\n\x04type\x18\x08 \x02(\t\x12\x15\n\rserial_number\x18\t \x02(\t\x12\x10\n\x08time_max\x18\n \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0b \x02(\x05\x12\x13\n\x0b\x61\x64\x62_message\x18\x0c \x02(\t\x12\r\n\x05stage\x18\r \x02(\t\x12\x0c\n\x04info\x18\x0e \x03(\t\"\xcb\x01\n\x06OneApk\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03url\x18\x02 \x01(\t\x12\x0b\n\x03md5\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x02(\t\x12\r\n\x05\x62rief\x18\x05 \x01(\t\x12\x0f\n\x07orderid\x18\x06 \x01(\x05\x12\x13\n\x0bupdate_time\x18\x07 \x01(\t\x12\x13\n\x0b\x63reate_time\x18\x08 \x01(\t\x12\x10\n\x08\x61pk_name\x18\t \x02(\t\x12\r\n\x05price\x18\n \x02(\x01\x12\x0c\n\x04type\x18\x0b \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0c \x02(\x01\"L\n\x07\x41pkList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12\x1d\n\x08\x61pk_list\x18\x02 \x03(\x0b\x32\x0b.apk.OneApk\"]\n\tAdbDevice\x12\x11\n\tserial_no\x18\x01 \x02(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\r\n\x05model\x18\x03 \x01(\t\x12\x0f\n\x07product\x18\x04 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x05 \x01(\t\"W\n\x0b\x44\x65vicesList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12$\n\x0c\x64\x65vices_list\x18\x02 \x03(\x0b\x32\x0e.apk.AdbDevice')
+  serialized_pb='\n\x12\x61pk_protomsg.proto\x12\x03\x61pk\"\\\n\x07\x43ommand\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x01(\x05\x12\x11\n\ttimestamp\x18\x04 \x02(\x03\x12\r\n\x05param\x18\x05 \x03(\t\"q\n\x0f\x43ommandResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x0c\n\x04info\x18\x06 \x03(\t\"\x94\x02\n\x19\x43ommandInstallApkResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x14\n\x0cpackage_name\x18\x06 \x02(\t\x12\x10\n\x08progress\x18\x07 \x02(\t\x12\x0c\n\x04type\x18\x08 \x02(\t\x12\x15\n\rserial_number\x18\t \x02(\t\x12\x10\n\x08time_max\x18\n \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0b \x02(\x05\x12\x13\n\x0b\x61\x64\x62_message\x18\x0c \x02(\t\x12\r\n\x05stage\x18\r \x02(\t\x12\x0c\n\x04info\x18\x0e \x03(\t\"\xcb\x01\n\x06OneApk\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03url\x18\x02 \x01(\t\x12\x0b\n\x03md5\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x02(\t\x12\r\n\x05\x62rief\x18\x05 \x01(\t\x12\x0f\n\x07orderid\x18\x06 \x01(\x05\x12\x13\n\x0bupdate_time\x18\x07 \x01(\t\x12\x13\n\x0b\x63reate_time\x18\x08 \x01(\t\x12\x10\n\x08\x61pk_name\x18\t \x02(\t\x12\r\n\x05price\x18\n \x02(\x01\x12\x0c\n\x04type\x18\x0b \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0c \x02(\x01\"L\n\x07\x41pkList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12\x1d\n\x08\x61pk_list\x18\x02 \x03(\x0b\x32\x0b.apk.OneApk\"]\n\tAdbDevice\x12\x11\n\tserial_no\x18\x01 \x02(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\r\n\x05model\x18\x03 \x01(\t\x12\x0f\n\x07product\x18\x04 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x05 \x01(\t\"W\n\x0b\x44\x65vicesList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12$\n\x0c\x64\x65vices_list\x18\x02 \x03(\x0b\x32\x0e.apk.AdbDevice')
 
 
 
@@ -40,15 +40,22 @@ _COMMAND = _descriptor.Descriptor(
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='timestamp', full_name='apk.Command.timestamp', index=2,
-      number=3, type=3, cpp_type=2, label=2,
+      name='sub_cmd_no', full_name='apk.Command.sub_cmd_no', index=2,
+      number=3, type=5, cpp_type=1, label=1,
       has_default_value=False, default_value=0,
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
       options=None),
     _descriptor.FieldDescriptor(
-      name='param', full_name='apk.Command.param', index=3,
-      number=4, type=9, cpp_type=9, label=3,
+      name='timestamp', full_name='apk.Command.timestamp', index=3,
+      number=4, type=3, cpp_type=2, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='param', full_name='apk.Command.param', index=4,
+      number=5, type=9, cpp_type=9, label=3,
       has_default_value=False, default_value=[],
       message_type=None, enum_type=None, containing_type=None,
       is_extension=False, extension_scope=None,
@@ -63,7 +70,7 @@ _COMMAND = _descriptor.Descriptor(
   is_extendable=False,
   extension_ranges=[],
   serialized_start=27,
-  serialized_end=99,
+  serialized_end=119,
 )
 
 
@@ -125,8 +132,8 @@ _COMMANDRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=101,
-  serialized_end=214,
+  serialized_start=121,
+  serialized_end=234,
 )
 
 
@@ -244,8 +251,8 @@ _COMMANDINSTALLAPKRESPONSE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=217,
-  serialized_end=493,
+  serialized_start=237,
+  serialized_end=513,
 )
 
 
@@ -349,8 +356,8 @@ _ONEAPK = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=496,
-  serialized_end=699,
+  serialized_start=516,
+  serialized_end=719,
 )
 
 
@@ -384,8 +391,8 @@ _APKLIST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=701,
-  serialized_end=777,
+  serialized_start=721,
+  serialized_end=797,
 )
 
 
@@ -440,8 +447,8 @@ _ADBDEVICE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=779,
-  serialized_end=872,
+  serialized_start=799,
+  serialized_end=892,
 )
 
 
@@ -475,8 +482,8 @@ _DEVICESLIST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=874,
-  serialized_end=961,
+  serialized_start=894,
+  serialized_end=981,
 )
 
 _APKLIST.fields_by_name['head'].message_type = _COMMANDRESPONSE

@@ -68,15 +68,15 @@ class Proxy(object):
     # self.last_command['timestamp'] = time.time()
     
     #for install apk
-    self.current_response = {}
+    self.current_installapk_response = {}
     
 
     self.debug_once = True
   
   
   
-  def _CleanCurrentResponse(self):
-    self.current_response['info'] = ['' for x in range(10)]
+  def _CleanCurrentInstallApkResponse(self):
+    self.current_installapk_response['info'] = ['' for x in range(10)]
   
   
   def Start(self):
@@ -138,6 +138,13 @@ class Proxy(object):
     
     
 #########################################################
+  def GenInstallApkResponse(self, target=None, command=None, error=consts.ERROR_CODE_OK, serial_number=None, stage='',
+                            package_name='', progress='', time_max=0,
+                            package_size=0, type='', adb_message='', info=None):
+    return callback.GenInstallApkResponse(self.current_installapk_response, target=target, command=command, error=error, serial_number=serial_number, stage=stage,
+                            package_name=package_name, progress=progress, time_max=time_max, package_size=package_size, type=type, adb_message=adb_message, info=info)
+  
+  
   def ProcessScanDevices(self, command):
     def Callback(data):
       # 记录最新的设备列表
@@ -177,7 +184,7 @@ class Proxy(object):
     old_timestamp = command.timestamp
     command.timestamp = util.utility.UTCTime2TimeInMicroseconds(int(time.time()))
     
-    self._CleanCurrentResponse()
+    self._CleanCurrentInstallApkResponse()
     
     if command.cmd == consts.COMMAND_INSTALL_APK:
       apk_path = command.param[1].encode('utf-8')
@@ -191,10 +198,9 @@ class Proxy(object):
       # else:
       time_max = package_size * 2 + 30
       self.StartCheckTimeOut(command, time_max)
-      response = self.GenCommandResponse(t=self.queue_master, c=command, s=self.serial_number.encode('utf-8'),
-                                         p=package_name, time_max=time_max, size=package_size, op=op)
-      callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
-                                   response['info'])
+      self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number.encode('utf-8'),
+                                            package_name=package_name, time_max=time_max, package_size=package_size, type=op)
+      callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK))
       pass
     
   
@@ -208,42 +214,42 @@ class Proxy(object):
   
   
   
-  def GenCommandResponse(self, t=None, c=None, err=None, s=None, stage=None, p=None, progress=None, time_max=None,
-                         size=None, op=None):
-    
-    if t is not None:
-      self.current_response['target'] = t
-      
-    if c is not None:
-      self.current_response['command'] = c
-      
-    if err is not None:
-      self.current_response['error'] = err
-      
-      
-    if s is not None:
-      self.current_response['info'][0] = s
-      
-    if stage is not None:
-      self.current_response['info'][1] = stage
-      
-    if p is not None:
-      self.current_response['info'][2] = p
-      
-    if progress is not None:
-      self.current_response['info'][3] = str(progress)
-      
-    if time_max is not None:
-      self.current_response['info'][4] = str(time_max)
-      
-    if size is not None:
-      self.current_response['info'][5] = str(size)
-      
-    if op is not None:
-      self.current_response['info'][6] = str(op)
-      
-    
-    return self.current_response
+  # def GenCommandResponse(self, t=None, c=None, err=None, s=None, stage=None, p=None, progress=None, time_max=None,
+  #                        size=None, op=None):
+  #
+  #   if t is not None:
+  #     self.current_response['target'] = t
+  #
+  #   if c is not None:
+  #     self.current_response['command'] = c
+  #
+  #   if err is not None:
+  #     self.current_response['error'] = err
+  #
+  #
+  #   if s is not None:
+  #     self.current_response['info'][0] = s
+  #
+  #   if stage is not None:
+  #     self.current_response['info'][1] = stage
+  #
+  #   if p is not None:
+  #     self.current_response['info'][2] = p
+  #
+  #   if progress is not None:
+  #     self.current_response['info'][3] = str(progress)
+  #
+  #   if time_max is not None:
+  #     self.current_response['info'][4] = str(time_max)
+  #
+  #   if size is not None:
+  #     self.current_response['info'][5] = str(size)
+  #
+  #   if op is not None:
+  #     self.current_response['info'][6] = str(op)
+  #
+  #
+  #   return self.current_response
   
   
 
@@ -265,7 +271,7 @@ class Proxy(object):
       self.log.info('command package_name ' + package_name)
       
 
-      cb = callback.CallbackInstallObject(self.queue_master, command, self.serial_number, self.GenCommandResponse)
+      cb = callback.CallbackInstallObject(self)
       install = adbtool.install.Command(self.serial_number, package_name, apk_path, cb.CallbackSucc,
                                         cb.CallbackFail)
 
@@ -275,8 +281,7 @@ class Proxy(object):
       #   time.sleep(10000)
 
       self.log.info('before ProcessInstallApk ' + self.serial_number + ' : ' + apk_path)
-      callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
-                                   self.GenCommandResponse(stage='开始')['info'])
+      callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK, stage='开始'.decode('utf-8')))
 
       install.Execute()
 
@@ -325,13 +330,13 @@ class Proxy(object):
       self.log.info('command id ' + str(command.cmd_no))
       self.log.info('command package_name ' + package_name)
     
-      cb = callback.CallbackUninstallObject(self.queue_master, command, self.serial_number, self.GenCommandResponse)
+      cb = callback.CallbackUninstallObject(self)
       uninstall = adbtool.uninstall.Command(self.serial_number, package_name, cb.CallbackSucc,
                                         cb.CallbackFail)
     
       self.log.info('before ProcessUninstallApk ' + self.serial_number + ' : ' + package_name)
-      callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
-                                   self.GenCommandResponse(stage='开始删除老包')['info'])
+      callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK,
+                                   stage='开始删除老包'.decode('utf-8')))
 
       uninstall.Execute()
     

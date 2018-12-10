@@ -52,9 +52,10 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       "apk_protomsg.proto");
   GOOGLE_CHECK(file != NULL);
   Command_descriptor_ = file->message_type(0);
-  static const int Command_offsets_[4] = {
+  static const int Command_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, cmd_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, cmd_no_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, sub_cmd_no_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, timestamp_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(Command, param_),
   };
@@ -248,31 +249,31 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
   GOOGLE_PROTOBUF_VERIFY_VERSION;
 
   ::google::protobuf::DescriptorPool::InternalAddGeneratedFile(
-    "\n\022apk_protomsg.proto\022\003apk\"H\n\007Command\022\013\n\003"
-    "cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\021\n\ttimestamp\030\003"
-    " \002(\003\022\r\n\005param\030\004 \003(\t\"q\n\017CommandResponse\022\013"
-    "\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\022\n\nsub_cmd_n"
-    "o\030\003 \002(\005\022\014\n\004code\030\004 \002(\005\022\021\n\ttime_cost\030\005 \001(\003"
-    "\022\014\n\004info\030\006 \003(\t\"\224\002\n\031CommandInstallApkResp"
-    "onse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\022\n\nsub"
-    "_cmd_no\030\003 \002(\005\022\014\n\004code\030\004 \002(\005\022\021\n\ttime_cost"
-    "\030\005 \001(\003\022\024\n\014package_name\030\006 \002(\t\022\020\n\010progress"
-    "\030\007 \002(\t\022\014\n\004type\030\010 \002(\t\022\025\n\rserial_number\030\t "
-    "\002(\t\022\020\n\010time_max\030\n \002(\005\022\024\n\014package_size\030\013 "
-    "\002(\005\022\023\n\013adb_message\030\014 \002(\t\022\r\n\005stage\030\r \002(\t\022"
-    "\014\n\004info\030\016 \003(\t\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003"
-    "url\030\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005"
-    "brief\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_t"
-    "ime\030\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_na"
-    "me\030\t \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022\024\n"
-    "\014package_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head\030\001"
-    " \002(\0132\024.apk.CommandResponse\022\035\n\010apk_list\030\002"
-    " \003(\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial"
-    "_no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022"
-    "\017\n\007product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013Devi"
-    "cesList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRespo"
-    "nse\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevic"
-    "e", 961);
+    "\n\022apk_protomsg.proto\022\003apk\"\\\n\007Command\022\013\n\003"
+    "cmd\030\001 \002(\t\022\016\n\006cmd_no\030\002 \002(\005\022\022\n\nsub_cmd_no\030"
+    "\003 \001(\005\022\021\n\ttimestamp\030\004 \002(\003\022\r\n\005param\030\005 \003(\t\""
+    "q\n\017CommandResponse\022\013\n\003cmd\030\001 \002(\t\022\016\n\006cmd_n"
+    "o\030\002 \002(\005\022\022\n\nsub_cmd_no\030\003 \002(\005\022\014\n\004code\030\004 \002("
+    "\005\022\021\n\ttime_cost\030\005 \001(\003\022\014\n\004info\030\006 \003(\t\"\224\002\n\031C"
+    "ommandInstallApkResponse\022\013\n\003cmd\030\001 \002(\t\022\016\n"
+    "\006cmd_no\030\002 \002(\005\022\022\n\nsub_cmd_no\030\003 \002(\005\022\014\n\004cod"
+    "e\030\004 \002(\005\022\021\n\ttime_cost\030\005 \001(\003\022\024\n\014package_na"
+    "me\030\006 \002(\t\022\020\n\010progress\030\007 \002(\t\022\014\n\004type\030\010 \002(\t"
+    "\022\025\n\rserial_number\030\t \002(\t\022\020\n\010time_max\030\n \002("
+    "\005\022\024\n\014package_size\030\013 \002(\005\022\023\n\013adb_message\030\014"
+    " \002(\t\022\r\n\005stage\030\r \002(\t\022\014\n\004info\030\016 \003(\t\"\313\001\n\006On"
+    "eApk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030\002 \001(\t\022\013\n\003md5\030\003 \001"
+    "(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005brief\030\005 \001(\t\022\017\n\007order"
+    "id\030\006 \001(\005\022\023\n\013update_time\030\007 \001(\t\022\023\n\013create_"
+    "time\030\010 \001(\t\022\020\n\010apk_name\030\t \002(\t\022\r\n\005price\030\n "
+    "\002(\001\022\014\n\004type\030\013 \002(\005\022\024\n\014package_size\030\014 \002(\001\""
+    "L\n\007ApkList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRe"
+    "sponse\022\035\n\010apk_list\030\002 \003(\0132\013.apk.OneApk\"]\n"
+    "\tAdbDevice\022\021\n\tserial_no\030\001 \002(\t\022\r\n\005state\030\002"
+    " \001(\t\022\r\n\005model\030\003 \001(\t\022\017\n\007product\030\004 \001(\t\022\016\n\006"
+    "device\030\005 \001(\t\"W\n\013DevicesList\022\"\n\004head\030\001 \002("
+    "\0132\024.apk.CommandResponse\022$\n\014devices_list\030"
+    "\002 \003(\0132\016.apk.AdbDevice", 981);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -304,6 +305,7 @@ struct StaticDescriptorInitializer_apk_5fprotomsg_2eproto {
 #ifndef _MSC_VER
 const int Command::kCmdFieldNumber;
 const int Command::kCmdNoFieldNumber;
+const int Command::kSubCmdNoFieldNumber;
 const int Command::kTimestampFieldNumber;
 const int Command::kParamFieldNumber;
 #endif  // !_MSC_VER
@@ -326,6 +328,7 @@ void Command::SharedCtor() {
   _cached_size_ = 0;
   cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   cmd_no_ = 0;
+  sub_cmd_no_ = 0;
   timestamp_ = GOOGLE_LONGLONG(0);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -371,6 +374,7 @@ void Command::Clear() {
       }
     }
     cmd_no_ = 0;
+    sub_cmd_no_ = 0;
     timestamp_ = GOOGLE_LONGLONG(0);
   }
   param_.Clear();
@@ -412,12 +416,28 @@ bool Command::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(24)) goto parse_timestamp;
+        if (input->ExpectTag(24)) goto parse_sub_cmd_no;
         break;
       }
 
-      // required int64 timestamp = 3;
+      // optional int32 sub_cmd_no = 3;
       case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+         parse_sub_cmd_no:
+          DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
+                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                 input, &sub_cmd_no_)));
+          set_has_sub_cmd_no();
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_timestamp;
+        break;
+      }
+
+      // required int64 timestamp = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_timestamp:
@@ -428,12 +448,12 @@ bool Command::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_param;
+        if (input->ExpectTag(42)) goto parse_param;
         break;
       }
 
-      // repeated string param = 4;
-      case 4: {
+      // repeated string param = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_param:
@@ -446,7 +466,7 @@ bool Command::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(34)) goto parse_param;
+        if (input->ExpectTag(42)) goto parse_param;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -483,18 +503,23 @@ void Command::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(2, this->cmd_no(), output);
   }
 
-  // required int64 timestamp = 3;
-  if (has_timestamp()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt64(3, this->timestamp(), output);
+  // optional int32 sub_cmd_no = 3;
+  if (has_sub_cmd_no()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->sub_cmd_no(), output);
   }
 
-  // repeated string param = 4;
+  // required int64 timestamp = 4;
+  if (has_timestamp()) {
+    ::google::protobuf::internal::WireFormatLite::WriteInt64(4, this->timestamp(), output);
+  }
+
+  // repeated string param = 5;
   for (int i = 0; i < this->param_size(); i++) {
   ::google::protobuf::internal::WireFormat::VerifyUTF8String(
     this->param(i).data(), this->param(i).length(),
     ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      4, this->param(i), output);
+      5, this->param(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -520,18 +545,23 @@ void Command::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(2, this->cmd_no(), target);
   }
 
-  // required int64 timestamp = 3;
-  if (has_timestamp()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(3, this->timestamp(), target);
+  // optional int32 sub_cmd_no = 3;
+  if (has_sub_cmd_no()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->sub_cmd_no(), target);
   }
 
-  // repeated string param = 4;
+  // required int64 timestamp = 4;
+  if (has_timestamp()) {
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt64ToArray(4, this->timestamp(), target);
+  }
+
+  // repeated string param = 5;
   for (int i = 0; i < this->param_size(); i++) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->param(i).data(), this->param(i).length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target = ::google::protobuf::internal::WireFormatLite::
-      WriteStringToArray(4, this->param(i), target);
+      WriteStringToArray(5, this->param(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -559,7 +589,14 @@ int Command::ByteSize() const {
           this->cmd_no());
     }
 
-    // required int64 timestamp = 3;
+    // optional int32 sub_cmd_no = 3;
+    if (has_sub_cmd_no()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::Int32Size(
+          this->sub_cmd_no());
+    }
+
+    // required int64 timestamp = 4;
     if (has_timestamp()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int64Size(
@@ -567,7 +604,7 @@ int Command::ByteSize() const {
     }
 
   }
-  // repeated string param = 4;
+  // repeated string param = 5;
   total_size += 1 * this->param_size();
   for (int i = 0; i < this->param_size(); i++) {
     total_size += ::google::protobuf::internal::WireFormatLite::StringSize(
@@ -607,6 +644,9 @@ void Command::MergeFrom(const Command& from) {
     if (from.has_cmd_no()) {
       set_cmd_no(from.cmd_no());
     }
+    if (from.has_sub_cmd_no()) {
+      set_sub_cmd_no(from.sub_cmd_no());
+    }
     if (from.has_timestamp()) {
       set_timestamp(from.timestamp());
     }
@@ -627,7 +667,7 @@ void Command::CopyFrom(const Command& from) {
 }
 
 bool Command::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x0000000b) != 0x0000000b) return false;
 
   return true;
 }
@@ -636,6 +676,7 @@ void Command::Swap(Command* other) {
   if (other != this) {
     std::swap(cmd_, other->cmd_);
     std::swap(cmd_no_, other->cmd_no_);
+    std::swap(sub_cmd_no_, other->sub_cmd_no_);
     std::swap(timestamp_, other->timestamp_);
     param_.Swap(&other->param_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);

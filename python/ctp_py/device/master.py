@@ -40,7 +40,28 @@ class OneDevice(object):
     self.package_list = []
     self.package_set = set()
     
+    
+    self.current_installapk_response = {}
+    
+    self.sub_command_id = 0
+    
    
+  
+  
+  def _GenSubCommandID(self):
+    self.sub_command_id += 1
+    return self.sub_command_id
+  
+  
+  def CopyCommand(self, command):
+    new_one = pb.apk_protomsg_pb2.Command()
+    new_one.cmd = command.cmd
+    new_one.cmd_no = command.cmd_no
+    new_one.sub_cmd_no = self._GenSubCommandID()
+    for one in command.param:
+      new_one.param.append(one)
+      
+    return new_one
    
    
   def _Start(self):
@@ -92,15 +113,17 @@ class OneDevice(object):
   def SendCommand(self, command):
     if self.proxy is not None:
       self.last_command_id = command.cmd_no
+      # 添加sub_command_id
+      command.sub_cmd_no = self._GenSubCommandID()
       self.proxy.SendCommand(command)
 
 
 
   def ProcessInstallApkResponse(self, command):
     if command.cmd_no > self.min_command_id:
-      if len(command.info) >= 4:
-        if command.info[1] == '完成'.decode('utf-8') and command.info[3] == 'Success'.decode('utf-8'):
-          self.AddInstalled(command.info[2])
+      if command.stage == '完成'.decode('utf-8') and command.progress == 'Success'.decode('utf-8'):
+        self.AddInstalled(command.package_name)
+        
           
       return True
     
@@ -133,9 +156,13 @@ class OneDevice(object):
 
 
   def ProcessInstallApk(self, command):
+    # 添加sub_command_id
+    command.sub_cmd_no = self._GenSubCommandID()
     type = command.param[0].encode('utf-8')
     apk_path = command.param[1].encode('utf-8')
     package_name = util.utility.GetPackageNameNoApkExt(apk_path)
+    self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number, package_name=package_name,
+                               time_max=0, package_size=0)
 
     if package_name in self.package_set:
       self.log.info('ProcessInstallApk delete first')
@@ -151,14 +178,55 @@ class OneDevice(object):
       self.log.info('ProcessInstallApk ' + command.cmd)
     
       if self.IsInstalled(package_name):
-        callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_OK,
-                                     [self.serial_number, '完成', package_name, '已经装过跳过安装', ''])
+        callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK,
+                                                                   stage='完成'.decode('utf-8'), progress='已经装过跳过安装'.decode('utf-8')))
       elif self.IsTimeOut(package_name):
-        callback.SendCommandResponse(self.queue_master, command, consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
-                                     [self.serial_number, '完成', package_name, '曾经超时跳过安装', ''])
+        callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
+                                     stage='完成'.decode('utf-8'), progress='曾经超时跳过安装'.decode('utf-8')))
       else:
         self.SendCommand(command)
-        
+
+
+
+  def GenInstallApkResponse(self, target=None, command=None, error=consts.ERROR_CODE_OK, serial_number=None, stage='',
+                            package_name='', progress='', time_max=0,
+                            package_size=0, type='', adb_message='', info=None):
+    return callback.GenInstallApkResponse(self.current_installapk_response, target=target, command=command, error=error, serial_number=serial_number, stage=stage,
+                            package_name=package_name, progress=progress, time_max=time_max, package_size=package_size, type=type, adb_message=adb_message, info=info)
+    # if target is not None:
+    #   self.current_response['target'] = target
+    #
+    # if command is not None:
+    #   self.current_response['command'] = command
+    #
+    # if error is not None:
+    #   self.current_response['error'] = error
+    #
+    # if serial_number is not None:
+    #   self.current_response['serial_number'] = serial_number
+    #
+    # if stage is not None:
+    #   self.current_response['stage'] = stage
+    #
+    # if package_name is not None:
+    #   self.current_response['package_name'] = package_name
+    #
+    # if progress is not None:
+    #   self.current_response['progress'] = str(progress)
+    #
+    # if time_max is not None:
+    #   self.current_response['time_max'] = str(time_max)
+    #
+    # if size is not None:
+    #   self.current_response['package_size'] = str(size)
+    #
+    # if type is not None:
+    #   self.current_response['type'] = str(type)
+    #
+    # if info is not None:
+    #   self.current_response['info'] = info
+    #
+    # return self.current_response
     
 #########################################################
 class Master(object):
@@ -221,6 +289,7 @@ class Master(object):
     #每次执行新命令前，看看旧有设备有无超时的
     self.CheckTimeout()
     
+    
     one = self._Add(serial_number)
     if command.cmd == consts.COMMAND_INSTALL_APK:
       one.ProcessInstallApk(command)
@@ -277,7 +346,7 @@ class Master(object):
 
 
   def ProcessInstallApkResponse(self, command):
-    return self._Get(command.info[0]).ProcessInstallApkResponse(command)
+    return self._Get(command.serial_number).ProcessInstallApkResponse(command)
   
 
   

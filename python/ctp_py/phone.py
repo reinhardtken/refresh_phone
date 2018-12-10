@@ -149,6 +149,19 @@ class PhoneLogic(util.thread_class.ThreadClass):
     
     self.device = device.master.Master(queue_out)
     self.device.Start()
+
+    self.sub_command_id = 0
+
+
+
+
+  def _GenSubCommandID(self):
+    self.sub_command_id += 1
+    return self.sub_command_id
+    
+    
+    
+    
   
   def Send(self, data):
     self.queue_out.put(data)
@@ -212,10 +225,13 @@ class PhoneLogic(util.thread_class.ThreadClass):
       elif self.prop is not None:
         # 只有完成了初始化才能响应业务请求
         if msg.cmd == 'check_net_package_list':
+          msg.sub_cmd_no = self._GenSubCommandID()
           self.ProcessCheckUpdatePackageList(msg)
         elif msg.cmd == 'remove_local_package_list':
+          msg.sub_cmd_no = self._GenSubCommandID()
           self.ProcessRemoveLocalPackageList(msg)
         elif msg.cmd == 'get_local_package_list':
+          msg.sub_cmd_no = self._GenSubCommandID()
           self.ProcessGetLocalPackageList(msg)
         elif msg.cmd == consts.COMMAND_INSTALL_APK:
           self.ProcessInstallApk3(msg)
@@ -501,21 +517,19 @@ class PhoneLogic(util.thread_class.ThreadClass):
     
     self.Send(response)
   
+  
+  
   def SendCommandResponse(self, cmd, code, info=None):
-    response = pb.apk_protomsg_pb2.CommandResponse()
-    response.cmd = cmd.cmd
-    response.cmd_no = cmd.cmd_no
-    response.code = code
-    if info is not None:
-      for one in info:
-        response.info.append(one.decode('utf-8'))
+    device.callback.SendCommandResponse(self.queue_out, cmd, code, info)
     
-    self.Send(response)
+    
+    
   
   def SendApkList(self, cmd, code, package_list=None):
     response = pb.apk_protomsg_pb2.ApkList()
     response.head.cmd = cmd.cmd
     response.head.cmd_no = cmd.cmd_no
+    response.head.sub_cmd_no = cmd.sub_cmd_no
     response.head.code = code
     if package_list is not None:
       for one in package_list:

@@ -116,17 +116,24 @@ class Command : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 cmd_no() const;
   inline void set_cmd_no(::google::protobuf::int32 value);
 
-  // required int64 timestamp = 3;
+  // optional int32 sub_cmd_no = 3;
+  inline bool has_sub_cmd_no() const;
+  inline void clear_sub_cmd_no();
+  static const int kSubCmdNoFieldNumber = 3;
+  inline ::google::protobuf::int32 sub_cmd_no() const;
+  inline void set_sub_cmd_no(::google::protobuf::int32 value);
+
+  // required int64 timestamp = 4;
   inline bool has_timestamp() const;
   inline void clear_timestamp();
-  static const int kTimestampFieldNumber = 3;
+  static const int kTimestampFieldNumber = 4;
   inline ::google::protobuf::int64 timestamp() const;
   inline void set_timestamp(::google::protobuf::int64 value);
 
-  // repeated string param = 4;
+  // repeated string param = 5;
   inline int param_size() const;
   inline void clear_param();
-  static const int kParamFieldNumber = 4;
+  static const int kParamFieldNumber = 5;
   inline const ::std::string& param(int index) const;
   inline ::std::string* mutable_param(int index);
   inline void set_param(int index, const ::std::string& value);
@@ -145,18 +152,21 @@ class Command : public ::google::protobuf::Message {
   inline void clear_has_cmd();
   inline void set_has_cmd_no();
   inline void clear_has_cmd_no();
+  inline void set_has_sub_cmd_no();
+  inline void clear_has_sub_cmd_no();
   inline void set_has_timestamp();
   inline void clear_has_timestamp();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* cmd_;
+  ::google::protobuf::int32 cmd_no_;
+  ::google::protobuf::int32 sub_cmd_no_;
   ::google::protobuf::int64 timestamp_;
   ::google::protobuf::RepeatedPtrField< ::std::string> param_;
-  ::google::protobuf::int32 cmd_no_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -1230,15 +1240,37 @@ inline void Command::set_cmd_no(::google::protobuf::int32 value) {
   cmd_no_ = value;
 }
 
-// required int64 timestamp = 3;
-inline bool Command::has_timestamp() const {
+// optional int32 sub_cmd_no = 3;
+inline bool Command::has_sub_cmd_no() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void Command::set_has_timestamp() {
+inline void Command::set_has_sub_cmd_no() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void Command::clear_has_timestamp() {
+inline void Command::clear_has_sub_cmd_no() {
   _has_bits_[0] &= ~0x00000004u;
+}
+inline void Command::clear_sub_cmd_no() {
+  sub_cmd_no_ = 0;
+  clear_has_sub_cmd_no();
+}
+inline ::google::protobuf::int32 Command::sub_cmd_no() const {
+  return sub_cmd_no_;
+}
+inline void Command::set_sub_cmd_no(::google::protobuf::int32 value) {
+  set_has_sub_cmd_no();
+  sub_cmd_no_ = value;
+}
+
+// required int64 timestamp = 4;
+inline bool Command::has_timestamp() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void Command::set_has_timestamp() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void Command::clear_has_timestamp() {
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void Command::clear_timestamp() {
   timestamp_ = GOOGLE_LONGLONG(0);
@@ -1252,7 +1284,7 @@ inline void Command::set_timestamp(::google::protobuf::int64 value) {
   timestamp_ = value;
 }
 
-// repeated string param = 4;
+// repeated string param = 5;
 inline int Command::param_size() const {
   return param_.size();
 }
