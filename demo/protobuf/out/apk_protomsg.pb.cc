@@ -260,7 +260,7 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
     "e\030\004 \002(\005\022\021\n\ttime_cost\030\005 \001(\003\022\024\n\014package_na"
     "me\030\006 \002(\t\022\020\n\010progress\030\007 \002(\t\022\014\n\004type\030\010 \002(\t"
     "\022\025\n\rserial_number\030\t \002(\t\022\020\n\010time_max\030\n \002("
-    "\005\022\024\n\014package_size\030\013 \002(\005\022\023\n\013adb_message\030\014"
+    "\005\022\024\n\014package_size\030\013 \002(\001\022\023\n\013adb_message\030\014"
     " \002(\t\022\r\n\005stage\030\r \002(\t\022\014\n\004info\030\016 \003(\t\"\313\001\n\006On"
     "eApk\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030\002 \001(\t\022\013\n\003md5\030\003 \001"
     "(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005brief\030\005 \001(\t\022\017\n\007order"
@@ -1447,17 +1447,17 @@ bool CommandInstallApkResponse::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(88)) goto parse_package_size;
+        if (input->ExpectTag(89)) goto parse_package_size;
         break;
       }
 
-      // required int32 package_size = 11;
+      // required double package_size = 11;
       case 11: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
-            ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_FIXED64) {
          parse_package_size:
           DO_((::google::protobuf::internal::WireFormatLite::ReadPrimitive<
-                   ::google::protobuf::int32, ::google::protobuf::internal::WireFormatLite::TYPE_INT32>(
+                   double, ::google::protobuf::internal::WireFormatLite::TYPE_DOUBLE>(
                  input, &package_size_)));
           set_has_package_size();
         } else {
@@ -1608,9 +1608,9 @@ void CommandInstallApkResponse::SerializeWithCachedSizes(
     ::google::protobuf::internal::WireFormatLite::WriteInt32(10, this->time_max(), output);
   }
 
-  // required int32 package_size = 11;
+  // required double package_size = 11;
   if (has_package_size()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(11, this->package_size(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteDouble(11, this->package_size(), output);
   }
 
   // required string adb_message = 12;
@@ -1723,9 +1723,9 @@ void CommandInstallApkResponse::SerializeWithCachedSizes(
     target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(10, this->time_max(), target);
   }
 
-  // required int32 package_size = 11;
+  // required double package_size = 11;
   if (has_package_size()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(11, this->package_size(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteDoubleToArray(11, this->package_size(), target);
   }
 
   // required string adb_message = 12;
@@ -1840,11 +1840,9 @@ int CommandInstallApkResponse::ByteSize() const {
           this->time_max());
     }
 
-    // required int32 package_size = 11;
+    // required double package_size = 11;
     if (has_package_size()) {
-      total_size += 1 +
-        ::google::protobuf::internal::WireFormatLite::Int32Size(
-          this->package_size());
+      total_size += 1 + 8;
     }
 
     // required string adb_message = 12;

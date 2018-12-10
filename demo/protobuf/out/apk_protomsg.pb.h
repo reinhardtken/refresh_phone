@@ -470,12 +470,12 @@ class CommandInstallApkResponse : public ::google::protobuf::Message {
   inline ::google::protobuf::int32 time_max() const;
   inline void set_time_max(::google::protobuf::int32 value);
 
-  // required int32 package_size = 11;
+  // required double package_size = 11;
   inline bool has_package_size() const;
   inline void clear_package_size();
   static const int kPackageSizeFieldNumber = 11;
-  inline ::google::protobuf::int32 package_size() const;
-  inline void set_package_size(::google::protobuf::int32 value);
+  inline double package_size() const;
+  inline void set_package_size(double value);
 
   // required string adb_message = 12;
   inline bool has_adb_message() const;
@@ -558,10 +558,10 @@ class CommandInstallApkResponse : public ::google::protobuf::Message {
   ::google::protobuf::int32 time_max_;
   ::std::string* type_;
   ::std::string* serial_number_;
+  double package_size_;
   ::std::string* adb_message_;
   ::std::string* stage_;
   ::google::protobuf::RepeatedPtrField< ::std::string> info_;
-  ::google::protobuf::int32 package_size_;
 
   mutable int _cached_size_;
   ::google::protobuf::uint32 _has_bits_[(14 + 31) / 32];
@@ -1998,7 +1998,7 @@ inline void CommandInstallApkResponse::set_time_max(::google::protobuf::int32 va
   time_max_ = value;
 }
 
-// required int32 package_size = 11;
+// required double package_size = 11;
 inline bool CommandInstallApkResponse::has_package_size() const {
   return (_has_bits_[0] & 0x00000400u) != 0;
 }
@@ -2012,10 +2012,10 @@ inline void CommandInstallApkResponse::clear_package_size() {
   package_size_ = 0;
   clear_has_package_size();
 }
-inline ::google::protobuf::int32 CommandInstallApkResponse::package_size() const {
+inline double CommandInstallApkResponse::package_size() const {
   return package_size_;
 }
-inline void CommandInstallApkResponse::set_package_size(::google::protobuf::int32 value) {
+inline void CommandInstallApkResponse::set_package_size(double value) {
   set_has_package_size();
   package_size_ = value;
 }

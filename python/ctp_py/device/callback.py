@@ -35,11 +35,11 @@ class CallbackInstallObject():
       stage = '完成'
     elif progress == 'push over: ':
       stage = '安装中'
-    SendInstallApkResponse(self.host.GenInstallApkResponse(error=consts.ERROR_CODE_OK, progress=progress))
+    SendInstallApkResponse(self.host.GenInstallApkResponse(error=consts.ERROR_CODE_OK, progress=progress, stage=stage))
   
   def CallbackFail(self, progress):
     SendInstallApkResponse(self.host.GenInstallApkResponse(error=consts.ERROR_CODE_PYADB_INSTALL_APK_FAILED,
-                        stage='完成'.decode('utf-8'), progress=progress))
+                        stage='完成', progress=progress))
 
 
 class CallbackUninstallObject():
@@ -52,11 +52,11 @@ class CallbackUninstallObject():
     if progress == 'Success':
       stage = '完成删除老包'
       SendInstallApkResponse(self.host.GenInstallApkResponse(error=consts.ERROR_CODE_OK,
-                        stage=stage.decode('utf-8')))
+                        stage=stage, progress=progress))
   
   def CallbackFail(self, progress):
     SendInstallApkResponse(self.host.GenInstallApkResponse(error=consts.ERROR_CODE_PYADB_UNINSTALL_APK_FAILED,
-                        stage='删除老包失败'.decode('utf-8')))
+                        stage='删除老包失败'))
     
     
     
@@ -139,16 +139,47 @@ def SendInstallApkResponse(r):
   response.code = r['error']
   start_timestamp = r['command'].timestamp
   response.time_cost = util.utility.UTCTime2TimeInMicroseconds(int(time.time())) - start_timestamp
-  response.package_name = r['package_name']
-  response.progress = r['progress']
-  response.type = r['type']
-  response.serial_number = r['serial_number']
-  response.time_max = r['time_max']
-  response.package_size = r['package_size']
-  response.stage = r['stage']
-  response.adb_message = r['adb_message']
   
-  if r['info'] is not None:
+  if 'package_name' in r and r['package_name'] is not None:
+    response.package_name = r['package_name'].decode('utf-8')
+  else:
+    response.package_name = ''
+    
+  if 'progress' in r and r['progress'] is not None:
+    response.progress = r['progress'].decode('utf-8')
+  else:
+    response.progress = ''
+
+  if 'type' in r and r['type'] is not None:
+    response.type = r['type'].decode('utf-8')
+  else:
+    response.type = ''
+    
+
+  response.serial_number = r['serial_number']
+  
+  if 'time_max' in r and r['time_max'] is not None:
+    response.time_max = int(r['time_max'])
+  else:
+    response.time_max = int(0)
+
+  if 'package_size' in r and r['package_size'] is not None:
+    response.package_size = float(r['package_size'])
+  else:
+    response.package_size = float(0)
+    
+  if 'stage' in r and r['stage'] is not None:
+    response.stage = r['stage'].decode('utf-8')
+  else:
+    response.stage = ''
+    
+  if 'adb_message' in r and r['adb_message'] is not None:
+    response.adb_message = r['adb_message'].decode('utf-8')
+  else:
+    response.adb_message = ''
+
+  
+  if 'info' in r and r['info'] is not None:
     for one in r['info']:
       response.info.append(one.decode('utf-8'))
 

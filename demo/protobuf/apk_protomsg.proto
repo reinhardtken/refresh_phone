@@ -36,7 +36,7 @@ message CommandInstallApkResponse {
   required string type = 8;//操作类型
   required string serial_number = 9;
   required int32 time_max = 10;
-  required int32 package_size = 11;
+  required double package_size = 11;
   required string adb_message = 12;
   required string stage = 13;
   repeated string info = 14;

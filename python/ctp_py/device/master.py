@@ -162,7 +162,7 @@ class OneDevice(object):
     apk_path = command.param[1].encode('utf-8')
     package_name = util.utility.GetPackageNameNoApkExt(apk_path)
     self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number, package_name=package_name,
-                               time_max=0, package_size=0)
+                               time_max=0, package_size=0, type=type)
 
     if package_name in self.package_set:
       self.log.info('ProcessInstallApk delete first')
@@ -179,18 +179,18 @@ class OneDevice(object):
     
       if self.IsInstalled(package_name):
         callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK,
-                                                                   stage='完成'.decode('utf-8'), progress='已经装过跳过安装'.decode('utf-8')))
+                                                                   stage='完成', progress='已经装过跳过安装'))
       elif self.IsTimeOut(package_name):
         callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
-                                     stage='完成'.decode('utf-8'), progress='曾经超时跳过安装'.decode('utf-8')))
+                                     stage='完成', progress='曾经超时跳过安装'))
       else:
         self.SendCommand(command)
 
 
 
-  def GenInstallApkResponse(self, target=None, command=None, error=consts.ERROR_CODE_OK, serial_number=None, stage='',
-                            package_name='', progress='', time_max=0,
-                            package_size=0, type='', adb_message='', info=None):
+  def GenInstallApkResponse(self, target=None, command=None, error=consts.ERROR_CODE_OK, serial_number=None, stage=None,
+                            package_name=None, progress=None, time_max=None,
+                            package_size=None, type=None, adb_message=None, info=None):
     return callback.GenInstallApkResponse(self.current_installapk_response, target=target, command=command, error=error, serial_number=serial_number, stage=stage,
                             package_name=package_name, progress=progress, time_max=time_max, package_size=package_size, type=type, adb_message=adb_message, info=info)
     # if target is not None:

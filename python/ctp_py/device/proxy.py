@@ -138,9 +138,9 @@ class Proxy(object):
     
     
 #########################################################
-  def GenInstallApkResponse(self, target=None, command=None, error=consts.ERROR_CODE_OK, serial_number=None, stage='',
-                            package_name='', progress='', time_max=0,
-                            package_size=0, type='', adb_message='', info=None):
+  def GenInstallApkResponse(self, target=None, command=None, error=consts.ERROR_CODE_OK, serial_number=None, stage=None,
+                            package_name=None, progress=None, time_max=None,
+                            package_size=None, type=None, adb_message=None, info=None):
     return callback.GenInstallApkResponse(self.current_installapk_response, target=target, command=command, error=error, serial_number=serial_number, stage=stage,
                             package_name=package_name, progress=progress, time_max=time_max, package_size=package_size, type=type, adb_message=adb_message, info=info)
   
@@ -199,6 +199,7 @@ class Proxy(object):
       time_max = package_size * 2 + 30
       self.StartCheckTimeOut(command, time_max)
       self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number.encode('utf-8'),
+                                 stage='开始', adb_message='',
                                             package_name=package_name, time_max=time_max, package_size=package_size, type=op)
       callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK))
       pass
@@ -281,7 +282,7 @@ class Proxy(object):
       #   time.sleep(10000)
 
       self.log.info('before ProcessInstallApk ' + self.serial_number + ' : ' + apk_path)
-      callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK, stage='开始'.decode('utf-8')))
+      callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK, stage='开始'))
 
       install.Execute()
 
@@ -336,7 +337,7 @@ class Proxy(object):
     
       self.log.info('before ProcessUninstallApk ' + self.serial_number + ' : ' + package_name)
       callback.SendInstallApkResponse(self.GenInstallApkResponse(error=consts.ERROR_CODE_OK,
-                                   stage='开始删除老包'.decode('utf-8')))
+                                   stage='开始删除老包'))
 
       uninstall.Execute()
     
