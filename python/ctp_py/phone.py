@@ -147,8 +147,8 @@ class PhoneLogic(util.thread_class.ThreadClass):
     # self.device2 = adb_wrapper2.AdbInstall()
     self.last_devices_list = None
     
-    self.device = device.master.Master(queue_out)
-    self.device.Start()
+    self.master = device.master.Master(queue_out)
+    self.master.Start()
 
     self.sub_command_id = 0
 
@@ -241,6 +241,8 @@ class PhoneLogic(util.thread_class.ThreadClass):
           self.ProcessGetPackageList(msg)
         elif msg.cmd == consts.COMMAND_REFRESH:
           self.ProcessRefresh(msg)
+        elif msg.cmd == consts.COMMAND_AUTO_INSTALL:
+          self.ProcessAutoInstall(msg)
   
   def ProcessStartServer(self, command):
     # 遍历所有的server，尝试kill，保留kill不掉的
@@ -272,23 +274,30 @@ class PhoneLogic(util.thread_class.ThreadClass):
     #   kill.Execute()
   
   def ProcessScanDevices3(self, command):
-    self.device.ProcessCommand('-', command)
+    self.master.ProcessCommand('-', command)
     
+    
+  
+  def ProcessAutoInstall(self, command):
+    self.master.EnterAutoInstall(command)
+    pass
+  
+  
   
   def ProcessRefresh(self, command):
     id = command.param[0].encode('utf-8')
     if id == 'all':
-      for one in self.device.last_devices_list:
-        self.device.ProcessCommand(one['serial_no'], command)
-    elif id in self.device.last_devices_set:
-      self.device.ProcessCommand(id, command)
+      for one in self.master.last_devices_list:
+        self.master.ProcessCommand(one['serial_no'], command)
+    elif id in self.master.last_devices_set:
+      self.master.ProcessCommand(id, command)
     
   
   
   def ProcessGetPackageList(self, command):
     # 此处有并发隐患
-    for one in self.device.last_devices_list:
-      self.device.ProcessCommand(one['serial_no'], command)
+    for one in self.master.last_devices_list:
+      self.master.ProcessCommand(one['serial_no'], command)
   
   # def ProcessScanDevices(self, command):
   #   succ, device_list = self.device.ListDevices()
@@ -305,10 +314,14 @@ class PhoneLogic(util.thread_class.ThreadClass):
   #     pass
   
   def ProcessInstallApk3(self, command):
+    #将包名换成路径
+    package_name = command.param[1]
+    apk_path = self.apk_dir + '\\' + package_name + '.apk'
+    command.param[1] = apk_path
     # 此处有并发隐患
     # tmp = self.device.last_devices_list.copy()
-    for one in self.device.last_devices_list:
-      self.device.ProcessCommand(one['serial_no'], command)
+    for one in self.master.last_devices_list:
+      self.master.ProcessCommand(one['serial_no'], command)
   
   # def ProcessInstallApk2(self, command):
   #   try:

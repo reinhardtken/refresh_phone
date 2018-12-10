@@ -319,7 +319,7 @@ namespace phone_module {
 		    IPC_MESSAGE_HANDLER(U2L_CheckUpdateApkList, OnCheckUpdateApkList)
         IPC_MESSAGE_HANDLER(U2L_RemoveLocalInstallApkList, OnRemoveLocalInstallApkList)
         IPC_MESSAGE_HANDLER(U2L_LaunchPY, OnLaunchPY)
-        
+        IPC_MESSAGE_HANDLER(U2L_AutoApkInstallCmd, OnAutoInstall)
 		  
 		  
         IPC_MESSAGE_UNHANDLED(msg_is_ok = false)
@@ -719,7 +719,7 @@ namespace phone_module {
     std::vector<phone_module::ApkInstallInfo> & info = *p.get();
     for (auto it = info.begin(); it != info.end(); ++it) {
       std::wstring dir = apk_dir_;
-      std::wstring file = dir.append(it->package_name).append(L".apk");
+      //std::wstring file = dir.append(it->package_name).append(L".apk");
       //std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
 
       apk::Command * cmd = new apk::Command;
@@ -727,7 +727,7 @@ namespace phone_module {
       cmd->set_cmd_no(cmd_no());
       cmd->set_timestamp(base::Time::Now().ToInternalValue());
       cmd->add_param(WideToUTF8(type));
-      cmd->add_param(WideToUTF8(file));
+      cmd->add_param(WideToUTF8(it->package_name));
       codec::MessagePtr ptr(cmd);
       current_cmd_no_set_.insert(cmd->cmd_no());
       channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
@@ -753,6 +753,17 @@ namespace phone_module {
     current_cmd_no_set_.insert(cmd->cmd_no());
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
   }
+
+  void CTPModule::OnAutoInstall() {
+    apk::Command * cmd = new apk::Command;
+    cmd->set_cmd(command::kPyAdbAutoInstall);
+    cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
+    codec::MessagePtr ptr(cmd);
+    current_cmd_no_set_.insert(cmd->cmd_no());
+    channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+  }
+
 
   void CTPModule::OnLaunchPY() {
     FilePath cur;
