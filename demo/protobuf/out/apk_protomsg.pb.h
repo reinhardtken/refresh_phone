@@ -36,6 +36,8 @@ void protobuf_ShutdownFile_apk_5fprotomsg_2eproto();
 class Command;
 class CommandResponse;
 class CommandInstallApkResponse;
+class FailTuple;
+class CommandInstallApkDigest;
 class OneApk;
 class ApkList;
 class AdbDevice;
@@ -572,6 +574,263 @@ class CommandInstallApkResponse : public ::google::protobuf::Message {
 
   void InitAsDefaultInstance();
   static CommandInstallApkResponse* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class FailTuple : public ::google::protobuf::Message {
+ public:
+  FailTuple();
+  virtual ~FailTuple();
+
+  FailTuple(const FailTuple& from);
+
+  inline FailTuple& operator=(const FailTuple& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const FailTuple& default_instance();
+
+  void Swap(FailTuple* other);
+
+  // implements Message ----------------------------------------------
+
+  FailTuple* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const FailTuple& from);
+  void MergeFrom(const FailTuple& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string package_name = 1;
+  inline bool has_package_name() const;
+  inline void clear_package_name();
+  static const int kPackageNameFieldNumber = 1;
+  inline const ::std::string& package_name() const;
+  inline void set_package_name(const ::std::string& value);
+  inline void set_package_name(const char* value);
+  inline void set_package_name(const char* value, size_t size);
+  inline ::std::string* mutable_package_name();
+  inline ::std::string* release_package_name();
+  inline void set_allocated_package_name(::std::string* package_name);
+
+  // required string adb_message = 2;
+  inline bool has_adb_message() const;
+  inline void clear_adb_message();
+  static const int kAdbMessageFieldNumber = 2;
+  inline const ::std::string& adb_message() const;
+  inline void set_adb_message(const ::std::string& value);
+  inline void set_adb_message(const char* value);
+  inline void set_adb_message(const char* value, size_t size);
+  inline ::std::string* mutable_adb_message();
+  inline ::std::string* release_adb_message();
+  inline void set_allocated_adb_message(::std::string* adb_message);
+
+  // @@protoc_insertion_point(class_scope:apk.FailTuple)
+ private:
+  inline void set_has_package_name();
+  inline void clear_has_package_name();
+  inline void set_has_adb_message();
+  inline void clear_has_adb_message();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* package_name_;
+  ::std::string* adb_message_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+
+  friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_ShutdownFile_apk_5fprotomsg_2eproto();
+
+  void InitAsDefaultInstance();
+  static FailTuple* default_instance_;
+};
+// -------------------------------------------------------------------
+
+class CommandInstallApkDigest : public ::google::protobuf::Message {
+ public:
+  CommandInstallApkDigest();
+  virtual ~CommandInstallApkDigest();
+
+  CommandInstallApkDigest(const CommandInstallApkDigest& from);
+
+  inline CommandInstallApkDigest& operator=(const CommandInstallApkDigest& from) {
+    CopyFrom(from);
+    return *this;
+  }
+
+  inline const ::google::protobuf::UnknownFieldSet& unknown_fields() const {
+    return _unknown_fields_;
+  }
+
+  inline ::google::protobuf::UnknownFieldSet* mutable_unknown_fields() {
+    return &_unknown_fields_;
+  }
+
+  static const ::google::protobuf::Descriptor* descriptor();
+  static const CommandInstallApkDigest& default_instance();
+
+  void Swap(CommandInstallApkDigest* other);
+
+  // implements Message ----------------------------------------------
+
+  CommandInstallApkDigest* New() const;
+  void CopyFrom(const ::google::protobuf::Message& from);
+  void MergeFrom(const ::google::protobuf::Message& from);
+  void CopyFrom(const CommandInstallApkDigest& from);
+  void MergeFrom(const CommandInstallApkDigest& from);
+  void Clear();
+  bool IsInitialized() const;
+
+  int ByteSize() const;
+  bool MergePartialFromCodedStream(
+      ::google::protobuf::io::CodedInputStream* input);
+  void SerializeWithCachedSizes(
+      ::google::protobuf::io::CodedOutputStream* output) const;
+  ::google::protobuf::uint8* SerializeWithCachedSizesToArray(::google::protobuf::uint8* output) const;
+  int GetCachedSize() const { return _cached_size_; }
+  private:
+  void SharedCtor();
+  void SharedDtor();
+  void SetCachedSize(int size) const;
+  public:
+
+  ::google::protobuf::Metadata GetMetadata() const;
+
+  // nested types ----------------------------------------------------
+
+  // accessors -------------------------------------------------------
+
+  // required string cmd = 1;
+  inline bool has_cmd() const;
+  inline void clear_cmd();
+  static const int kCmdFieldNumber = 1;
+  inline const ::std::string& cmd() const;
+  inline void set_cmd(const ::std::string& value);
+  inline void set_cmd(const char* value);
+  inline void set_cmd(const char* value, size_t size);
+  inline ::std::string* mutable_cmd();
+  inline ::std::string* release_cmd();
+  inline void set_allocated_cmd(::std::string* cmd);
+
+  // required int32 total_number = 2;
+  inline bool has_total_number() const;
+  inline void clear_total_number();
+  static const int kTotalNumberFieldNumber = 2;
+  inline ::google::protobuf::int32 total_number() const;
+  inline void set_total_number(::google::protobuf::int32 value);
+
+  // required int32 success_number = 3;
+  inline bool has_success_number() const;
+  inline void clear_success_number();
+  static const int kSuccessNumberFieldNumber = 3;
+  inline ::google::protobuf::int32 success_number() const;
+  inline void set_success_number(::google::protobuf::int32 value);
+
+  // required int32 failed_number = 4;
+  inline bool has_failed_number() const;
+  inline void clear_failed_number();
+  static const int kFailedNumberFieldNumber = 4;
+  inline ::google::protobuf::int32 failed_number() const;
+  inline void set_failed_number(::google::protobuf::int32 value);
+
+  // required int32 time_cost = 5;
+  inline bool has_time_cost() const;
+  inline void clear_time_cost();
+  static const int kTimeCostFieldNumber = 5;
+  inline ::google::protobuf::int32 time_cost() const;
+  inline void set_time_cost(::google::protobuf::int32 value);
+
+  // required string serial_number = 6;
+  inline bool has_serial_number() const;
+  inline void clear_serial_number();
+  static const int kSerialNumberFieldNumber = 6;
+  inline const ::std::string& serial_number() const;
+  inline void set_serial_number(const ::std::string& value);
+  inline void set_serial_number(const char* value);
+  inline void set_serial_number(const char* value, size_t size);
+  inline ::std::string* mutable_serial_number();
+  inline ::std::string* release_serial_number();
+  inline void set_allocated_serial_number(::std::string* serial_number);
+
+  // repeated .apk.FailTuple fail_list = 7;
+  inline int fail_list_size() const;
+  inline void clear_fail_list();
+  static const int kFailListFieldNumber = 7;
+  inline const ::apk::FailTuple& fail_list(int index) const;
+  inline ::apk::FailTuple* mutable_fail_list(int index);
+  inline ::apk::FailTuple* add_fail_list();
+  inline const ::google::protobuf::RepeatedPtrField< ::apk::FailTuple >&
+      fail_list() const;
+  inline ::google::protobuf::RepeatedPtrField< ::apk::FailTuple >*
+      mutable_fail_list();
+
+  // @@protoc_insertion_point(class_scope:apk.CommandInstallApkDigest)
+ private:
+  inline void set_has_cmd();
+  inline void clear_has_cmd();
+  inline void set_has_total_number();
+  inline void clear_has_total_number();
+  inline void set_has_success_number();
+  inline void clear_has_success_number();
+  inline void set_has_failed_number();
+  inline void clear_has_failed_number();
+  inline void set_has_time_cost();
+  inline void clear_has_time_cost();
+  inline void set_has_serial_number();
+  inline void clear_has_serial_number();
+
+  ::google::protobuf::UnknownFieldSet _unknown_fields_;
+
+  ::std::string* cmd_;
+  ::google::protobuf::int32 total_number_;
+  ::google::protobuf::int32 success_number_;
+  ::google::protobuf::int32 failed_number_;
+  ::google::protobuf::int32 time_cost_;
+  ::std::string* serial_number_;
+  ::google::protobuf::RepeatedPtrField< ::apk::FailTuple > fail_list_;
+
+  mutable int _cached_size_;
+  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+
+  friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
+  friend void protobuf_ShutdownFile_apk_5fprotomsg_2eproto();
+
+  void InitAsDefaultInstance();
+  static CommandInstallApkDigest* default_instance_;
 };
 // -------------------------------------------------------------------
 
@@ -2202,6 +2461,407 @@ CommandInstallApkResponse::info() const {
 inline ::google::protobuf::RepeatedPtrField< ::std::string>*
 CommandInstallApkResponse::mutable_info() {
   return &info_;
+}
+
+// -------------------------------------------------------------------
+
+// FailTuple
+
+// required string package_name = 1;
+inline bool FailTuple::has_package_name() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void FailTuple::set_has_package_name() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void FailTuple::clear_has_package_name() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void FailTuple::clear_package_name() {
+  if (package_name_ != &::google::protobuf::internal::kEmptyString) {
+    package_name_->clear();
+  }
+  clear_has_package_name();
+}
+inline const ::std::string& FailTuple::package_name() const {
+  return *package_name_;
+}
+inline void FailTuple::set_package_name(const ::std::string& value) {
+  set_has_package_name();
+  if (package_name_ == &::google::protobuf::internal::kEmptyString) {
+    package_name_ = new ::std::string;
+  }
+  package_name_->assign(value);
+}
+inline void FailTuple::set_package_name(const char* value) {
+  set_has_package_name();
+  if (package_name_ == &::google::protobuf::internal::kEmptyString) {
+    package_name_ = new ::std::string;
+  }
+  package_name_->assign(value);
+}
+inline void FailTuple::set_package_name(const char* value, size_t size) {
+  set_has_package_name();
+  if (package_name_ == &::google::protobuf::internal::kEmptyString) {
+    package_name_ = new ::std::string;
+  }
+  package_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* FailTuple::mutable_package_name() {
+  set_has_package_name();
+  if (package_name_ == &::google::protobuf::internal::kEmptyString) {
+    package_name_ = new ::std::string;
+  }
+  return package_name_;
+}
+inline ::std::string* FailTuple::release_package_name() {
+  clear_has_package_name();
+  if (package_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = package_name_;
+    package_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void FailTuple::set_allocated_package_name(::std::string* package_name) {
+  if (package_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete package_name_;
+  }
+  if (package_name) {
+    set_has_package_name();
+    package_name_ = package_name;
+  } else {
+    clear_has_package_name();
+    package_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required string adb_message = 2;
+inline bool FailTuple::has_adb_message() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void FailTuple::set_has_adb_message() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void FailTuple::clear_has_adb_message() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void FailTuple::clear_adb_message() {
+  if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
+    adb_message_->clear();
+  }
+  clear_has_adb_message();
+}
+inline const ::std::string& FailTuple::adb_message() const {
+  return *adb_message_;
+}
+inline void FailTuple::set_adb_message(const ::std::string& value) {
+  set_has_adb_message();
+  if (adb_message_ == &::google::protobuf::internal::kEmptyString) {
+    adb_message_ = new ::std::string;
+  }
+  adb_message_->assign(value);
+}
+inline void FailTuple::set_adb_message(const char* value) {
+  set_has_adb_message();
+  if (adb_message_ == &::google::protobuf::internal::kEmptyString) {
+    adb_message_ = new ::std::string;
+  }
+  adb_message_->assign(value);
+}
+inline void FailTuple::set_adb_message(const char* value, size_t size) {
+  set_has_adb_message();
+  if (adb_message_ == &::google::protobuf::internal::kEmptyString) {
+    adb_message_ = new ::std::string;
+  }
+  adb_message_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* FailTuple::mutable_adb_message() {
+  set_has_adb_message();
+  if (adb_message_ == &::google::protobuf::internal::kEmptyString) {
+    adb_message_ = new ::std::string;
+  }
+  return adb_message_;
+}
+inline ::std::string* FailTuple::release_adb_message() {
+  clear_has_adb_message();
+  if (adb_message_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = adb_message_;
+    adb_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void FailTuple::set_allocated_adb_message(::std::string* adb_message) {
+  if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
+    delete adb_message_;
+  }
+  if (adb_message) {
+    set_has_adb_message();
+    adb_message_ = adb_message;
+  } else {
+    clear_has_adb_message();
+    adb_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// -------------------------------------------------------------------
+
+// CommandInstallApkDigest
+
+// required string cmd = 1;
+inline bool CommandInstallApkDigest::has_cmd() const {
+  return (_has_bits_[0] & 0x00000001u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_cmd() {
+  _has_bits_[0] |= 0x00000001u;
+}
+inline void CommandInstallApkDigest::clear_has_cmd() {
+  _has_bits_[0] &= ~0x00000001u;
+}
+inline void CommandInstallApkDigest::clear_cmd() {
+  if (cmd_ != &::google::protobuf::internal::kEmptyString) {
+    cmd_->clear();
+  }
+  clear_has_cmd();
+}
+inline const ::std::string& CommandInstallApkDigest::cmd() const {
+  return *cmd_;
+}
+inline void CommandInstallApkDigest::set_cmd(const ::std::string& value) {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  cmd_->assign(value);
+}
+inline void CommandInstallApkDigest::set_cmd(const char* value) {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  cmd_->assign(value);
+}
+inline void CommandInstallApkDigest::set_cmd(const char* value, size_t size) {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  cmd_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CommandInstallApkDigest::mutable_cmd() {
+  set_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    cmd_ = new ::std::string;
+  }
+  return cmd_;
+}
+inline ::std::string* CommandInstallApkDigest::release_cmd() {
+  clear_has_cmd();
+  if (cmd_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = cmd_;
+    cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CommandInstallApkDigest::set_allocated_cmd(::std::string* cmd) {
+  if (cmd_ != &::google::protobuf::internal::kEmptyString) {
+    delete cmd_;
+  }
+  if (cmd) {
+    set_has_cmd();
+    cmd_ = cmd;
+  } else {
+    clear_has_cmd();
+    cmd_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required int32 total_number = 2;
+inline bool CommandInstallApkDigest::has_total_number() const {
+  return (_has_bits_[0] & 0x00000002u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_total_number() {
+  _has_bits_[0] |= 0x00000002u;
+}
+inline void CommandInstallApkDigest::clear_has_total_number() {
+  _has_bits_[0] &= ~0x00000002u;
+}
+inline void CommandInstallApkDigest::clear_total_number() {
+  total_number_ = 0;
+  clear_has_total_number();
+}
+inline ::google::protobuf::int32 CommandInstallApkDigest::total_number() const {
+  return total_number_;
+}
+inline void CommandInstallApkDigest::set_total_number(::google::protobuf::int32 value) {
+  set_has_total_number();
+  total_number_ = value;
+}
+
+// required int32 success_number = 3;
+inline bool CommandInstallApkDigest::has_success_number() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_success_number() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void CommandInstallApkDigest::clear_has_success_number() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void CommandInstallApkDigest::clear_success_number() {
+  success_number_ = 0;
+  clear_has_success_number();
+}
+inline ::google::protobuf::int32 CommandInstallApkDigest::success_number() const {
+  return success_number_;
+}
+inline void CommandInstallApkDigest::set_success_number(::google::protobuf::int32 value) {
+  set_has_success_number();
+  success_number_ = value;
+}
+
+// required int32 failed_number = 4;
+inline bool CommandInstallApkDigest::has_failed_number() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_failed_number() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void CommandInstallApkDigest::clear_has_failed_number() {
+  _has_bits_[0] &= ~0x00000008u;
+}
+inline void CommandInstallApkDigest::clear_failed_number() {
+  failed_number_ = 0;
+  clear_has_failed_number();
+}
+inline ::google::protobuf::int32 CommandInstallApkDigest::failed_number() const {
+  return failed_number_;
+}
+inline void CommandInstallApkDigest::set_failed_number(::google::protobuf::int32 value) {
+  set_has_failed_number();
+  failed_number_ = value;
+}
+
+// required int32 time_cost = 5;
+inline bool CommandInstallApkDigest::has_time_cost() const {
+  return (_has_bits_[0] & 0x00000010u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_time_cost() {
+  _has_bits_[0] |= 0x00000010u;
+}
+inline void CommandInstallApkDigest::clear_has_time_cost() {
+  _has_bits_[0] &= ~0x00000010u;
+}
+inline void CommandInstallApkDigest::clear_time_cost() {
+  time_cost_ = 0;
+  clear_has_time_cost();
+}
+inline ::google::protobuf::int32 CommandInstallApkDigest::time_cost() const {
+  return time_cost_;
+}
+inline void CommandInstallApkDigest::set_time_cost(::google::protobuf::int32 value) {
+  set_has_time_cost();
+  time_cost_ = value;
+}
+
+// required string serial_number = 6;
+inline bool CommandInstallApkDigest::has_serial_number() const {
+  return (_has_bits_[0] & 0x00000020u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_serial_number() {
+  _has_bits_[0] |= 0x00000020u;
+}
+inline void CommandInstallApkDigest::clear_has_serial_number() {
+  _has_bits_[0] &= ~0x00000020u;
+}
+inline void CommandInstallApkDigest::clear_serial_number() {
+  if (serial_number_ != &::google::protobuf::internal::kEmptyString) {
+    serial_number_->clear();
+  }
+  clear_has_serial_number();
+}
+inline const ::std::string& CommandInstallApkDigest::serial_number() const {
+  return *serial_number_;
+}
+inline void CommandInstallApkDigest::set_serial_number(const ::std::string& value) {
+  set_has_serial_number();
+  if (serial_number_ == &::google::protobuf::internal::kEmptyString) {
+    serial_number_ = new ::std::string;
+  }
+  serial_number_->assign(value);
+}
+inline void CommandInstallApkDigest::set_serial_number(const char* value) {
+  set_has_serial_number();
+  if (serial_number_ == &::google::protobuf::internal::kEmptyString) {
+    serial_number_ = new ::std::string;
+  }
+  serial_number_->assign(value);
+}
+inline void CommandInstallApkDigest::set_serial_number(const char* value, size_t size) {
+  set_has_serial_number();
+  if (serial_number_ == &::google::protobuf::internal::kEmptyString) {
+    serial_number_ = new ::std::string;
+  }
+  serial_number_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CommandInstallApkDigest::mutable_serial_number() {
+  set_has_serial_number();
+  if (serial_number_ == &::google::protobuf::internal::kEmptyString) {
+    serial_number_ = new ::std::string;
+  }
+  return serial_number_;
+}
+inline ::std::string* CommandInstallApkDigest::release_serial_number() {
+  clear_has_serial_number();
+  if (serial_number_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = serial_number_;
+    serial_number_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CommandInstallApkDigest::set_allocated_serial_number(::std::string* serial_number) {
+  if (serial_number_ != &::google::protobuf::internal::kEmptyString) {
+    delete serial_number_;
+  }
+  if (serial_number) {
+    set_has_serial_number();
+    serial_number_ = serial_number;
+  } else {
+    clear_has_serial_number();
+    serial_number_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// repeated .apk.FailTuple fail_list = 7;
+inline int CommandInstallApkDigest::fail_list_size() const {
+  return fail_list_.size();
+}
+inline void CommandInstallApkDigest::clear_fail_list() {
+  fail_list_.Clear();
+}
+inline const ::apk::FailTuple& CommandInstallApkDigest::fail_list(int index) const {
+  return fail_list_.Get(index);
+}
+inline ::apk::FailTuple* CommandInstallApkDigest::mutable_fail_list(int index) {
+  return fail_list_.Mutable(index);
+}
+inline ::apk::FailTuple* CommandInstallApkDigest::add_fail_list() {
+  return fail_list_.Add();
+}
+inline const ::google::protobuf::RepeatedPtrField< ::apk::FailTuple >&
+CommandInstallApkDigest::fail_list() const {
+  return fail_list_;
+}
+inline ::google::protobuf::RepeatedPtrField< ::apk::FailTuple >*
+CommandInstallApkDigest::mutable_fail_list() {
+  return &fail_list_;
 }
 
 // -------------------------------------------------------------------

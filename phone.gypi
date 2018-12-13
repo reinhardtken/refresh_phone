@@ -328,6 +328,10 @@
 		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/update_view.h',
 		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/main_view.cc',
 		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/main_view.h',
+		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/all_command_list_table.cc',
+		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/all_command_list_table.h',
+		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/auto_install_apk_list_table.cc',
+		'../phone/demo/phone_wrapper_exe/phone_view/adb_view/auto_install_apk_list_table.h',
 		
 		'../phone/demo/phone_wrapper_exe/phone_view/cc_table.cc',
 		'../phone/demo/phone_wrapper_exe/phone_view/cc_table.h',

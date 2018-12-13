@@ -13,7 +13,7 @@ from google.protobuf import descriptor_pb2
 DESCRIPTOR = _descriptor.FileDescriptor(
   name='apk_protomsg.proto',
   package='apk',
-  serialized_pb='\n\x12\x61pk_protomsg.proto\x12\x03\x61pk\"\\\n\x07\x43ommand\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x01(\x05\x12\x11\n\ttimestamp\x18\x04 \x02(\x03\x12\r\n\x05param\x18\x05 \x03(\t\"q\n\x0f\x43ommandResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x0c\n\x04info\x18\x06 \x03(\t\"\x94\x02\n\x19\x43ommandInstallApkResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x14\n\x0cpackage_name\x18\x06 \x02(\t\x12\x10\n\x08progress\x18\x07 \x02(\t\x12\x0c\n\x04type\x18\x08 \x02(\t\x12\x15\n\rserial_number\x18\t \x02(\t\x12\x10\n\x08time_max\x18\n \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0b \x02(\x01\x12\x13\n\x0b\x61\x64\x62_message\x18\x0c \x02(\t\x12\r\n\x05stage\x18\r \x02(\t\x12\x0c\n\x04info\x18\x0e \x03(\t\"\xcb\x01\n\x06OneApk\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03url\x18\x02 \x01(\t\x12\x0b\n\x03md5\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x02(\t\x12\r\n\x05\x62rief\x18\x05 \x01(\t\x12\x0f\n\x07orderid\x18\x06 \x01(\x05\x12\x13\n\x0bupdate_time\x18\x07 \x01(\t\x12\x13\n\x0b\x63reate_time\x18\x08 \x01(\t\x12\x10\n\x08\x61pk_name\x18\t \x02(\t\x12\r\n\x05price\x18\n \x02(\x01\x12\x0c\n\x04type\x18\x0b \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0c \x02(\x01\"L\n\x07\x41pkList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12\x1d\n\x08\x61pk_list\x18\x02 \x03(\x0b\x32\x0b.apk.OneApk\"]\n\tAdbDevice\x12\x11\n\tserial_no\x18\x01 \x02(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\r\n\x05model\x18\x03 \x01(\t\x12\x0f\n\x07product\x18\x04 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x05 \x01(\t\"W\n\x0b\x44\x65vicesList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12$\n\x0c\x64\x65vices_list\x18\x02 \x03(\x0b\x32\x0e.apk.AdbDevice')
+  serialized_pb='\n\x12\x61pk_protomsg.proto\x12\x03\x61pk\"\\\n\x07\x43ommand\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x01(\x05\x12\x11\n\ttimestamp\x18\x04 \x02(\x03\x12\r\n\x05param\x18\x05 \x03(\t\"q\n\x0f\x43ommandResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x0c\n\x04info\x18\x06 \x03(\t\"\x94\x02\n\x19\x43ommandInstallApkResponse\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x0e\n\x06\x63md_no\x18\x02 \x02(\x05\x12\x12\n\nsub_cmd_no\x18\x03 \x02(\x05\x12\x0c\n\x04\x63ode\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x01(\x03\x12\x14\n\x0cpackage_name\x18\x06 \x02(\t\x12\x10\n\x08progress\x18\x07 \x02(\t\x12\x0c\n\x04type\x18\x08 \x02(\t\x12\x15\n\rserial_number\x18\t \x02(\t\x12\x10\n\x08time_max\x18\n \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0b \x02(\x01\x12\x13\n\x0b\x61\x64\x62_message\x18\x0c \x02(\t\x12\r\n\x05stage\x18\r \x02(\t\x12\x0c\n\x04info\x18\x0e \x03(\t\"6\n\tFailTuple\x12\x14\n\x0cpackage_name\x18\x01 \x02(\t\x12\x13\n\x0b\x61\x64\x62_message\x18\x02 \x02(\t\"\xb8\x01\n\x17\x43ommandInstallApkDigest\x12\x0b\n\x03\x63md\x18\x01 \x02(\t\x12\x14\n\x0ctotal_number\x18\x02 \x02(\x05\x12\x16\n\x0esuccess_number\x18\x03 \x02(\x05\x12\x15\n\rfailed_number\x18\x04 \x02(\x05\x12\x11\n\ttime_cost\x18\x05 \x02(\x05\x12\x15\n\rserial_number\x18\x06 \x02(\t\x12!\n\tfail_list\x18\x07 \x03(\x0b\x32\x0e.apk.FailTuple\"\xcb\x01\n\x06OneApk\x12\n\n\x02id\x18\x01 \x01(\x05\x12\x0b\n\x03url\x18\x02 \x01(\t\x12\x0b\n\x03md5\x18\x03 \x01(\t\x12\x0c\n\x04name\x18\x04 \x02(\t\x12\r\n\x05\x62rief\x18\x05 \x01(\t\x12\x0f\n\x07orderid\x18\x06 \x01(\x05\x12\x13\n\x0bupdate_time\x18\x07 \x01(\t\x12\x13\n\x0b\x63reate_time\x18\x08 \x01(\t\x12\x10\n\x08\x61pk_name\x18\t \x02(\t\x12\r\n\x05price\x18\n \x02(\x01\x12\x0c\n\x04type\x18\x0b \x02(\x05\x12\x14\n\x0cpackage_size\x18\x0c \x02(\x01\"L\n\x07\x41pkList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12\x1d\n\x08\x61pk_list\x18\x02 \x03(\x0b\x32\x0b.apk.OneApk\"]\n\tAdbDevice\x12\x11\n\tserial_no\x18\x01 \x02(\t\x12\r\n\x05state\x18\x02 \x01(\t\x12\r\n\x05model\x18\x03 \x01(\t\x12\x0f\n\x07product\x18\x04 \x01(\t\x12\x0e\n\x06\x64\x65vice\x18\x05 \x01(\t\"W\n\x0b\x44\x65vicesList\x12\"\n\x04head\x18\x01 \x02(\x0b\x32\x14.apk.CommandResponse\x12$\n\x0c\x64\x65vices_list\x18\x02 \x03(\x0b\x32\x0e.apk.AdbDevice')
 
 
 
@@ -256,6 +256,111 @@ _COMMANDINSTALLAPKRESPONSE = _descriptor.Descriptor(
 )
 
 
+_FAILTUPLE = _descriptor.Descriptor(
+  name='FailTuple',
+  full_name='apk.FailTuple',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='package_name', full_name='apk.FailTuple.package_name', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='adb_message', full_name='apk.FailTuple.adb_message', index=1,
+      number=2, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=515,
+  serialized_end=569,
+)
+
+
+_COMMANDINSTALLAPKDIGEST = _descriptor.Descriptor(
+  name='CommandInstallApkDigest',
+  full_name='apk.CommandInstallApkDigest',
+  filename=None,
+  file=DESCRIPTOR,
+  containing_type=None,
+  fields=[
+    _descriptor.FieldDescriptor(
+      name='cmd', full_name='apk.CommandInstallApkDigest.cmd', index=0,
+      number=1, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='total_number', full_name='apk.CommandInstallApkDigest.total_number', index=1,
+      number=2, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='success_number', full_name='apk.CommandInstallApkDigest.success_number', index=2,
+      number=3, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='failed_number', full_name='apk.CommandInstallApkDigest.failed_number', index=3,
+      number=4, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='time_cost', full_name='apk.CommandInstallApkDigest.time_cost', index=4,
+      number=5, type=5, cpp_type=1, label=2,
+      has_default_value=False, default_value=0,
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='serial_number', full_name='apk.CommandInstallApkDigest.serial_number', index=5,
+      number=6, type=9, cpp_type=9, label=2,
+      has_default_value=False, default_value=unicode("", "utf-8"),
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+    _descriptor.FieldDescriptor(
+      name='fail_list', full_name='apk.CommandInstallApkDigest.fail_list', index=6,
+      number=7, type=11, cpp_type=10, label=3,
+      has_default_value=False, default_value=[],
+      message_type=None, enum_type=None, containing_type=None,
+      is_extension=False, extension_scope=None,
+      options=None),
+  ],
+  extensions=[
+  ],
+  nested_types=[],
+  enum_types=[
+  ],
+  options=None,
+  is_extendable=False,
+  extension_ranges=[],
+  serialized_start=572,
+  serialized_end=756,
+)
+
+
 _ONEAPK = _descriptor.Descriptor(
   name='OneApk',
   full_name='apk.OneApk',
@@ -356,8 +461,8 @@ _ONEAPK = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=516,
-  serialized_end=719,
+  serialized_start=759,
+  serialized_end=962,
 )
 
 
@@ -391,8 +496,8 @@ _APKLIST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=721,
-  serialized_end=797,
+  serialized_start=964,
+  serialized_end=1040,
 )
 
 
@@ -447,8 +552,8 @@ _ADBDEVICE = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=799,
-  serialized_end=892,
+  serialized_start=1042,
+  serialized_end=1135,
 )
 
 
@@ -482,10 +587,11 @@ _DEVICESLIST = _descriptor.Descriptor(
   options=None,
   is_extendable=False,
   extension_ranges=[],
-  serialized_start=894,
-  serialized_end=981,
+  serialized_start=1137,
+  serialized_end=1224,
 )
 
+_COMMANDINSTALLAPKDIGEST.fields_by_name['fail_list'].message_type = _FAILTUPLE
 _APKLIST.fields_by_name['head'].message_type = _COMMANDRESPONSE
 _APKLIST.fields_by_name['apk_list'].message_type = _ONEAPK
 _DEVICESLIST.fields_by_name['head'].message_type = _COMMANDRESPONSE
@@ -493,6 +599,8 @@ _DEVICESLIST.fields_by_name['devices_list'].message_type = _ADBDEVICE
 DESCRIPTOR.message_types_by_name['Command'] = _COMMAND
 DESCRIPTOR.message_types_by_name['CommandResponse'] = _COMMANDRESPONSE
 DESCRIPTOR.message_types_by_name['CommandInstallApkResponse'] = _COMMANDINSTALLAPKRESPONSE
+DESCRIPTOR.message_types_by_name['FailTuple'] = _FAILTUPLE
+DESCRIPTOR.message_types_by_name['CommandInstallApkDigest'] = _COMMANDINSTALLAPKDIGEST
 DESCRIPTOR.message_types_by_name['OneApk'] = _ONEAPK
 DESCRIPTOR.message_types_by_name['ApkList'] = _APKLIST
 DESCRIPTOR.message_types_by_name['AdbDevice'] = _ADBDEVICE
@@ -515,6 +623,18 @@ class CommandInstallApkResponse(_message.Message):
   DESCRIPTOR = _COMMANDINSTALLAPKRESPONSE
 
   # @@protoc_insertion_point(class_scope:apk.CommandInstallApkResponse)
+
+class FailTuple(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _FAILTUPLE
+
+  # @@protoc_insertion_point(class_scope:apk.FailTuple)
+
+class CommandInstallApkDigest(_message.Message):
+  __metaclass__ = _reflection.GeneratedProtocolMessageType
+  DESCRIPTOR = _COMMANDINSTALLAPKDIGEST
+
+  # @@protoc_insertion_point(class_scope:apk.CommandInstallApkDigest)
 
 class OneApk(_message.Message):
   __metaclass__ = _reflection.GeneratedProtocolMessageType

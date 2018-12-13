@@ -16,7 +16,20 @@ import util.log
 import callback
 import consts
 import pb.apk_protomsg_pb2
+import my_globals
 # ====================================
+class FailedItem(object):
+  MAX_TRY = 3
+  ERROR_TIMEOUT = 1
+  ERROR_ADB = 2
+  def __init__(self):
+    self.package_name = None
+    self.try_times = 0
+    self.error_code = None
+    self.error_message = None
+  
+  
+  
 class OneDevice(object):
   def __init__(self, queue_master, serial_number):
     self.log = util.log.GetLogger(self.__class__.__name__)
@@ -30,12 +43,25 @@ class OneDevice(object):
     self.installed_set = set()
 
     # 记录所有超时的包，超时包会导致后续安装无法进行，除非强制，否转不再重复安装
-    self.installed_timeout_set = set()
+    # self.installed_timeout_set = set()
     
     
-    #当发生过杀线程的事情，min id被设置成杀之前接收命令的最大id，确保如果无法正确杀死线程，也不会被线程后续回复干扰
-    self.min_command_id = 0
-    self.last_command_id = 0
+    #记录所有失败的包，adb返回的失败，超时失败，重试次数
+    self.installed_failed = {}
+    
+    #摘要
+    self.digest = {
+      'total_number': 0,
+      'success_number': 0,
+      'failed_number': 0,
+      'time_cost': 0,
+      'fail_list': [],
+    }
+    
+    
+    #当发生过杀线程的事情，sub_min id被设置成杀之前接收命令的最大id，确保如果无法正确杀死线程，也不会被线程后续回复干扰
+    self.min_sub_command_id = 0
+    self.last_sub_command_id = 0
 
     self.package_list = []
     self.package_set = set()
@@ -45,7 +71,10 @@ class OneDevice(object):
     
     self.sub_command_id = 0
     
-   
+    #需要进行安装的apk集合
+    self.todo_install_apk_set = set()
+    
+    
   
   
   def _GenSubCommandID(self):
@@ -69,7 +98,7 @@ class OneDevice(object):
       
       
   def Stop(self):
-    self.min_command_id = self.last_command_id
+    self.min_sub_command_id = self.last_sub_command_id
     if self.proxy is not None:
       self.proxy.Stop()
       self.proxy.ForceStop()
@@ -89,15 +118,33 @@ class OneDevice(object):
     if self.proxy is None:
       self._Create()
       self._Start()
-    
       
+      
+  
+  def Empty(self):
+    if self.proxy is not None:
+      return self.proxy.Empty()
+    
+    #如果proxy不存在，也就没有任务队列，那默认非empty
+    return False
+
+
+  def UpdateApkList(self, data):
+    self.todo_install_apk_set = data
+    
+    
       
   def IsInstalled(self, apk):
     return apk in self.installed_set
   
   
+  def IsInstallFailed(self, apk):
+    return apk in self.installed_failed
+  
+  
+  
   def IsTimeOut(self, apk):
-    return apk in self.installed_timeout_set
+    return apk in self.installed_failed and self.installed_failed[apk].error_code == FailedItem.ERROR_TIMEOUT
   
   
   def AddInstalled(self, apk):
@@ -107,28 +154,70 @@ class OneDevice(object):
   
   def AddTimeOut(self, apk):
     self.log.info('AddTimeOut ' + self.serial_number + ' ' + apk)
-    self.installed_timeout_set.add(apk)
+    self.AddInstallFailed(apk, FailedItem.ERROR_TIMEOUT, 'timeout')
+    
+  
+  
+  def AddInstallFailed(self, apk, reason, message):
+    self.log.info('AddInstallFailed  %s  %s %d %s', self.serial_number, apk, reason, message)
+    if apk in self.installed_failed:
+      self.installed_failed[apk].try_times += 1
+      self.installed_failed[apk].error_code = reason
+      self.installed_failed[apk].error_message = message
+    else:
+      item = FailedItem()
+      item.package_name = apk
+      item.try_times = 1
+      item.error_code = reason
+      item.error_message = message
+      self.installed_failed[apk] = item
+  
     
     
   def SendCommand(self, command):
     if self.proxy is not None:
-      self.last_command_id = command.cmd_no
       # 添加sub_command_id
       command.sub_cmd_no = self._GenSubCommandID()
+      self.last_sub_command_id = command.sub_cmd_no
       self.proxy.SendCommand(command)
 
 
 
+  def NotifyInstallApkDigest(self, command):
+    out = pb.apk_protomsg_pb2.CommandInstallApkDigest()
+    out.cmd = consts.COMMAND_NOTIFY_INSTALL_APK_DIGEST
+    out.total_number = len(self.todo_install_apk_set)
+    out.success_number = len(self.installed_set)
+    out.failed_number = len(self.installed_failed)
+    out.time_cost = 0
+    out.serial_number = self.serial_number
+    for one in self.installed_failed.values():
+      failed = out.fail_list.add()
+      failed.package_name = one.package_name
+      failed.adb_message = one.error_message
+      
+    return out
+    
+
+
   def ProcessInstallApkResponse(self, command):
-    if command.cmd_no > self.min_command_id:
-      if command.stage == '完成'.decode('utf-8') and command.progress == 'Success'.decode('utf-8'):
-        self.AddInstalled(command.package_name)
+    if command.sub_cmd_no > self.min_sub_command_id:
+      if command.stage == '完成'.decode('utf-8'):
+        if command.progress == 'Success'.decode('utf-8'):
+          self.AddInstalled(command.package_name)
+        else:
+          self.AddInstallFailed(command.package_name, FailedItem.ERROR_ADB, command.progress)
+
+        # 发送装包摘要
+        notify = self.NotifyInstallApkDigest(command)
+        my_globals.queue_network.put(notify)
+      
         
           
       return True
     
     else:
-      self.log.warning('ProcessInstallApkResponse  the min: %d  the one: %d', self.min_command_id, command.cmd_no)
+      self.log.warning('ProcessInstallApkResponse  the min: %d  the one: %d', self.min_sub_command_id, command.cmd_no)
   
 
   
@@ -148,11 +237,7 @@ class OneDevice(object):
   
   def TriggerProcessPackageList(self):
     pass
-    # MIN_INTERVAL = 5 * 60
-    # if len(self.package_list) == 0:
-    #   self.ProcessPackageList()
-    # elif self.last_get_package_list is None or time.time() - self.last_get_package_list > MIN_INTERVAL:
-    #   self.ProcessPackageList()
+
 
 
   def ProcessInstallApk(self, command):
@@ -193,45 +278,23 @@ class OneDevice(object):
                             package_size=None, type=None, adb_message=None, info=None):
     return callback.GenInstallApkResponse(self.current_installapk_response, target=target, command=command, error=error, serial_number=serial_number, stage=stage,
                             package_name=package_name, progress=progress, time_max=time_max, package_size=package_size, type=type, adb_message=adb_message, info=info)
-    # if target is not None:
-    #   self.current_response['target'] = target
-    #
-    # if command is not None:
-    #   self.current_response['command'] = command
-    #
-    # if error is not None:
-    #   self.current_response['error'] = error
-    #
-    # if serial_number is not None:
-    #   self.current_response['serial_number'] = serial_number
-    #
-    # if stage is not None:
-    #   self.current_response['stage'] = stage
-    #
-    # if package_name is not None:
-    #   self.current_response['package_name'] = package_name
-    #
-    # if progress is not None:
-    #   self.current_response['progress'] = str(progress)
-    #
-    # if time_max is not None:
-    #   self.current_response['time_max'] = str(time_max)
-    #
-    # if size is not None:
-    #   self.current_response['package_size'] = str(size)
-    #
-    # if type is not None:
-    #   self.current_response['type'] = str(type)
-    #
-    # if info is not None:
-    #   self.current_response['info'] = info
-    #
-    # return self.current_response
-    
+
+  
+  def _GenInstallApkCommand(self, package_name):
+    command = pb.apk_protomsg_pb2.Command()
+    command.cmd = consts.COMMAND_INSTALL_APK
+    command.cmd_no = -1
+    command.sub_cmd_no = self._GenSubCommandID()
+
+    command.param.append(u'all')
+    apk_path = my_globals.apk_dir + '\\' + package_name + '.apk'
+    command.param.append(apk_path)
+    return command
 #########################################################
 class Master(object):
   def __init__(self, queue_out):
     print("Master.init=======================================")
+    # self.host = host
     self.queue_out = queue_out
     self.queue_in = Queue.Queue()
     self.devices_map = {}
@@ -243,7 +306,7 @@ class Master(object):
     
     
     # self.apk_map = {}
-    
+    self.todo_install_apk_set = set()
     
     
     
@@ -256,12 +319,45 @@ class Master(object):
     self.thread = threading.Thread(target=self.Work)
     self._continue = True
     self.thread.setDaemon(True)
+
+    self.auto_install_mode = False
+
+
+
+
+  def EnterAutoInstall(self, command):
+    if int(command.param[0]) == 1:
+      self.auto_install_mode = True
+      self.TriggerAutoInstall()
+    else:
+      self.auto_install_mode = False
+      
+      
+  
+
+  def TriggerAutoInstall(self):
+    # 自动安装逻辑
+    if self.auto_install_mode:
+      for one in self.last_devices_list:
+        device = self._Add(one['serial_no'])
+        if device.Empty():
+          for apk in device.todo_install_apk_set:
+            # 没有安装成功
+            if not device.IsInstalled(apk):
+              # 检查所有设备，如果要安装包数大于已经成功包数，且失败次数位超过阈值，重新把安装请求塞到队列中
+              # 没有失败过或者失败重试没有到达上限
+              if not device.IsInstallFailed(apk) or device.installed_failed[apk].try_times < FailedItem.MAX_TRY:
+                command = device._GenInstallApkCommand(apk)
+                device.ProcessInstallApk(command)
+      
     
     
   
-  # def UpdateApkList(self, data):
-  #   for one in data:
-  #     self.apk_map[one.apk_name] = one
+  def UpdateApkList(self, data):
+    self.todo_install_apk_set = data
+    for one in self.last_devices_list:
+      self._Add(one['serial_no']).UpdateApkList(data)
+
     
   
   def _Add(self, serial_number):
@@ -270,6 +366,8 @@ class Master(object):
       return self.devices_map[serial_number]
     else:
       one = OneDevice(self.queue_in, serial_number)
+      #把要装的包集合设置好
+      one.UpdateApkList(self.todo_install_apk_set)
       self.devices_map[serial_number] = one
       one.MaybeCreate()
       return one
@@ -311,6 +409,10 @@ class Master(object):
           package_name = util.utility.GetPackageNameNoApkExt(apk_path)
           #超时的包，记录超时失败，不再继续
           self._Get(k).AddTimeOut(package_name)
+          # 发送装包摘要
+          notify = self._Get(k).NotifyInstallApkDigest(None)
+          self.queue_out.put(notify)
+          #发送超时通知
           callback.SendCommandResponse(self.queue_out, v['c'],
                                        consts.ERROR_CODE_PYADB_OP_TIMEOUT_FAILED,
                                        [k.encode('utf-8'), '完成', package_name, '超时', str(tmp[k]['max'])])
@@ -335,10 +437,8 @@ class Master(object):
       self.last_devices_set.add(one['serial_no'])
       
     
-    #对于所有手机，枚举已经安装的包
-    # for one in self.last_devices_list:
-    #   d = self._Add(one['serial_no'])
-    #   d.TriggerProcessPackageList()
+    #对于所有手机，如果自动模式，开始装包
+    self.TriggerAutoInstall()
       
     
     return True
@@ -366,7 +466,6 @@ class Master(object):
       forword = self.ProcessInstallApkResponse(command)
     
       
-    
     if forword is not None and forword == True:
       self.queue_out.put(command)
       
@@ -408,13 +507,16 @@ class Master(object):
       self.ProcessIncome(msg)
       self.queue_in.task_done()
   
+  
   def Work(self):
     
     while self._continue:
       self.DealWithIncomeQueue()
       self.CheckTimeout()
+      self.TriggerAutoInstall()
       self.CheckPendingTask()
       time.sleep(1)
+  
   
   def Join(self):
     self.thread.join()

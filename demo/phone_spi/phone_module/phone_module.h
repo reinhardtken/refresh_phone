@@ -104,6 +104,7 @@ private:
 	void OnCheckUpdateApkList();
   void OnRemoveLocalInstallApkList();
   void OnLaunchPY();
+  void OnAutoInstall(bool b);
   private:
     //scoped_ptr<MarketQuotationBase> market_quotation_base_;
 

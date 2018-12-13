@@ -354,8 +354,12 @@ IPC_MESSAGE_CONTROL2(U2L_ApkInstallCmd, std::wstring, PointerWrapper<std::vector
 IPC_MESSAGE_CONTROL0(U2L_LaunchPY)//  
 IPC_MESSAGE_CONTROL1(L2U_DevicesList,
   PointerWrapper<phone_module::DevicesList>)
-  IPC_MESSAGE_CONTROL1(L2U_ApkIRStatus,
+IPC_MESSAGE_CONTROL1(L2U_ApkIRStatus,
     PointerWrapper<phone_module::ApkIRStatus>)
+IPC_MESSAGE_CONTROL1(L2U_InstallApkDigest,
+  PointerWrapper<phone_module::InstallDigest>)
+
+  IPC_MESSAGE_CONTROL1(U2L_AutoApkInstallCmd, bool)
                           
 
 //must last one

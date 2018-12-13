@@ -475,6 +475,7 @@ struct ApkIRStatus {
   std::wstring percent;
   std::wstring result;
   std::wstring speed;
+  std::wstring adb_message;
   int sub_command_id;
   int error_code;
   int time_cost;//秒
@@ -541,6 +542,16 @@ struct AdbDevice {
 
 typedef std::vector<AdbDevice> DevicesList;
 
+
+typedef std::pair<std::wstring, std::wstring> FailedPair;
+struct InstallDigest {
+  int total_number;
+  int success_number;
+  int failed_number;
+  int time_cost;
+  std::wstring serial_number;
+  std::vector< FailedPair> failed_list;
+};
 
 
 

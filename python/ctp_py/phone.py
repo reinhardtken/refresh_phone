@@ -33,7 +33,7 @@ import adbtool.list_devices
 import adbtool.find_server
 import device.master
 import device.callback
-
+import my_globals
 
 # =======================================================
 
@@ -139,6 +139,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     
     util.thread_class.ThreadClass.__init__(self, queue_in)
     self.queue_out = queue_out
+    my_globals.queue_network = queue_out
     
     self.local_prop = None
     self.apk_dir = None
@@ -151,6 +152,8 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.master.Start()
 
     self.sub_command_id = 0
+    
+    self.package_set = set()
 
 
 
@@ -189,6 +192,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
       self.log.info(str(self.prop))
       try:
         self.apk_dir = self.prop['apkPath']
+        my_globals.apk_dir = self.apk_dir
         self.LoadLocalProp()
       except Exception as e:
         pass
@@ -388,6 +392,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
       
       apk_list = []
       if local_prop is not None:
+        self.package_set.clear()
         for one in local_prop['data']['install']:
           one_apk = pb.apk_protomsg_pb2.OneApk()
           one_apk.md5 = one['apkmd5']
@@ -397,6 +402,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
           one_apk.price = one['price']
           one_apk.type = consts.PACKAGE_BOTH
           one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['apkname'] + '.apk')
+          self.package_set.add(one_apk.apk_name)
           apk_list.append(one_apk)
         
         for one in local_prop['data']['remove']:
@@ -410,7 +416,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
           one_apk.package_size = 0
           apk_list.append(one_apk)
         
-        # self.device.UpdateApkList(apk_list)
+        self.master.UpdateApkList(self.package_set)
         
         self.SendApkList(command,
                          consts.ERROR_CODE_OK, apk_list)
@@ -419,6 +425,8 @@ class PhoneLogic(util.thread_class.ThreadClass):
                          consts.ERROR_CODE_LOAD_LOCAL_APKLIST_FAILED)
     except Exception as e:
       self.SendCommandResponse(command, consts.ERROR_CODE_UNKNOWN, ['获取本地包列表', ])
+  
+  
   
   def ProcessRemoveLocalPackageList(self, command):
     try:
@@ -486,7 +494,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
               
               if new_one['apkname'] in diff_set or \
                   (new_one['apkname'] == old_one['apkname'] and new_one['apkmd5'] != old_one['apkmd5']) or \
-                  (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) == False):
+                  (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) is False):
                 need_save_json = True
                 if new_one['apkname'] not in solved_package_name and self.DownloadOneApk(new_one, command):
                   solved_package_name.add(new_one['apkname'])

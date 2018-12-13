@@ -64,6 +64,7 @@ class CTPTabbedPane : public CTPViewBase,
 	PACKAGE_LIST_TAB,
 	INSTALL_APK_LIST_TAB,
 	UPDATE_TAB,
+  AUTO_INSTALL_TAB,
   };
   void AddOneTab(TabTypeEnum const type, const string16& label);
   void AddTUTab(PointerWrapper<phone_module::TradeUnitInfo> const & p);

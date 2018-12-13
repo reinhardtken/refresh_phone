@@ -460,6 +460,21 @@ namespace phone_module {
             DCHECK(false);
           }
         }
+      } else if (p->GetTypeName() == "apk.CommandInstallApkDigest") {
+        //kPyAdbNotifyInstallDigest
+        apk::CommandInstallApkDigest const* digest = static_cast<apk::CommandInstallApkDigest const*>(p.get());
+        InstallDigest * out = new InstallDigest;
+        out->total_number = digest->total_number();
+        out->success_number = digest->success_number();
+        out->failed_number = digest->failed_number();
+        out->serial_number = UTF8ToWide(digest->serial_number());
+        for (auto i = 0; i < digest->fail_list_size(); ++i) {
+          out->failed_list.push_back(FailedPair(UTF8ToWide(digest->fail_list(i).package_name()), 
+            UTF8ToWide(digest->fail_list(i).adb_message())));
+        }
+        PointerWrapper<InstallDigest> tmp(out);
+        ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+          new L2U_InstallApkDigest(tmp));
       }
 
     } else {
@@ -754,11 +769,16 @@ namespace phone_module {
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
   }
 
-  void CTPModule::OnAutoInstall() {
+  void CTPModule::OnAutoInstall(bool b) {
     apk::Command * cmd = new apk::Command;
     cmd->set_cmd(command::kPyAdbAutoInstall);
     cmd->set_cmd_no(cmd_no());
     cmd->set_timestamp(base::Time::Now().ToInternalValue());
+    if (b) {
+      cmd->add_param("1");
+    } else {
+      cmd->add_param("0");
+    }
     codec::MessagePtr ptr(cmd);
     current_cmd_no_set_.insert(cmd->cmd_no());
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);

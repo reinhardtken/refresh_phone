@@ -60,6 +60,8 @@ COMMAND_SCAN_DEVICES = 'pyadb.scan_devices'
 COMMAND_INSTALL_APK = 'pyadb.install_apk'
 COMMAND_GET_PACKAGE_LIST = 'pyadb.get_package_list'
 COMMAND_REFRESH = 'pyadb.refresh'
+COMMAND_AUTO_INSTALL = 'pyadb.auto_install'
+COMMAND_NOTIFY_INSTALL_APK_DIGEST = 'pyadb.notify.install_digest'
 
 
 #inner

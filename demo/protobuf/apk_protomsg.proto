@@ -42,7 +42,20 @@ message CommandInstallApkResponse {
   repeated string info = 14;
 };
 
+message FailTuple {
+  required string package_name = 1;
+  required string adb_message = 2;
+};
 
+message CommandInstallApkDigest {
+  required string cmd = 1;
+  required int32 total_number = 2;
+  required int32 success_number = 3;
+  required int32 failed_number = 4;
+  required int32 time_cost = 5;
+  required string serial_number = 6;
+  repeated FailTuple fail_list = 7;
+};
 
 
 message OneApk {

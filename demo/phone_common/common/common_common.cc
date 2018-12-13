@@ -103,5 +103,7 @@ namespace command {
   const char kPyAdbScanDevices[] = "pyadb.scan_devices";
   const char kPyAdbRemoveApk[] = "pyadb.remove_apk";
   const char kPyAdbRefresh[] = "pyadb.refresh";
+  const char kPyAdbAutoInstall[] = "pyadb.auto_install";
+  const char kPyAdbNotifyInstallDigest[] = "pyadb.notify.install_digest";
 
 }

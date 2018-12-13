@@ -115,6 +115,11 @@ class Proxy(object):
   
   
   
+  def Empty(self):
+    return self.queue_in.empty()
+  
+  
+  
   def DealWithIncomeQueue(self):
     while not self.queue_in.empty() and self._continue:
       msg = self.queue_in.get()

@@ -23,6 +23,7 @@
 #include "adb_view/install_apk_list_table.h"
 #include "adb_view/update_view.h"
 #include "adb_view/main_view.h"
+#include "adb_view/auto_install_apk_list_table.h"
 
 namespace views {
 namespace examples {
@@ -66,6 +67,7 @@ void CTPTabbedPane::CreateExampleView(View* container) {
   AddOneTab(REFRESH_TAB, L"命令集合");
   //AddOneTab(PACKAGE_LIST_TAB, L"已安装包名列表");
   AddOneTab(INSTALL_APK_LIST_TAB, L"包安装/删除");//所有adb装包，删包在这里
+  AddOneTab(AUTO_INSTALL_TAB, L"自动装包");
   //if (process_type == switches::kProcessTypeTest) {
   //  AddOneTab(TEST_TAB, "Test");
   //} else if (process_type == switches::kProcessTypeMQ) {
@@ -160,6 +162,11 @@ void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
 
 	  tabs_[tabbed_pane_->GetTabCount()] = p;
 	  tabbed_pane_->AddTab((label), p->example_view());
+  } else if (type == AUTO_INSTALL_TAB) {
+    AutoInstallApkListTable* p = new AutoInstallApkListTable(this, label);
+
+    tabs_[tabbed_pane_->GetTabCount()] = p;
+    tabbed_pane_->AddTab((label), p->example_view());
   } else {
   }
 
