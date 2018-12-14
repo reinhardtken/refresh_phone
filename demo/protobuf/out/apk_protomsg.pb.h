@@ -655,20 +655,30 @@ class FailTuple : public ::google::protobuf::Message {
   inline ::std::string* release_adb_message();
   inline void set_allocated_adb_message(::std::string* adb_message);
 
+  // required int32 try_times = 3;
+  inline bool has_try_times() const;
+  inline void clear_try_times();
+  static const int kTryTimesFieldNumber = 3;
+  inline ::google::protobuf::int32 try_times() const;
+  inline void set_try_times(::google::protobuf::int32 value);
+
   // @@protoc_insertion_point(class_scope:apk.FailTuple)
  private:
   inline void set_has_package_name();
   inline void clear_has_package_name();
   inline void set_has_adb_message();
   inline void clear_has_adb_message();
+  inline void set_has_try_times();
+  inline void clear_has_try_times();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* package_name_;
   ::std::string* adb_message_;
+  ::google::protobuf::int32 try_times_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(2 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -2605,6 +2615,28 @@ inline void FailTuple::set_allocated_adb_message(::std::string* adb_message) {
     clear_has_adb_message();
     adb_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   }
+}
+
+// required int32 try_times = 3;
+inline bool FailTuple::has_try_times() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void FailTuple::set_has_try_times() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void FailTuple::clear_has_try_times() {
+  _has_bits_[0] &= ~0x00000004u;
+}
+inline void FailTuple::clear_try_times() {
+  try_times_ = 0;
+  clear_has_try_times();
+}
+inline ::google::protobuf::int32 FailTuple::try_times() const {
+  return try_times_;
+}
+inline void FailTuple::set_try_times(::google::protobuf::int32 value) {
+  set_has_try_times();
+  try_times_ = value;
 }
 
 // -------------------------------------------------------------------

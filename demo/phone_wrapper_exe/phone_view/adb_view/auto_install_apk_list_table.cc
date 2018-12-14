@@ -48,6 +48,10 @@ namespace examples {
   }
 
 
+  void ApkIRStatusModel2::OnSelectionChanged() {
+    table_->OnFirstTableSelectionChanged();
+  }
+
   std::wstring GetAutoModeText(bool auto_mode) {
     if (auto_mode) {
       return L"禁用自动安装";
@@ -102,7 +106,7 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   //====================================
   std::vector<ui::TableColumn> columns2;
   columns2.push_back(ui::TableColumn(0, L"手机",
-    ui::TableColumn::LEFT, 250));
+    ui::TableColumn::LEFT, 150));
 
   columns2.push_back(ui::TableColumn(1, L"总数",
     ui::TableColumn::LEFT, 100));
@@ -116,8 +120,8 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   columns2.push_back(ui::TableColumn(4, L"总耗时",
     ui::TableColumn::LEFT, 100));
 
-  columns2.push_back(ui::TableColumn(5, L"失败包及原因",
-    ui::TableColumn::LEFT, 550));
+  columns2.push_back(ui::TableColumn(5, L"失败包",
+    ui::TableColumn::LEFT, 750));
   
   
 
@@ -137,32 +141,15 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   ++index;
 
   std::vector<ui::TableColumn> columns;
-  columns.push_back(ui::TableColumn(0, L"时间",
-    ui::TableColumn::LEFT, 100));
-  columns.push_back(ui::TableColumn(1, L"包名",
+
+  columns.push_back(ui::TableColumn(0, L"包名",
     ui::TableColumn::LEFT, 250));
-  columns.push_back(ui::TableColumn(2, L"操作",
-    ui::TableColumn::LEFT, 100));
-  columns.push_back(ui::TableColumn(3, L"操作ID",
-    ui::TableColumn::LEFT, 50));
-  columns.push_back(ui::TableColumn(4, L"操作子ID",
-    ui::TableColumn::LEFT, 50));
-  columns.push_back(ui::TableColumn(5, L"耗时",
+  columns.push_back(ui::TableColumn(1, L"重试次数",
     ui::TableColumn::LEFT, 70));
-  columns.push_back(ui::TableColumn(6, L"允许耗时",
-    ui::TableColumn::LEFT, 70));
-  columns.push_back(ui::TableColumn(7, L"阶段",
-    ui::TableColumn::LEFT, 70));
-  columns.push_back(ui::TableColumn(8, L"进度/错误信息",
-    ui::TableColumn::LEFT, 300));
-  columns.push_back(ui::TableColumn(9, L"结果",
-    ui::TableColumn::LEFT, 70));
-  columns.push_back(ui::TableColumn(10, L"错误码",
-    ui::TableColumn::LEFT, 50));
-  columns.push_back(ui::TableColumn(11, L"速度",
-    ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(12, L"底层错误信息",
-    ui::TableColumn::LEFT, 200));
+  columns.push_back(ui::TableColumn(2, L"错误信息",
+    ui::TableColumn::LEFT, 800));
+  
+
 
   table_ = new TableView(this, columns, ICON_AND_TEXT, true, true, true);
   table_->SetObserver(this);
@@ -203,7 +190,7 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
 }
 
 int AutoInstallApkListTable::RowCount() {
-  return data_.size();
+  return failed_list_.size();
 }
 
 int AutoInstallApkListTable::RowCount2() {
@@ -211,42 +198,20 @@ int AutoInstallApkListTable::RowCount2() {
 }
 
 string16 AutoInstallApkListTable::GetText(int row, int column_id) {
-  if ((uint32)row >= data_.size()) {
+  if ((uint32)row >= failed_list_.size()) {
     return string16();
   }
   switch (column_id) {
       case 0: {
-		  return data_[row].package_name;
+		  return failed_list_[row].package_name;
         break;
       }
       case 1: {
-        return data_[row].name;
+        return base::IntToString16(failed_list_[row].try_times);
         break;
       }
       case 2: {
-        return data_[row].md5;
-        break;
-      }
-      case 3: {
-        return data_[row].brief;
-        break;
-      }
-      case 4: {
-        return ASCIIToUTF16(base::DoubleToString(data_[row].price));
-        break;
-      }
-      case 5: {
-        if (data_[row].type == phone_module::PACKAGE_BOTH) {
-          return L"先删除/后安装";
-        } else if (data_[row].type == phone_module::PACKAGE_INSTALL) {
-          return L"仅安装";
-        } else {
-          return L"仅删除";
-        }
-        break;
-      }
-      case 6: {
-        return ASCIIToUTF16(base::DoubleToString(data_[row].package_size)) + L"MB";
+        return failed_list_[row].error_message;
         break;
       }
       default: {
@@ -287,6 +252,10 @@ string16 AutoInstallApkListTable::GetText2(int row, int column_id) {
   }
   case 5: {
     std::wstring tmp;
+    for (auto it = install_digest_data_[row].failed_list.begin(); it != install_digest_data_[row].failed_list.end(); ++it) {
+      tmp.append(it->package_name).append(L",");
+    }
+    
     return tmp;
     break;
   }
@@ -302,9 +271,7 @@ string16 AutoInstallApkListTable::GetText2(int row, int column_id) {
 
 
 gfx::ImageSkia AutoInstallApkListTable::GetIcon(int row) {
-  DCHECK(false);
-  return gfx::ImageSkia();
-  //return row % 2 ? gfx::ImageSkia(icon1_) : gfx::ImageSkia(icon2_);
+  return *die_;
 }
 
 gfx::ImageSkia AutoInstallApkListTable::GetIcon2(int row) {
@@ -417,8 +384,8 @@ void AutoInstallApkListTable::OnMarginRate(PointerWrapper<CThostFtdcInstrumentMa
 }
 
 void AutoInstallApkListTable::OnUpdatePackageList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
-	data_.swap(*p.get());
-	table_->OnModelChanged();
+	//data_.swap(*p.get());
+	//table_->OnModelChanged();
 }
 
 void AutoInstallApkListTable::OnUpdateInstallApkDigest(PointerWrapper<phone_module::InstallDigest> const & p) {
@@ -434,6 +401,25 @@ void AutoInstallApkListTable::OnUpdateInstallApkDigest(PointerWrapper<phone_modu
     if (install_digest_data_.size()) {
       table_apk_ir_->Select(install_digest_data_.size() - 1);
     }
+  }
+
+  if (current_serial_number_ == digest.serial_number) {
+    failed_list_ = digest.failed_list;
+    table_->OnModelChanged();
+  }
+  
+}
+
+void AutoInstallApkListTable::OnFirstTableSelectionChanged() {
+  int select = table_apk_ir_->FirstSelectedRow();
+  if (select >= 0 && select < (int)install_digest_data_.size()) {
+    current_serial_number_ = install_digest_data_[select].serial_number;
+    failed_list_ = install_digest_data_[select].failed_list;
+    table_->OnModelChanged();
+  } else {
+    current_serial_number_.clear();
+    failed_list_.clear();
+    table_->OnModelChanged();
   }
 }
 

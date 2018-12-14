@@ -76,7 +76,7 @@ namespace examples {
     virtual void SetObserver(ui::TableModelObserver* observer) OVERRIDE {}
 
     // TableViewObserver:
-    virtual void OnSelectionChanged() OVERRIDE {}
+    virtual void OnSelectionChanged() OVERRIDE;
     virtual void OnDoubleClick() OVERRIDE {}
     virtual void OnMiddleClick() OVERRIDE {}
     virtual void OnKeyDown(ui::KeyboardCode virtual_keycode) OVERRIDE {}
@@ -132,7 +132,7 @@ class AutoInstallApkListTable : public CTPViewBase,
 
   //
   virtual void OnSelectedIndexChanged(Combobox* combobox) OVERRIDE;
-
+  void OnFirstTableSelectionChanged();
 
   /*virtual bool GetCellColors(
     CCTableView* who,
@@ -162,7 +162,9 @@ class AutoInstallApkListTable : public CTPViewBase,
    TableView* table_apk_ir_;
 
   TableView* table_;
-  std::vector<phone_module::ApkInstallInfo> data_;
+  std::vector< phone_module::FailedTuple> failed_list_;
+  std::wstring current_serial_number_;
+  //std::vector<phone_module::ApkInstallInfo> data_;
   
   
 

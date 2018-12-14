@@ -195,6 +195,7 @@ class OneDevice(object):
       failed = out.fail_list.add()
       failed.package_name = one.package_name
       failed.adb_message = one.error_message
+      failed.try_times = one.try_times
       
     return out
     

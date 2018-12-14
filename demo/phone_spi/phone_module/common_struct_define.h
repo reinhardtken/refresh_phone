@@ -484,7 +484,7 @@ struct ApkIRStatus {
   int command_id;
   std::wstring get_key() {
     if (key.size() == 0) {
-      key = serial_no + L"-" + base::IntToString16(command_id);
+      key = serial_no + L"-" + base::IntToString16(command_id) + L"-" + base::IntToString16(sub_command_id);
     }
     return key;
   }
@@ -542,15 +542,19 @@ struct AdbDevice {
 
 typedef std::vector<AdbDevice> DevicesList;
 
-
-typedef std::pair<std::wstring, std::wstring> FailedPair;
+struct FailedTuple {
+  std::wstring package_name;
+  std::wstring error_message;
+  int try_times;
+};
+//typedef std::pair<std::wstring, std::wstring> FailedPair;
 struct InstallDigest {
   int total_number;
   int success_number;
   int failed_number;
   int time_cost;
   std::wstring serial_number;
-  std::vector< FailedPair> failed_list;
+  std::vector< FailedTuple> failed_list;
 };
 
 

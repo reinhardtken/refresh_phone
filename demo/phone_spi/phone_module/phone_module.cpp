@@ -469,8 +469,11 @@ namespace phone_module {
         out->failed_number = digest->failed_number();
         out->serial_number = UTF8ToWide(digest->serial_number());
         for (auto i = 0; i < digest->fail_list_size(); ++i) {
-          out->failed_list.push_back(FailedPair(UTF8ToWide(digest->fail_list(i).package_name()), 
-            UTF8ToWide(digest->fail_list(i).adb_message())));
+          FailedTuple tmp;
+          tmp.package_name = UTF8ToWide(digest->fail_list(i).package_name());
+          tmp.error_message = UTF8ToWide(digest->fail_list(i).adb_message());
+          tmp.try_times = digest->fail_list(i).try_times();
+          out->failed_list.push_back(tmp);
         }
         PointerWrapper<InstallDigest> tmp(out);
         ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
