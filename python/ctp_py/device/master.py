@@ -38,7 +38,8 @@ class OneDevice(object):
     self.queue_master = queue_master
     self.serial_number = serial_number
     self.proxy = None
-
+    
+    self.model = None
     # 记录所有已经成功安装的包，除非强制清空，不然不再重复安装
     self.installed_set = set()
 
@@ -147,30 +148,36 @@ class OneDevice(object):
     return apk in self.installed_failed and self.installed_failed[apk].error_code == FailedItem.ERROR_TIMEOUT
   
   
-  def AddInstalled(self, apk):
-    self.log.info('AddInstalled ' + self.serial_number + ' ' + apk)
-    self.installed_set.add(apk)
+  def AddInstalled(self, command):
+    self.log.info('AddInstalled ' + self.serial_number + ' ' + command.package_name)
+    self.installed_set.add(command.package_name)
+    #耗时记录
+    self.digest['time_cost'] += command.time_cost
     
   
-  def AddTimeOut(self, apk):
+  def AddTimeOut(self, apk, time_cost):
     self.log.info('AddTimeOut ' + self.serial_number + ' ' + apk)
-    self.AddInstallFailed(apk, FailedItem.ERROR_TIMEOUT, 'timeout')
+    self.AddInstallFailed(apk, FailedItem.ERROR_TIMEOUT, 'timeout', time_cost)
     
   
   
-  def AddInstallFailed(self, apk, reason, message):
-    self.log.info('AddInstallFailed  %s  %s %d %s', self.serial_number, apk, reason, message)
+  def AddInstallFailed(self, package_name, reason, progress, time_cost):
+    self.log.info('AddInstallFailed  %s  %s %d %s', self.serial_number, package_name, reason, progress)
+    apk = package_name
     if apk in self.installed_failed:
       self.installed_failed[apk].try_times += 1
       self.installed_failed[apk].error_code = reason
-      self.installed_failed[apk].error_message = message
+      self.installed_failed[apk].error_message = progress
     else:
       item = FailedItem()
       item.package_name = apk
       item.try_times = 1
       item.error_code = reason
-      item.error_message = message
+      item.error_message = progress
       self.installed_failed[apk] = item
+
+    # 耗时记录
+    self.digest['time_cost'] += time_cost
   
     
     
@@ -189,12 +196,14 @@ class OneDevice(object):
     out.total_number = len(self.todo_install_apk_set)
     out.success_number = len(self.installed_set)
     out.failed_number = len(self.installed_failed)
-    out.time_cost = 0
+    out.time_cost = self.digest['time_cost']
     out.serial_number = self.serial_number
+    out.model = self.model
     for one in self.installed_failed.values():
       failed = out.fail_list.add()
       failed.package_name = one.package_name
       failed.adb_message = one.error_message
+      failed.user_message = consts.AdbMessage2UserMessage(one.error_message)
       failed.try_times = one.try_times
       
     return out
@@ -205,9 +214,9 @@ class OneDevice(object):
     if command.sub_cmd_no > self.min_sub_command_id:
       if command.stage == '完成'.decode('utf-8'):
         if command.progress == 'Success'.decode('utf-8'):
-          self.AddInstalled(command.package_name)
+          self.AddInstalled(command)
         else:
-          self.AddInstallFailed(command.package_name, FailedItem.ERROR_ADB, command.progress)
+          self.AddInstallFailed(command.package_name, FailedItem.ERROR_ADB, command.progress, command.time_cost)
 
         # 发送装包摘要
         notify = self.NotifyInstallApkDigest(command)
@@ -301,7 +310,7 @@ class Master(object):
     self.devices_map = {}
     # self.last_alive = {}
     self.last_devices_list = []
-    self.last_devices_set = set()
+    self.last_devices_map = {}
     
     self.pending_task_list = deque()
     
@@ -357,7 +366,9 @@ class Master(object):
   def UpdateApkList(self, data):
     self.todo_install_apk_set = data
     for one in self.last_devices_list:
-      self._Add(one['serial_no']).UpdateApkList(data)
+      device = self._Add(one['serial_no'])
+      device.UpdateApkList(data)
+      
 
     
   
@@ -367,6 +378,8 @@ class Master(object):
       return self.devices_map[serial_number]
     else:
       one = OneDevice(self.queue_in, serial_number)
+      if serial_number != '-':
+        one.model = self.last_devices_map[serial_number]['model']
       #把要装的包集合设置好
       one.UpdateApkList(self.todo_install_apk_set)
       self.devices_map[serial_number] = one
@@ -409,7 +422,7 @@ class Master(object):
           apk_path =v['c'].param[1].encode('utf-8')
           package_name = util.utility.GetPackageNameNoApkExt(apk_path)
           #超时的包，记录超时失败，不再继续
-          self._Get(k).AddTimeOut(package_name)
+          self._Get(k).AddTimeOut(package_name, v['max'])
           # 发送装包摘要
           notify = self._Get(k).NotifyInstallApkDigest(None)
           self.queue_out.put(notify)
@@ -427,7 +440,7 @@ class Master(object):
   
   def ProcessScanDevicesResponse(self, command):
     self.last_devices_list = []
-    self.last_devices_set = set()
+    self.last_devices_map = {}
     for one_device in command.devices_list:
       one = {}
       one['serial_no'] = one_device.serial_no
@@ -435,7 +448,7 @@ class Master(object):
       one['model'] = one_device.model
       one['device'] = one_device.device
       self.last_devices_list.append(one)
-      self.last_devices_set.add(one['serial_no'])
+      self.last_devices_map[one['serial_no']] = one
       
     
     #对于所有手机，如果自动模式，开始装包

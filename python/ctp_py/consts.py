@@ -72,3 +72,25 @@ COMMAND_INNER_PACKAGE_LIST = 'inner.package_list'
 
 INSTALL_TYPE_DELTE_FIRST = r'先删除\后安装'
 INSTALL_TYPE_JUST_INSTALL = r'全新安装'
+
+
+
+def AdbMessage2UserMessage(msg):
+  #INSTALL_FAILED_CONFLICTING_PROVIDER
+  message = {
+    u'INSTALL_FAILED_VERSION_DOWNGRADE': u'版本降级',
+    u'INSTALL_FAILED_INSUFFICIENT_STORAGE': u'存储已满',
+  }
+  
+  contain_message = {
+    u'INSTALL_FAILED_USER_RESTRICTED': u'用户拒绝',
+  }
+  
+  if msg in message:
+    return message[msg]
+  
+  for key in contain_message.keys():
+    if key in msg:
+      return contain_message[key]
+    
+  return u''

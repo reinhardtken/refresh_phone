@@ -655,10 +655,22 @@ class FailTuple : public ::google::protobuf::Message {
   inline ::std::string* release_adb_message();
   inline void set_allocated_adb_message(::std::string* adb_message);
 
-  // required int32 try_times = 3;
+  // required string user_message = 3;
+  inline bool has_user_message() const;
+  inline void clear_user_message();
+  static const int kUserMessageFieldNumber = 3;
+  inline const ::std::string& user_message() const;
+  inline void set_user_message(const ::std::string& value);
+  inline void set_user_message(const char* value);
+  inline void set_user_message(const char* value, size_t size);
+  inline ::std::string* mutable_user_message();
+  inline ::std::string* release_user_message();
+  inline void set_allocated_user_message(::std::string* user_message);
+
+  // required int32 try_times = 4;
   inline bool has_try_times() const;
   inline void clear_try_times();
-  static const int kTryTimesFieldNumber = 3;
+  static const int kTryTimesFieldNumber = 4;
   inline ::google::protobuf::int32 try_times() const;
   inline void set_try_times(::google::protobuf::int32 value);
 
@@ -668,6 +680,8 @@ class FailTuple : public ::google::protobuf::Message {
   inline void clear_has_package_name();
   inline void set_has_adb_message();
   inline void clear_has_adb_message();
+  inline void set_has_user_message();
+  inline void clear_has_user_message();
   inline void set_has_try_times();
   inline void clear_has_try_times();
 
@@ -675,10 +689,11 @@ class FailTuple : public ::google::protobuf::Message {
 
   ::std::string* package_name_;
   ::std::string* adb_message_;
+  ::std::string* user_message_;
   ::google::protobuf::int32 try_times_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(3 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -795,10 +810,22 @@ class CommandInstallApkDigest : public ::google::protobuf::Message {
   inline ::std::string* release_serial_number();
   inline void set_allocated_serial_number(::std::string* serial_number);
 
-  // repeated .apk.FailTuple fail_list = 7;
+  // required string model = 7;
+  inline bool has_model() const;
+  inline void clear_model();
+  static const int kModelFieldNumber = 7;
+  inline const ::std::string& model() const;
+  inline void set_model(const ::std::string& value);
+  inline void set_model(const char* value);
+  inline void set_model(const char* value, size_t size);
+  inline ::std::string* mutable_model();
+  inline ::std::string* release_model();
+  inline void set_allocated_model(::std::string* model);
+
+  // repeated .apk.FailTuple fail_list = 8;
   inline int fail_list_size() const;
   inline void clear_fail_list();
-  static const int kFailListFieldNumber = 7;
+  static const int kFailListFieldNumber = 8;
   inline const ::apk::FailTuple& fail_list(int index) const;
   inline ::apk::FailTuple* mutable_fail_list(int index);
   inline ::apk::FailTuple* add_fail_list();
@@ -821,6 +848,8 @@ class CommandInstallApkDigest : public ::google::protobuf::Message {
   inline void clear_has_time_cost();
   inline void set_has_serial_number();
   inline void clear_has_serial_number();
+  inline void set_has_model();
+  inline void clear_has_model();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -830,10 +859,11 @@ class CommandInstallApkDigest : public ::google::protobuf::Message {
   ::google::protobuf::int32 failed_number_;
   ::google::protobuf::int32 time_cost_;
   ::std::string* serial_number_;
+  ::std::string* model_;
   ::google::protobuf::RepeatedPtrField< ::apk::FailTuple > fail_list_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(7 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -2617,15 +2647,85 @@ inline void FailTuple::set_allocated_adb_message(::std::string* adb_message) {
   }
 }
 
-// required int32 try_times = 3;
-inline bool FailTuple::has_try_times() const {
+// required string user_message = 3;
+inline bool FailTuple::has_user_message() const {
   return (_has_bits_[0] & 0x00000004u) != 0;
 }
-inline void FailTuple::set_has_try_times() {
+inline void FailTuple::set_has_user_message() {
   _has_bits_[0] |= 0x00000004u;
 }
-inline void FailTuple::clear_has_try_times() {
+inline void FailTuple::clear_has_user_message() {
   _has_bits_[0] &= ~0x00000004u;
+}
+inline void FailTuple::clear_user_message() {
+  if (user_message_ != &::google::protobuf::internal::kEmptyString) {
+    user_message_->clear();
+  }
+  clear_has_user_message();
+}
+inline const ::std::string& FailTuple::user_message() const {
+  return *user_message_;
+}
+inline void FailTuple::set_user_message(const ::std::string& value) {
+  set_has_user_message();
+  if (user_message_ == &::google::protobuf::internal::kEmptyString) {
+    user_message_ = new ::std::string;
+  }
+  user_message_->assign(value);
+}
+inline void FailTuple::set_user_message(const char* value) {
+  set_has_user_message();
+  if (user_message_ == &::google::protobuf::internal::kEmptyString) {
+    user_message_ = new ::std::string;
+  }
+  user_message_->assign(value);
+}
+inline void FailTuple::set_user_message(const char* value, size_t size) {
+  set_has_user_message();
+  if (user_message_ == &::google::protobuf::internal::kEmptyString) {
+    user_message_ = new ::std::string;
+  }
+  user_message_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* FailTuple::mutable_user_message() {
+  set_has_user_message();
+  if (user_message_ == &::google::protobuf::internal::kEmptyString) {
+    user_message_ = new ::std::string;
+  }
+  return user_message_;
+}
+inline ::std::string* FailTuple::release_user_message() {
+  clear_has_user_message();
+  if (user_message_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = user_message_;
+    user_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void FailTuple::set_allocated_user_message(::std::string* user_message) {
+  if (user_message_ != &::google::protobuf::internal::kEmptyString) {
+    delete user_message_;
+  }
+  if (user_message) {
+    set_has_user_message();
+    user_message_ = user_message;
+  } else {
+    clear_has_user_message();
+    user_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required int32 try_times = 4;
+inline bool FailTuple::has_try_times() const {
+  return (_has_bits_[0] & 0x00000008u) != 0;
+}
+inline void FailTuple::set_has_try_times() {
+  _has_bits_[0] |= 0x00000008u;
+}
+inline void FailTuple::clear_has_try_times() {
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void FailTuple::clear_try_times() {
   try_times_ = 0;
@@ -2871,7 +2971,77 @@ inline void CommandInstallApkDigest::set_allocated_serial_number(::std::string* 
   }
 }
 
-// repeated .apk.FailTuple fail_list = 7;
+// required string model = 7;
+inline bool CommandInstallApkDigest::has_model() const {
+  return (_has_bits_[0] & 0x00000040u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_model() {
+  _has_bits_[0] |= 0x00000040u;
+}
+inline void CommandInstallApkDigest::clear_has_model() {
+  _has_bits_[0] &= ~0x00000040u;
+}
+inline void CommandInstallApkDigest::clear_model() {
+  if (model_ != &::google::protobuf::internal::kEmptyString) {
+    model_->clear();
+  }
+  clear_has_model();
+}
+inline const ::std::string& CommandInstallApkDigest::model() const {
+  return *model_;
+}
+inline void CommandInstallApkDigest::set_model(const ::std::string& value) {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  model_->assign(value);
+}
+inline void CommandInstallApkDigest::set_model(const char* value) {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  model_->assign(value);
+}
+inline void CommandInstallApkDigest::set_model(const char* value, size_t size) {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  model_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CommandInstallApkDigest::mutable_model() {
+  set_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    model_ = new ::std::string;
+  }
+  return model_;
+}
+inline ::std::string* CommandInstallApkDigest::release_model() {
+  clear_has_model();
+  if (model_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = model_;
+    model_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CommandInstallApkDigest::set_allocated_model(::std::string* model) {
+  if (model_ != &::google::protobuf::internal::kEmptyString) {
+    delete model_;
+  }
+  if (model) {
+    set_has_model();
+    model_ = model;
+  } else {
+    clear_has_model();
+    model_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// repeated .apk.FailTuple fail_list = 8;
 inline int CommandInstallApkDigest::fail_list_size() const {
   return fail_list_.size();
 }

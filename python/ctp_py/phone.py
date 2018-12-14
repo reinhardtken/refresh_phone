@@ -293,7 +293,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     if id == 'all':
       for one in self.master.last_devices_list:
         self.master.ProcessCommand(one['serial_no'], command)
-    elif id in self.master.last_devices_set:
+    elif id in self.master.last_devices_map:
       self.master.ProcessCommand(id, command)
     
   

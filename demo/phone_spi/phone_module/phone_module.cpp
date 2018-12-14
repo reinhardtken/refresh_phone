@@ -468,10 +468,13 @@ namespace phone_module {
         out->success_number = digest->success_number();
         out->failed_number = digest->failed_number();
         out->serial_number = UTF8ToWide(digest->serial_number());
+        out->model = UTF8ToWide(digest->model());
+        out->time_cost = (int)base::TimeDelta::FromMicroseconds(digest->time_cost()).InSeconds();
         for (auto i = 0; i < digest->fail_list_size(); ++i) {
           FailedTuple tmp;
           tmp.package_name = UTF8ToWide(digest->fail_list(i).package_name());
           tmp.error_message = UTF8ToWide(digest->fail_list(i).adb_message());
+          tmp.user_message = UTF8ToWide(digest->fail_list(i).user_message());
           tmp.try_times = digest->fail_list(i).try_times();
           out->failed_list.push_back(tmp);
         }

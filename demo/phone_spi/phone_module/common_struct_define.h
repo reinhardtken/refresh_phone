@@ -545,6 +545,7 @@ typedef std::vector<AdbDevice> DevicesList;
 struct FailedTuple {
   std::wstring package_name;
   std::wstring error_message;
+  std::wstring user_message;
   int try_times;
 };
 //typedef std::pair<std::wstring, std::wstring> FailedPair;
@@ -554,6 +555,7 @@ struct InstallDigest {
   int failed_number;
   int time_cost;
   std::wstring serial_number;
+  std::wstring model;
   std::vector< FailedTuple> failed_list;
 };
 

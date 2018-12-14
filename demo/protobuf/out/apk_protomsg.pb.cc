@@ -125,9 +125,10 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CommandInstallApkResponse));
   FailTuple_descriptor_ = file->message_type(3);
-  static const int FailTuple_offsets_[3] = {
+  static const int FailTuple_offsets_[4] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, package_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, adb_message_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, user_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, try_times_),
   };
   FailTuple_reflection_ =
@@ -142,13 +143,14 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(FailTuple));
   CommandInstallApkDigest_descriptor_ = file->message_type(4);
-  static const int CommandInstallApkDigest_offsets_[7] = {
+  static const int CommandInstallApkDigest_offsets_[8] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, cmd_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, total_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, success_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, failed_number_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, time_cost_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, serial_number_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, model_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(CommandInstallApkDigest, fail_list_),
   };
   CommandInstallApkDigest_reflection_ =
@@ -313,26 +315,26 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
     "me\030\006 \002(\t\022\020\n\010progress\030\007 \002(\t\022\014\n\004type\030\010 \002(\t"
     "\022\025\n\rserial_number\030\t \002(\t\022\020\n\010time_max\030\n \002("
     "\005\022\024\n\014package_size\030\013 \002(\001\022\023\n\013adb_message\030\014"
-    " \002(\t\022\r\n\005stage\030\r \002(\t\022\014\n\004info\030\016 \003(\t\"I\n\tFai"
+    " \002(\t\022\r\n\005stage\030\r \002(\t\022\014\n\004info\030\016 \003(\t\"_\n\tFai"
     "lTuple\022\024\n\014package_name\030\001 \002(\t\022\023\n\013adb_mess"
-    "age\030\002 \002(\t\022\021\n\ttry_times\030\003 \002(\005\"\270\001\n\027Command"
-    "InstallApkDigest\022\013\n\003cmd\030\001 \002(\t\022\024\n\014total_n"
-    "umber\030\002 \002(\005\022\026\n\016success_number\030\003 \002(\005\022\025\n\rf"
-    "ailed_number\030\004 \002(\005\022\021\n\ttime_cost\030\005 \002(\005\022\025\n"
-    "\rserial_number\030\006 \002(\t\022!\n\tfail_list\030\007 \003(\0132"
-    "\016.apk.FailTuple\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013"
-    "\n\003url\030\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r"
-    "\n\005brief\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update"
-    "_time\030\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_"
-    "name\030\t \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022"
-    "\024\n\014package_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head"
-    "\030\001 \002(\0132\024.apk.CommandResponse\022\035\n\010apk_list"
-    "\030\002 \003(\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tseri"
-    "al_no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001("
-    "\t\022\017\n\007product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013De"
-    "vicesList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRes"
-    "ponse\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDev"
-    "ice", 1243);
+    "age\030\002 \002(\t\022\024\n\014user_message\030\003 \002(\t\022\021\n\ttry_t"
+    "imes\030\004 \002(\005\"\307\001\n\027CommandInstallApkDigest\022\013"
+    "\n\003cmd\030\001 \002(\t\022\024\n\014total_number\030\002 \002(\005\022\026\n\016suc"
+    "cess_number\030\003 \002(\005\022\025\n\rfailed_number\030\004 \002(\005"
+    "\022\021\n\ttime_cost\030\005 \002(\005\022\025\n\rserial_number\030\006 \002"
+    "(\t\022\r\n\005model\030\007 \002(\t\022!\n\tfail_list\030\010 \003(\0132\016.a"
+    "pk.FailTuple\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003u"
+    "rl\030\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005b"
+    "rief\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_ti"
+    "me\030\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_nam"
+    "e\030\t \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022\024\n\014"
+    "package_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head\030\001 "
+    "\002(\0132\024.apk.CommandResponse\022\035\n\010apk_list\030\002 "
+    "\003(\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial_"
+    "no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022\017"
+    "\n\007product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013Devic"
+    "esList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRespon"
+    "se\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevice", 1280);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -2056,6 +2058,7 @@ void CommandInstallApkResponse::Swap(CommandInstallApkResponse* other) {
 #ifndef _MSC_VER
 const int FailTuple::kPackageNameFieldNumber;
 const int FailTuple::kAdbMessageFieldNumber;
+const int FailTuple::kUserMessageFieldNumber;
 const int FailTuple::kTryTimesFieldNumber;
 #endif  // !_MSC_VER
 
@@ -2077,6 +2080,7 @@ void FailTuple::SharedCtor() {
   _cached_size_ = 0;
   package_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   adb_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  user_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   try_times_ = 0;
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
@@ -2091,6 +2095,9 @@ void FailTuple::SharedDtor() {
   }
   if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
     delete adb_message_;
+  }
+  if (user_message_ != &::google::protobuf::internal::kEmptyString) {
+    delete user_message_;
   }
   if (this != default_instance_) {
   }
@@ -2127,6 +2134,11 @@ void FailTuple::Clear() {
     if (has_adb_message()) {
       if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
         adb_message_->clear();
+      }
+    }
+    if (has_user_message()) {
+      if (user_message_ != &::google::protobuf::internal::kEmptyString) {
+        user_message_->clear();
       }
     }
     try_times_ = 0;
@@ -2170,12 +2182,29 @@ bool FailTuple::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(24)) goto parse_try_times;
+        if (input->ExpectTag(26)) goto parse_user_message;
         break;
       }
 
-      // required int32 try_times = 3;
+      // required string user_message = 3;
       case 3: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_user_message:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_user_message()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->user_message().data(), this->user_message().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(32)) goto parse_try_times;
+        break;
+      }
+
+      // required int32 try_times = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_try_times:
@@ -2226,9 +2255,18 @@ void FailTuple::SerializeWithCachedSizes(
       2, this->adb_message(), output);
   }
 
-  // required int32 try_times = 3;
+  // required string user_message = 3;
+  if (has_user_message()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->user_message().data(), this->user_message().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      3, this->user_message(), output);
+  }
+
+  // required int32 try_times = 4;
   if (has_try_times()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(3, this->try_times(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->try_times(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -2259,9 +2297,19 @@ void FailTuple::SerializeWithCachedSizes(
         2, this->adb_message(), target);
   }
 
-  // required int32 try_times = 3;
+  // required string user_message = 3;
+  if (has_user_message()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->user_message().data(), this->user_message().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        3, this->user_message(), target);
+  }
+
+  // required int32 try_times = 4;
   if (has_try_times()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(3, this->try_times(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->try_times(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -2289,7 +2337,14 @@ int FailTuple::ByteSize() const {
           this->adb_message());
     }
 
-    // required int32 try_times = 3;
+    // required string user_message = 3;
+    if (has_user_message()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->user_message());
+    }
+
+    // required int32 try_times = 4;
     if (has_try_times()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -2329,6 +2384,9 @@ void FailTuple::MergeFrom(const FailTuple& from) {
     if (from.has_adb_message()) {
       set_adb_message(from.adb_message());
     }
+    if (from.has_user_message()) {
+      set_user_message(from.user_message());
+    }
     if (from.has_try_times()) {
       set_try_times(from.try_times());
     }
@@ -2349,7 +2407,7 @@ void FailTuple::CopyFrom(const FailTuple& from) {
 }
 
 bool FailTuple::IsInitialized() const {
-  if ((_has_bits_[0] & 0x00000007) != 0x00000007) return false;
+  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
 
   return true;
 }
@@ -2358,6 +2416,7 @@ void FailTuple::Swap(FailTuple* other) {
   if (other != this) {
     std::swap(package_name_, other->package_name_);
     std::swap(adb_message_, other->adb_message_);
+    std::swap(user_message_, other->user_message_);
     std::swap(try_times_, other->try_times_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
@@ -2383,6 +2442,7 @@ const int CommandInstallApkDigest::kSuccessNumberFieldNumber;
 const int CommandInstallApkDigest::kFailedNumberFieldNumber;
 const int CommandInstallApkDigest::kTimeCostFieldNumber;
 const int CommandInstallApkDigest::kSerialNumberFieldNumber;
+const int CommandInstallApkDigest::kModelFieldNumber;
 const int CommandInstallApkDigest::kFailListFieldNumber;
 #endif  // !_MSC_VER
 
@@ -2408,6 +2468,7 @@ void CommandInstallApkDigest::SharedCtor() {
   failed_number_ = 0;
   time_cost_ = 0;
   serial_number_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  model_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   ::memset(_has_bits_, 0, sizeof(_has_bits_));
 }
 
@@ -2421,6 +2482,9 @@ void CommandInstallApkDigest::SharedDtor() {
   }
   if (serial_number_ != &::google::protobuf::internal::kEmptyString) {
     delete serial_number_;
+  }
+  if (model_ != &::google::protobuf::internal::kEmptyString) {
+    delete model_;
   }
   if (this != default_instance_) {
   }
@@ -2461,6 +2525,11 @@ void CommandInstallApkDigest::Clear() {
     if (has_serial_number()) {
       if (serial_number_ != &::google::protobuf::internal::kEmptyString) {
         serial_number_->clear();
+      }
+    }
+    if (has_model()) {
+      if (model_ != &::google::protobuf::internal::kEmptyString) {
+        model_->clear();
       }
     }
   }
@@ -2568,12 +2637,29 @@ bool CommandInstallApkDigest::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(58)) goto parse_fail_list;
+        if (input->ExpectTag(58)) goto parse_model;
         break;
       }
 
-      // repeated .apk.FailTuple fail_list = 7;
+      // required string model = 7;
       case 7: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_model:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_model()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->model().data(), this->model().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(66)) goto parse_fail_list;
+        break;
+      }
+
+      // repeated .apk.FailTuple fail_list = 8;
+      case 8: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_fail_list:
@@ -2582,7 +2668,7 @@ bool CommandInstallApkDigest::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(58)) goto parse_fail_list;
+        if (input->ExpectTag(66)) goto parse_fail_list;
         if (input->ExpectAtEnd()) return true;
         break;
       }
@@ -2643,10 +2729,19 @@ void CommandInstallApkDigest::SerializeWithCachedSizes(
       6, this->serial_number(), output);
   }
 
-  // repeated .apk.FailTuple fail_list = 7;
+  // required string model = 7;
+  if (has_model()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->model().data(), this->model().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      7, this->model(), output);
+  }
+
+  // repeated .apk.FailTuple fail_list = 8;
   for (int i = 0; i < this->fail_list_size(); i++) {
     ::google::protobuf::internal::WireFormatLite::WriteMessageMaybeToArray(
-      7, this->fail_list(i), output);
+      8, this->fail_list(i), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -2697,11 +2792,21 @@ void CommandInstallApkDigest::SerializeWithCachedSizes(
         6, this->serial_number(), target);
   }
 
-  // repeated .apk.FailTuple fail_list = 7;
+  // required string model = 7;
+  if (has_model()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->model().data(), this->model().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        7, this->model(), target);
+  }
+
+  // repeated .apk.FailTuple fail_list = 8;
   for (int i = 0; i < this->fail_list_size(); i++) {
     target = ::google::protobuf::internal::WireFormatLite::
       WriteMessageNoVirtualToArray(
-        7, this->fail_list(i), target);
+        8, this->fail_list(i), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -2757,8 +2862,15 @@ int CommandInstallApkDigest::ByteSize() const {
           this->serial_number());
     }
 
+    // required string model = 7;
+    if (has_model()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->model());
+    }
+
   }
-  // repeated .apk.FailTuple fail_list = 7;
+  // repeated .apk.FailTuple fail_list = 8;
   total_size += 1 * this->fail_list_size();
   for (int i = 0; i < this->fail_list_size(); i++) {
     total_size +=
@@ -2811,6 +2923,9 @@ void CommandInstallApkDigest::MergeFrom(const CommandInstallApkDigest& from) {
     if (from.has_serial_number()) {
       set_serial_number(from.serial_number());
     }
+    if (from.has_model()) {
+      set_model(from.model());
+    }
   }
   mutable_unknown_fields()->MergeFrom(from.unknown_fields());
 }
@@ -2828,7 +2943,7 @@ void CommandInstallApkDigest::CopyFrom(const CommandInstallApkDigest& from) {
 }
 
 bool CommandInstallApkDigest::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000003f) != 0x0000003f) return false;
+  if ((_has_bits_[0] & 0x0000007f) != 0x0000007f) return false;
 
   for (int i = 0; i < fail_list_size(); i++) {
     if (!this->fail_list(i).IsInitialized()) return false;
@@ -2844,6 +2959,7 @@ void CommandInstallApkDigest::Swap(CommandInstallApkDigest* other) {
     std::swap(failed_number_, other->failed_number_);
     std::swap(time_cost_, other->time_cost_);
     std::swap(serial_number_, other->serial_number_);
+    std::swap(model_, other->model_);
     fail_list_.Swap(&other->fail_list_);
     std::swap(_has_bits_[0], other->_has_bits_[0]);
     _unknown_fields_.Swap(&other->_unknown_fields_);
