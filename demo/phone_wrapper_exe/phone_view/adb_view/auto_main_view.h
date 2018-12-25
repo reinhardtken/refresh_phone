@@ -29,6 +29,8 @@
 #include "ui/views/controls/button/text_button.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/combobox/combobox.h"
+#include "ui/views/context_menu_controller.h"
+#include "ui/views/controls/menu/menu.h"
 #include "ui/views/controls/combobox/combobox_listener.h"
 #include "ui/views/controls/textfield/textfield_controller.h"
 
@@ -49,9 +51,8 @@
 #include "../../../phone_spi/phone_module/common.h"
 #include "../example_base.h"
 #include "../cc_table.h"
-#include "../ms_table.h"
 
-#include "../../../phone_spi/adbtool/adb_define.h"
+//#include "ms_table.h"
 
 namespace gfx {
 class ImageSkia;
@@ -63,11 +64,12 @@ class Event;
 class TableView;
 
 namespace examples {
-  class AutoInstallApkListTable;
-  class ApkIRStatusModel2 : public ui::TableModel,
+  class AutoMainView;
+
+  class AutoStatusModel : public ui::TableModel,
     public TableViewObserver {
   public:
-    ApkIRStatusModel2(AutoInstallApkListTable *p)
+    AutoStatusModel(AutoMainView *p)
       :table_(p) {}
     // ui::TableModel:
     virtual int RowCount() OVERRIDE;
@@ -76,7 +78,7 @@ namespace examples {
     virtual void SetObserver(ui::TableModelObserver* observer) OVERRIDE {}
 
     // TableViewObserver:
-    virtual void OnSelectionChanged() OVERRIDE;
+    virtual void OnSelectionChanged() OVERRIDE {}
     virtual void OnDoubleClick() OVERRIDE {}
     virtual void OnMiddleClick() OVERRIDE {}
     virtual void OnKeyDown(ui::KeyboardCode virtual_keycode) OVERRIDE {}
@@ -84,24 +86,33 @@ namespace examples {
     virtual void OnTableView2Delete(TableView2* table_view) OVERRIDE {}
 
   private:
-    AutoInstallApkListTable *table_;
+    AutoMainView *table_;
   };
+  
+  //=======================================================
+  typedef std::map<std::wstring, std::shared_ptr<phone_module::DeviceData>> DeviceDataList;
+  typedef std::vector<std::shared_ptr<phone_module::StatusInfo>> StatusInfoList;
+  typedef std::map<std::string, SkColor> ColorMap;
+
 
 class CTPTabbedPane;
 
-class AutoInstallApkListTable : public CTPViewBase,
+class AutoMainView : public CTPViewBase,
                      public ui::TableModel,
                      public TableViewObserver,
                      public ButtonListener,
                      public ThreadMessageFilter,
                      public content::NotificationObserver,
-                     //public CCTableView::Delegate,
+                     public CCTableView::Delegate,
+                     //public DeviceDelegate,
+                     public views::ContextMenuController,
+                     public views::Menu::Delegate,
                      public ComboboxListener {
  public:
 
 
-  AutoInstallApkListTable(CTPViewBase *p, bool );
-  virtual ~AutoInstallApkListTable();
+  AutoMainView(CTPTabbedPane *p, std::string const &);
+  virtual ~AutoMainView();
   virtual void Selected() OVERRIDE;
   // CTPViewBase:
   virtual void CreateExampleView(View* container) OVERRIDE;
@@ -132,64 +143,84 @@ class AutoInstallApkListTable : public CTPViewBase,
 
   //
   virtual void OnSelectedIndexChanged(Combobox* combobox) OVERRIDE;
-  void OnFirstTableSelectionChanged();
 
-  /*virtual bool GetCellColors(
+  virtual void ShowContextMenuForView(views::View* source,
+    const gfx::Point& point) OVERRIDE;
+  virtual void ExecuteCommand(int id) OVERRIDE;
+
+
+
+  virtual bool GetCellColors(
     CCTableView* who,
     int model_row,
     int column,
     CCTableView::ItemColor* foreground,
     CCTableView::ItemColor* background,
-    LOGFONT* logfont) OVERRIDE;*/
+    LOGFONT* logfont) OVERRIDE;
 
 
+  void OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p);
+  void OnStatusInfo(PointerWrapper<phone_module::StatusInfo> const & p);
   
-  void OnMarginRate(PointerWrapper<CThostFtdcInstrumentMarginRateField> const & p);
-  void OnUpdatePackageList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p);
-  void OnUpdateInstallApkDigest(PointerWrapper<phone_module::InstallDigest> const & p);
+
+  int size() ;
+  string16 text(int row, int column_id);
 
 
-  gfx::ImageSkia GetIcon2(int row);
-  string16 GetText2(int row, int column_id);
-  int RowCount2();
+  std::string const bc_;
+
   
  private:
 
-  
-   ApkIRStatusModel2 model_apk_ir_;
-   std::vector<phone_module::InstallDigest> install_digest_data_;
-   std::map<std::wstring, int> install_digest_map_;
-   TableView* table_apk_ir_;
+   friend AutoStatusModel;
+   friend DeviceModel;
+   //friend OrderModel;
+  // The table to be tested.
+  AutoStatusModel model_order_;
+  TableView* table_order_;
 
-  TableView* table_;
-  std::vector< phone_module::FailedTuple> failed_list_;
-  std::wstring current_serial_number_;
-  //std::vector<phone_module::ApkInstallInfo> data_;
-  
+  DeviceModel model_device_;
+  CCTableView* table_device_;
+  ColorMap position_color_map_;
+  phone_module::DevicesList device_data_;
+
+
+
+  TextButton* clear_table_;
+  TextButton* refresh_;
+  TextButton* refresh_all_;
+
+  TextButton * clear_order_button_;
+  Label * cash_label_;
+  Label * balance_label_;
+  Label * position_profit_label_;
   
 
-  TextButton* auto_mode_;
-  bool auto_install_mode_;
-  //TextButton* check_update_apk_list_;
-  //TextButton* install_apk_list_all_device_;
-  //TextButton* install_apk_list_all_device_force_;
-  //TextButton* clear_table_;
-  //TextButton* clear_apk_ir_table_;
-  Label* status_label_;
 
-  gfx::ImageSkia* alive_;
-  gfx::ImageSkia* die_;
+
+  StatusInfoList status_info_data_;
 
 
   content::NotificationRegistrar registrar_;
-  CTPViewBase* pane_;
-  bool const total_auto_;//标明当前UI是局部自动化模式的装包还是全局自动化的UI
-  std::wstring GetAutoModeText(bool auto_mode);
+  CTPTabbedPane* pane_;
   
+
+
+  
+  
+  void OnInitParam(std::string const & s);
+
+
+  string16 GetColumnText(int id, phone_module::StatusInfo const & info);
+  //string16 GetColumnTextOrder(int id, OrderResultData const & info);
+  string16 GetColumnTextPosition(int id, phone_module::AdbDevice const & info);
   void EnsureVisible();
 
 
-  DISALLOW_COPY_AND_ASSIGN(AutoInstallApkListTable);
+  bool OverrideThreadForMessage(IPC::Message const& message,
+    CommonThread::ID* thread);
+
+  DISALLOW_COPY_AND_ASSIGN(AutoMainView);
 };
 
 }  // namespace examples

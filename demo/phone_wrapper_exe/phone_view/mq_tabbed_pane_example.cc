@@ -26,7 +26,7 @@ namespace views {
 namespace examples {
 
 MQTabbedPane::MQTabbedPane() 
-  :CTPViewBase("Tabbed Pane"),
+  :CTPViewBase(L"Tabbed Pane"),
   ThreadMessageFilter(true) {
 }
 

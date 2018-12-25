@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "main_view.h"
+#include "auto_main_view.h"
 
 #include <vector>
 
@@ -72,19 +72,19 @@ namespace examples {
 
   
   //-====================================
-  int StatusModel::RowCount() {
+  int AutoStatusModel::RowCount() {
     return table_->status_info_data_.size();
     return 0;
   }
 
-  string16 StatusModel::GetText(int row, int column_id) {
+  string16 AutoStatusModel::GetText(int row, int column_id) {
 
     return table_->GetText(row, column_id);
     return string16();
   }
 
 
-  gfx::ImageSkia StatusModel::GetIcon(int row) {
+  gfx::ImageSkia AutoStatusModel::GetIcon(int row) {
     DCHECK(false);
     return gfx::ImageSkia();
   }
@@ -94,8 +94,8 @@ namespace examples {
   
   //================================================================
 
-MainView::MainView(CTPTabbedPane *p, std::string const &bc) 
-  :CTPViewBase(L"Table"),
+AutoMainView::AutoMainView(CTPTabbedPane *p, std::string const &bc) 
+  :CTPViewBase("Table"),
   pane_(p),
   bc_(bc),
   table_order_(NULL),
@@ -111,7 +111,7 @@ MainView::MainView(CTPTabbedPane *p, std::string const &bc)
 
 }
 
-MainView::~MainView() {
+AutoMainView::~AutoMainView() {
   // Delete the view before the model.
   delete table_order_;
   table_order_ = NULL;
@@ -119,11 +119,11 @@ MainView::~MainView() {
   table_device_ = NULL;
 }
 
-void MainView::OnSelectedIndexChanged(Combobox* combobox) {
+void AutoMainView::OnSelectedIndexChanged(Combobox* combobox) {
 
 }
 
-void MainView::CreateExampleView(View* container) {
+void AutoMainView::CreateExampleView(View* container) {
 
 
   GridLayout* layout = new GridLayout(container);
@@ -203,17 +203,17 @@ void MainView::CreateExampleView(View* container) {
 
 }
 
-int MainView::RowCount() {
+int AutoMainView::RowCount() {
 
   return status_info_data_.size();
   return 0;
 }
 
-string16 MainView::GetText(int row, int column_id) {
+string16 AutoMainView::GetText(int row, int column_id) {
   return GetColumnText(column_id, *status_info_data_[row].get());
 }
 
-string16 MainView::GetColumnText(int id, phone_module::StatusInfo const & info) {
+string16 AutoMainView::GetColumnText(int id, phone_module::StatusInfo const & info) {
   switch (id) {
   case 0: {
     return info.time_string;
@@ -241,7 +241,7 @@ string16 MainView::GetColumnText(int id, phone_module::StatusInfo const & info) 
 }
 
 
-string16 MainView::GetColumnTextPosition(int id, phone_module::AdbDevice const & info) {
+string16 AutoMainView::GetColumnTextPosition(int id, phone_module::AdbDevice const & info) {
   switch (id) {
       case 0: {
         base::Time::Exploded e;
@@ -274,34 +274,34 @@ string16 MainView::GetColumnTextPosition(int id, phone_module::AdbDevice const &
   return string16();
 }
 
-gfx::ImageSkia MainView::GetIcon(int row) {
+gfx::ImageSkia AutoMainView::GetIcon(int row) {
   DCHECK(false);
   return gfx::ImageSkia();
   //return row % 2 ? gfx::ImageSkia(icon1_) : gfx::ImageSkia(icon2_);
 }
 
-void MainView::SetObserver(ui::TableModelObserver* observer) {}
+void AutoMainView::SetObserver(ui::TableModelObserver* observer) {}
 
-void MainView::OnSelectionChanged() {
+void AutoMainView::OnSelectionChanged() {
 
 }
 
-void MainView::OnDoubleClick() {
+void AutoMainView::OnDoubleClick() {
   uint32 index = table_device_->FirstSelectedRow();
   if (index < device_data_.size()) {
     ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Refresh(device_data_[index].serial_no));
   }
 }
 
-void MainView::OnMiddleClick() {}
+void AutoMainView::OnMiddleClick() {}
 
-void MainView::OnKeyDown(ui::KeyboardCode virtual_keycode) {}
+void AutoMainView::OnKeyDown(ui::KeyboardCode virtual_keycode) {}
 
-void MainView::OnTableViewDelete(TableView* table_view) {}
+void AutoMainView::OnTableViewDelete(TableView* table_view) {}
 
-void MainView::OnTableView2Delete(TableView2* table_view) {}
+void AutoMainView::OnTableView2Delete(TableView2* table_view) {}
 
-void MainView::ButtonPressed(Button* sender, const ui::Event& event) {
+void AutoMainView::ButtonPressed(Button* sender, const ui::Event& event) {
   if (sender == clear_table_) {
     status_info_data_.clear();
     table_order_->OnModelChanged();
@@ -312,7 +312,7 @@ void MainView::ButtonPressed(Button* sender, const ui::Event& event) {
 
 
 
-void MainView::Observe(int type,
+void AutoMainView::Observe(int type,
   const content::NotificationSource& source,
   const content::NotificationDetails& details) {
     if (type == phone_module::NOTIFICATION_CTP_MQ_MQLEVEL_INFO) {
@@ -320,12 +320,12 @@ void MainView::Observe(int type,
     }
 }
 
-bool MainView::OnMessageReceived(IPC::Message const & msg) {
+bool AutoMainView::OnMessageReceived(IPC::Message const & msg) {
 
   if (msg.routing_id() == MSG_ROUTING_CONTROL) {
     // Dispatch control messages.
     bool msg_is_ok = false;
-    IPC_BEGIN_MESSAGE_MAP_EX(MainView, msg, msg_is_ok)
+    IPC_BEGIN_MESSAGE_MAP_EX(AutoMainView, msg, msg_is_ok)
 
       IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
       IPC_MESSAGE_HANDLER(L2U_StatusInfo, OnStatusInfo)
@@ -346,7 +346,7 @@ bool MainView::OnMessageReceived(IPC::Message const & msg) {
 
 
 //TaskManagerTableModel
-void MainView::EnsureVisible() {
+void AutoMainView::EnsureVisible() {
   if (status_info_data_.size()) {
     //table_order_->Select(list_data_.size() - 1);
     table_order_->Select(status_info_data_.size() - 1);
@@ -355,18 +355,18 @@ void MainView::EnsureVisible() {
 
 
 
-void MainView::OnStatusInfo(PointerWrapper<phone_module::StatusInfo> const & p) {
+void AutoMainView::OnStatusInfo(PointerWrapper<phone_module::StatusInfo> const & p) {
   status_info_data_.push_back(std::shared_ptr<phone_module::StatusInfo>(new phone_module::StatusInfo(*p.get())));
   table_order_->OnItemsAdded(status_info_data_.size() - 1, 1);
   EnsureVisible();
 }
 
-void MainView::OnInitParam(std::string const & s) {
+void AutoMainView::OnInitParam(std::string const & s) {
 
 }
 
 
-bool MainView::OverrideThreadForMessage(IPC::Message const& message,
+bool AutoMainView::OverrideThreadForMessage(IPC::Message const& message,
   CommonThread::ID* thread) {
 /*
     if (message.type() == CTP_CONSOLE_Command::ID || 
@@ -380,7 +380,7 @@ bool MainView::OverrideThreadForMessage(IPC::Message const& message,
 
 
 
-void MainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
+void AutoMainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
   phone_module::DevicesList & list = *p.get();
   pane_->OnUpdateDevicesList(p);
 
@@ -397,7 +397,7 @@ void MainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const &
 }
 
 
-void MainView::ShowContextMenuForView(views::View* source,
+void AutoMainView::ShowContextMenuForView(views::View* source,
   const gfx::Point& point) {
   //UpdateStatsCounters();
   if (source == table_device_) {
@@ -417,20 +417,20 @@ void MainView::ShowContextMenuForView(views::View* source,
   
 }
 
-void MainView::ExecuteCommand(int id) {
+void AutoMainView::ExecuteCommand(int id) {
   //tab_table_->SetColumnVisibility(id, !tab_table_->IsColumnVisible(id));
   if (device_data_.size() > (uint32)id) {
   }
 }
 
 
-void MainView::Selected() {
+void AutoMainView::Selected() {
   //manual_type_checkbox_->ModelChanged();
   //manual_direction_checkbox_->ModelChanged();
  //manual_oc_checkbox_->ModelChanged();
 }
 
-bool MainView::GetCellColors(
+bool AutoMainView::GetCellColors(
   CCTableView* who,
   int model_row,
   int column,
@@ -454,10 +454,10 @@ bool MainView::GetCellColors(
     return false;
 }
 
-int MainView::size() {
+int AutoMainView::size() {
   return device_data_.size();
 }
-string16 MainView::text(int row, int column_id) {
+string16 AutoMainView::text(int row, int column_id) {
   return GetColumnTextPosition(column_id, device_data_[row]);
 }
 

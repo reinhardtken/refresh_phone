@@ -32,7 +32,7 @@ namespace views {
 namespace examples {
 
 RefreshView::RefreshView(CTPTabbedPane *p, string16 const &)
-    : CTPViewBase("Button") {
+    : CTPViewBase(L"Button") {
   //ui::ResourceBundle& rb = ui::ResourceBundle::GetSharedInstance();
   //icon_ = rb.GetImageNamed(IDR_CLOSE_SA_H).ToImageSkia();
 }

@@ -35,7 +35,7 @@ namespace examples {
   //================================================================
 
 TUControlTable::TUControlTable(CTPTabbedPane *p, phone_module::TradeUnitInfo const &info) 
-  :CTPViewBase("Table"),
+  :CTPViewBase(L"Table"),
   p_(p),
   info_(info),
   ThreadMessageFilter(true) {

@@ -49,7 +49,7 @@ namespace examples {
 
   //=================================================
 InstallApkListTable::InstallApkListTable(CTPTabbedPane *p, std::wstring const &) 
-  :CTPViewBase("Table"),
+  :CTPViewBase(L"Table"),
   pane_(p),
   table_(NULL),
   ALLOW_THIS_IN_INITIALIZER_LIST(model_apk_ir_(this)),

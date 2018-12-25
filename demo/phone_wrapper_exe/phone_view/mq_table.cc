@@ -63,7 +63,7 @@ namespace examples {
   //================================================================
 
 MQTable::MQTable() 
-  :CTPViewBase("Table") ,
+  :CTPViewBase(L"Table") ,
   table_(NULL),
   ThreadMessageFilter(true)/*,
 这段代码高度危险，不推荐使用=

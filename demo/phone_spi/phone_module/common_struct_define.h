@@ -443,6 +443,11 @@ struct StatusInfo {
 
 
 
+
+
+
+
+
 struct ApkIRStatus {
   ApkIRStatus(std::wstring const & sn, int const id)
     :serial_no(sn),

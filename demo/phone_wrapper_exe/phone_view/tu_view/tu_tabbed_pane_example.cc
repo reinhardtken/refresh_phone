@@ -26,7 +26,7 @@ namespace views {
 namespace examples {
 
 TUTabbedPane::TUTabbedPane(CTPTabbedPane *p, phone_module::TradeUnitInfo const &info) 
-  :CTPViewBase("Tabbed Pane"),
+  :CTPViewBase(L"Tabbed Pane"),
   p_(p),
   info_(info),
   ThreadMessageFilter(false) {

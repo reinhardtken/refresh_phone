@@ -73,7 +73,7 @@ namespace examples {
   //================================================================
 
 GuardView::GuardView() 
-  :CTPViewBase("Table") ,
+  :CTPViewBase(L"Table") ,
   table_(NULL),
   auto_run_finished_(false),
   ALLOW_THIS_IN_INITIALIZER_LIST(weak_factory_(this)),

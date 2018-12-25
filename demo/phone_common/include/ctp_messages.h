@@ -360,6 +360,7 @@ IPC_MESSAGE_CONTROL1(L2U_InstallApkDigest,
   PointerWrapper<phone_module::InstallDigest>)
 
   IPC_MESSAGE_CONTROL1(U2L_AutoApkInstallCmd, bool)
+  IPC_MESSAGE_CONTROL1(U2L_TotalAutoCmd, bool)
                           
 
 //must last one

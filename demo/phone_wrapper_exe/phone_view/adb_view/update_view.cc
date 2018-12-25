@@ -73,7 +73,7 @@ namespace examples {
   //================================================================
 
 UpdateView::UpdateView() 
-  :CTPViewBase("Table") ,
+  :CTPViewBase(L"Table") ,
   table_(NULL),
   ALLOW_THIS_IN_INITIALIZER_LIST(weak_factory_(this)),
   ThreadMessageFilter(true) {

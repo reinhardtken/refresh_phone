@@ -51,7 +51,7 @@ namespace examples {
   //================================================================
 
 MQGuardView::MQGuardView() 
-  :CTPViewBase("Table") ,
+  :CTPViewBase(L"Table") ,
   table_(NULL),
   ThreadMessageFilter(true) {
 

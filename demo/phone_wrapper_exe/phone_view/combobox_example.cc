@@ -26,7 +26,7 @@ string16 ComboboxModelExample::GetItemAt(int index) {
   return UTF8ToUTF16(base::StringPrintf("Item %d", index));
 }
 
-ComboboxExample::ComboboxExample() : CTPViewBase("Combo Box"), combobox_(NULL) {
+ComboboxExample::ComboboxExample() : CTPViewBase(L"Combo Box"), combobox_(NULL) {
 }
 
 ComboboxExample::~ComboboxExample() {

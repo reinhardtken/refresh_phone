@@ -31,7 +31,7 @@ namespace examples {
 
 
 CommissionRateTable::CommissionRateTable(CTPTabbedPane *p, std::string const &bc) 
-  :CTPViewBase("Table"),
+  :CTPViewBase(L"Table"),
   pane_(p),
   bc_(bc),
   table_(NULL),

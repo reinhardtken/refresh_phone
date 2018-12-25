@@ -31,7 +31,7 @@ namespace examples {
 
 
 PackageListTable::PackageListTable(CTPTabbedPane *p, std::wstring const &) 
-  :CTPViewBase("Table"),
+  :CTPViewBase(L"Table"),
   pane_(p),
   table_(NULL),
   ThreadMessageFilter(true) {

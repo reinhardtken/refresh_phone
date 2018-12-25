@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "tabbed_pane_example.h"
+#include "auto_tabbed_pane_example.h"
 
 #include "base/utf_string_conversions.h"
 #include "ui/views/controls/tabbed_pane/tabbed_pane.h"
@@ -28,15 +28,15 @@
 namespace views {
 namespace examples {
 
-CTPTabbedPane::CTPTabbedPane() 
-  :CTPViewBase(L"手动模式"),
+AutoTabbedPane::AutoTabbedPane() 
+  :CTPViewBase(L"自动模式"),
   ThreadMessageFilter(true) {
 }
 
-CTPTabbedPane::~CTPTabbedPane() {
+AutoTabbedPane::~AutoTabbedPane() {
 }
 
-void CTPTabbedPane::CreateExampleView(View* container) {
+void AutoTabbedPane::CreateExampleView(View* container) {
   tabbed_pane_ = new TabbedPane();
   tabbed_pane_->set_use_native_win_control(true);
   tabbed_pane_->set_listener(this);
@@ -62,11 +62,6 @@ void CTPTabbedPane::CreateExampleView(View* container) {
 
   CommandLine const& command_line = *CommandLine::ForCurrentProcess();
   std::string const process_type = command_line.GetSwitchValueASCII(switches::kProcessType);
-  AddOneTab(MAIN_TAB, L"设备列表");
-  AddOneTab(UPDATE_TAB, L"包更新管理");//所有网络更新检查在这里
-  AddOneTab(REFRESH_TAB, L"命令集合");
-  //AddOneTab(PACKAGE_LIST_TAB, L"已安装包名列表");
-  AddOneTab(INSTALL_APK_LIST_TAB, L"包安装/删除");//所有adb装包，删包在这里
   AddOneTab(AUTO_INSTALL_TAB, L"自动安装");
   //if (process_type == switches::kProcessTypeTest) {
   //  AddOneTab(TEST_TAB, "Test");
@@ -88,7 +83,7 @@ void CTPTabbedPane::CreateExampleView(View* container) {
 
 }
 
-void CTPTabbedPane::ButtonPressed(Button* sender, const ui::Event& event) {
+void AutoTabbedPane::ButtonPressed(Button* sender, const ui::Event& event) {
   if (sender == add_) {
     //AddButton("Added");
   } else if (sender == add_at_) {
@@ -104,7 +99,7 @@ void CTPTabbedPane::ButtonPressed(Button* sender, const ui::Event& event) {
 
 }
 
-void CTPTabbedPane::TabSelectedAt(int index) {
+void AutoTabbedPane::TabSelectedAt(int index) {
   if (tabs_.find(index) != tabs_.end()) {
     tabs_[index]->Selected();
   } else {
@@ -116,28 +111,14 @@ void CTPTabbedPane::TabSelectedAt(int index) {
 
 
 
-void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
+void AutoTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
   if (type == MQ_TAB) {
-  //  MQTabbedPane* p = new MQTabbedPane;
-  // 
-  //  tabs_[tabbed_pane_->GetTabCount()] = p;
-  //  tabbed_pane_->AddTab(ASCIIToUTF16(label), p->example_view());
-  //} else if (type == MS_TAB) {
-  //  MSTable* p = new MSTable;
-  //  ms_table_ = p;
-  //  tabs_[tabbed_pane_->GetTabCount()] = p;
-  //  tabbed_pane_->AddTab(ASCIIToUTF16(label), p->example_view());
+
     
   } else if (type == MAIN_TAB) {
-    MainView* p = new MainView(this, "");
 
-    tabs_[tabbed_pane_->GetTabCount()] = p;
-    tabbed_pane_->AddTab((label), p->example_view());
   } else if (type == REFRESH_TAB) {
-    RefreshView* p = new RefreshView(this ,label);
 
-    tabs_[tabbed_pane_->GetTabCount()] = p;
-    tabbed_pane_->AddTab((label), p->example_view());
   }  else if (type == TEST_TAB) {
     //TestView* p = new TestView(this ,label);
 
@@ -148,22 +129,13 @@ void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
     //tabs_[tabbed_pane_->GetTabCount()] = p;
     //tabbed_pane_->AddTab(ASCIIToUTF16(label), p->example_view());
   } else if (type == PACKAGE_LIST_TAB) {
-	  PackageListTable* p = new PackageListTable(this, label);
 
-	  tabs_[tabbed_pane_->GetTabCount()] = p;
-	  tabbed_pane_->AddTab((label), p->example_view());
   } else if (type == INSTALL_APK_LIST_TAB) {
-	  InstallApkListTable* p = new InstallApkListTable(this, label);
 
-	  tabs_[tabbed_pane_->GetTabCount()] = p;
-	  tabbed_pane_->AddTab((label), p->example_view());
   } else if (type == UPDATE_TAB) {
-	  UpdateView* p = new UpdateView();
 
-	  tabs_[tabbed_pane_->GetTabCount()] = p;
-	  tabbed_pane_->AddTab((label), p->example_view());
   } else if (type == AUTO_INSTALL_TAB) {
-    AutoInstallApkListTable* p = new AutoInstallApkListTable(this, false);
+    AutoInstallApkListTable* p = new AutoInstallApkListTable(this, true);
 
     tabs_[tabbed_pane_->GetTabCount()] = p;
     tabbed_pane_->AddTab((label), p->example_view());
@@ -173,7 +145,7 @@ void CTPTabbedPane::AddOneTab(TabTypeEnum const type, const string16& label) {
 }
 
 
-void CTPTabbedPane::AddTUTab(PointerWrapper<phone_module::TradeUnitInfo> const & p_info) {
+void AutoTabbedPane::AddTUTab(PointerWrapper<phone_module::TradeUnitInfo> const & p_info) {
 
   //TUTabbedPane* p = new TUTabbedPane(this, *(p_info.get()));
   //if (bc_2_tuview_.find(p_info.get()->bc) == bc_2_tuview_.end()) {
@@ -189,26 +161,20 @@ void CTPTabbedPane::AddTUTab(PointerWrapper<phone_module::TradeUnitInfo> const &
   //tabbed_pane_->AddTab(ASCIIToUTF16(p_info.get()->bc), p->example_view());
 }
 
-void CTPTabbedPane::AddBacktestingTab(TabTypeEnum const type, const std::string& label, uint32 const id) {
-  if (type == BT_TAB) {
-    BacktestingView * p = new BacktestingView(this, label, id);
-    tabs_[tabbed_pane_->GetTabCount()] = p;
-    tabbed_pane_->AddTab(ASCIIToUTF16(label), p->example_view());
-  } else {
-    DCHECK_RLOG(false);
-  }
+void AutoTabbedPane::AddBacktestingTab(TabTypeEnum const type, const std::string& label, uint32 const id) {
+
 }
 
-void CTPTabbedPane::OnTradeUnitCreated(PointerWrapper<phone_module::TradeUnitInfo> const & p) {
+void AutoTabbedPane::OnTradeUnitCreated(PointerWrapper<phone_module::TradeUnitInfo> const & p) {
   AddTUTab(p);
 }
 
-void CTPTabbedPane::OnBacktestingCreated(std::string const& bc, int32 const id) {
+void AutoTabbedPane::OnBacktestingCreated(std::string const& bc, int32 const id) {
   AddBacktestingTab(BT_TAB, bc, id);
   //AddOneTab(BT_TAB, bc);
 }
 
-bool CTPTabbedPane::OnMessageReceived(IPC::Message const & msg) {
+bool AutoTabbedPane::OnMessageReceived(IPC::Message const & msg) {
 
 
   //CommonThread::ID thread;
@@ -229,7 +195,7 @@ bool CTPTabbedPane::OnMessageReceived(IPC::Message const & msg) {
   if (msg.routing_id() == MSG_ROUTING_CONTROL) {
     // Dispatch control messages.
     bool msg_is_ok = false;
-    IPC_BEGIN_MESSAGE_MAP_EX(CTPTabbedPane, msg, msg_is_ok)
+    IPC_BEGIN_MESSAGE_MAP_EX(AutoTabbedPane, msg, msg_is_ok)
       
       IPC_MESSAGE_HANDLER(CTP_TradeUnitCreatedNew, OnTradeUnitCreated)
 
@@ -263,7 +229,7 @@ bool CTPTabbedPane::OnMessageReceived(IPC::Message const & msg) {
 }
 
 
-void CTPTabbedPane::OnOrder(std::string const & ba, PointerWrapper<phone_module::OrderFootprints::OneRecord> const & p) {
+void AutoTabbedPane::OnOrder(std::string const & ba, PointerWrapper<phone_module::OrderFootprints::OneRecord> const & p) {
   if (bc_2_tuview_.find(ba) != bc_2_tuview_.end()) {
     bc_2_tuview_[ba]->OnOrder(p);
   } else {
@@ -272,13 +238,13 @@ void CTPTabbedPane::OnOrder(std::string const & ba, PointerWrapper<phone_module:
 }
 
 
-void CTPTabbedPane::OnAdbInfo(std::string const & id, std::wstring const & info) {
+void AutoTabbedPane::OnAdbInfo(std::string const & id, std::wstring const & info) {
   RefreshView * p = (RefreshView*)tabs_[2];
 	p->UpdateAdbInfo(info);
 	//L"恢复出厂设置"
 }
 
-void CTPTabbedPane::OnUpdateDevicesList(PointerWrapper< phone_module::DevicesList> const & p) {
+void AutoTabbedPane::OnUpdateDevicesList(PointerWrapper< phone_module::DevicesList> const & p) {
   std::wstring device(L"当前设备ID: ");
   phone_module::DevicesList & list = *p.get();
   for (auto it = list.begin(); it != list.end(); ++it) {
@@ -288,7 +254,7 @@ void CTPTabbedPane::OnUpdateDevicesList(PointerWrapper< phone_module::DevicesLis
 }
 
 
-void CTPTabbedPane::Observe(int type,
+void AutoTabbedPane::Observe(int type,
   const content::NotificationSource& source,
   const content::NotificationDetails& details) {
     

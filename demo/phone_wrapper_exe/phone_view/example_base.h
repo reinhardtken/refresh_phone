@@ -22,11 +22,11 @@ class CTPViewBase {
   // Sub-classes should creates and add the views to the given parent.
   virtual void CreateExampleView(View* parent) = 0;
 
-  const std::string& example_title() const { return example_title_; }
+  const std::wstring& example_title() const { return example_title_; }
   View* example_view() { return container_; }
 
  protected:
-  explicit CTPViewBase(const char* title);
+  explicit CTPViewBase(const wchar_t* title);
 
   // Prints a message in the status area, at the bottom of the window.
   void PrintStatus(const wchar_t* format, ...);
@@ -38,7 +38,7 @@ class CTPViewBase {
 
  private:
   // Name of the example - used as title in the combobox list.
-  std::string example_title_;
+  std::wstring example_title_;
 
   // The view that contains the views example.
   View* container_;

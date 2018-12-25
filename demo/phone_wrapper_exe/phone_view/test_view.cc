@@ -36,7 +36,7 @@ namespace views {
 namespace examples {
 
 TestView::TestView(CTPTabbedPane *p, std::string const &)
-    : CTPViewBase("Button"),
+    : CTPViewBase(L"Button"),
       connect_button_(NULL),
       send_button_(NULL),
       label_(NULL),

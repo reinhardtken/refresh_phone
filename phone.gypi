@@ -355,6 +355,8 @@
 		'../phone/demo/phone_wrapper_exe/phone_view/ms_table.h',
 		'../phone/demo/phone_wrapper_exe/phone_view/tabbed_pane_example.cc',
 		'../phone/demo/phone_wrapper_exe/phone_view/tabbed_pane_example.h',
+		'../phone/demo/phone_wrapper_exe/phone_view/auto_tabbed_pane_example.cc',
+		'../phone/demo/phone_wrapper_exe/phone_view/auto_tabbed_pane_example.h',
 		'../phone/demo/phone_wrapper_exe/phone_view/position_data.cc',
 		'../phone/demo/phone_wrapper_exe/phone_view/position_data.h',
 		'../phone/demo/phone_wrapper_exe/phone_view/ui_common.cc',

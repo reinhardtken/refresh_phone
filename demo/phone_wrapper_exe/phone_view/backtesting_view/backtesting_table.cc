@@ -35,7 +35,7 @@ namespace examples {
   //================================================================
 
 BacktestingView::BacktestingView(CTPTabbedPane *p, std::string const &bc, int32 const id) 
-  :CTPViewBase("Table"),
+  :CTPViewBase(L"Table"),
   p_(p),
   bc_(bc),
   id_(id),

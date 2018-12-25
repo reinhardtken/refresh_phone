@@ -52,17 +52,26 @@ namespace examples {
     table_->OnFirstTableSelectionChanged();
   }
 
-  std::wstring GetAutoModeText(bool auto_mode) {
-    if (auto_mode) {
-      return L"禁用自动安装";
+  std::wstring AutoInstallApkListTable::GetAutoModeText(bool auto_mode) {
+    if (total_auto_) {
+      if (auto_mode) {
+        return L"启动";
+      } else {
+        return L"停止";
+      }
     } else {
-      return L"启用自动安装";
+      if (auto_mode) {
+        return L"禁用自动安装";
+      } else {
+        return L"启用自动安装";
+      }
     }
   }
   //=================================================
-AutoInstallApkListTable::AutoInstallApkListTable(CTPTabbedPane *p, std::wstring const &) 
-  :CTPViewBase("Table"),
+AutoInstallApkListTable::AutoInstallApkListTable(CTPViewBase *p, bool b)
+  :CTPViewBase(L"Table"),
   pane_(p),
+  total_auto_(b),
   table_(NULL),
   ALLOW_THIS_IN_INITIALIZER_LIST(model_apk_ir_(this)),
   auto_install_mode_(false),
@@ -190,6 +199,17 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
 
   layout->AddView(auto_mode_);
 
+  //=======================================
+ 
+  ++index;
+  status_label_ = new Label();
+
+  column_set = layout->AddColumnSet(index);
+  column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,
+    1.0f, GridLayout::USE_PREF, 0, 0);
+  layout->StartRow(0 /* expand */, index);
+
+  layout->AddView(status_label_);
 }
 
 int AutoInstallApkListTable::RowCount() {
@@ -325,7 +345,7 @@ void AutoInstallApkListTable::ButtonPressed(Button* sender, const ui::Event& eve
       auto_install_mode_ = true;
     }
     auto_mode_->SetText(GetAutoModeText(auto_install_mode_));
-		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_AutoApkInstallCmd(auto_install_mode_));
+		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_TotalAutoCmd(auto_install_mode_));
 	} 
  // else if (sender == install_apk_list_all_device_force_ ||
  //   sender == install_apk_list_all_device_) {

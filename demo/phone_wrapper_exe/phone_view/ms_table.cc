@@ -155,7 +155,7 @@ namespace examples {
   //================================================================
 
 MSTable::MSTable() 
-  :CTPViewBase("Table") ,
+  :CTPViewBase(L"Table") ,
   table_(NULL),
   table_position_(NULL),
   ALLOW_THIS_IN_INITIALIZER_LIST(model_position_(this)),

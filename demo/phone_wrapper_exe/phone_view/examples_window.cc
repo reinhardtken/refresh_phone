@@ -29,6 +29,7 @@
 
 
 #include "tabbed_pane_example.h"
+#include "auto_tabbed_pane_example.h"
 #include "guard_view.h"
 #include "combobox_example.h"
 
@@ -47,7 +48,7 @@ class ComboboxModelExampleList : public ui::ComboboxModel {
   // Overridden from ui::ComboboxModel:
   virtual int GetItemCount() const OVERRIDE { return example_list_.size(); }
   virtual string16 GetItemAt(int index) OVERRIDE {
-    return UTF8ToUTF16(example_list_[index]->example_title());
+    return (example_list_[index]->example_title());
   }
 
   View* GetItemViewAt(int index) {
@@ -192,6 +193,7 @@ class CTPWindowContents : public WidgetDelegateView,
     //combobox_model_.AddExample(new MQTable);
     if (process_type_.size() == 0) {
       combobox_model_.AddExample(new CTPTabbedPane); 
+      combobox_model_.AddExample(new AutoTabbedPane);
     } else {
       combobox_model_.AddExample(new GuardView);
     }

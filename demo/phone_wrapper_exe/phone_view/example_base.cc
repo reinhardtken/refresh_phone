@@ -53,7 +53,7 @@ class ContainerView : public View {
 
 CTPViewBase::~CTPViewBase() {}
 
-CTPViewBase::CTPViewBase(const char* title) : example_title_(title) {
+CTPViewBase::CTPViewBase(const wchar_t* title) : example_title_(title) {
   container_ = new ContainerView(this);
 }
 
