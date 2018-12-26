@@ -145,6 +145,7 @@ namespace phone_module {
   CTPModule::CTPModule()
     :ThreadMessageFilter(true),
     python_connected_(false),
+    pending_total_auto_(false),
     routing_id_seed_(0) {
 
     LOG(INFO)<<"CTPModule::CTPModule begin";
@@ -228,6 +229,11 @@ namespace phone_module {
 
           if (py_adb_.get()) {
             py_adb_->StartScan();
+          }
+
+          if (pending_total_auto_) {
+            pending_total_auto_ = false;
+            OnInnerTotalAutoInstall(total_param_);
           }
 
 		} else {
@@ -320,6 +326,8 @@ namespace phone_module {
         IPC_MESSAGE_HANDLER(U2L_RemoveLocalInstallApkList, OnRemoveLocalInstallApkList)
         IPC_MESSAGE_HANDLER(U2L_LaunchPY, OnLaunchPY)
         IPC_MESSAGE_HANDLER(U2L_AutoApkInstallCmd, OnAutoInstall)
+        IPC_MESSAGE_HANDLER(U2L_TotalAutoCmd, OnTotalAutoInstall)
+        IPC_MESSAGE_HANDLER(U2L_ModeChange, OnModeChange)
 		  
 		  
         IPC_MESSAGE_UNHANDLED(msg_is_ok = false)
@@ -329,17 +337,7 @@ namespace phone_module {
           return true;
         } 
     } else {
-      //if (MQ()->routing_id() == msg.routing_id()) {
-      //  return MQ()->OnMessageReceived(msg);
-      //} else {
-      //  // Dispatch incoming messages to the appropriate RenderView/WidgetHost.
-      //  TradeUnit* tu = GetTradeUnit(msg.routing_id());
-      //  if (tu) {
-      //    return tu->OnMessageReceived(msg);
-      //  } else {
-      //    DCHECK_RLOG(false);
-      //  }
-      //}
+
     }
  
     return false; 
@@ -350,12 +348,28 @@ namespace phone_module {
 
 
   void CTPModule::OnQuitR() {
-    //把task丢到file线程执行
-    //CommonThread::PostTask(CommonThread::FILE,
-    //  FROM_HERE,
-    //  base::Bind(base::IgnoreResult(&ctp_bridge::RBridgeWorkOnFileQuitR)));
   }
 
+
+  void CTPModule::NotifyApkCheckUpdateInfo(PointerWrapper<ApkUpdateInfo> &tmp) {
+    if (now_mode_ == 1) {
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+        new L2U_ApkUpdateInfo(tmp));
+    } else {
+      std::wstring string_data = tmp->ToString();
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI, new L2U_ApkTotalAutoModeInfoToString(string_data));
+    }
+  }
+
+  void CTPModule::NotifyGetApkList(PointerWrapper<std::vector< ApkInstallInfo>> &tmp) {
+    if (now_mode_ == 1) {
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+        new L2U_ApkInstallInfo(tmp));
+    } else {
+      std::wstring string_data = L"包名单更新完成，请插入手机，开始自动安装！";
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI, new L2U_ApkTotalAutoModeInfoToString(string_data));
+    }
+  }
 
   void CTPModule::DispatchProtobufMessage(std::string const & name, codec::MessagePtr const & p, base::Time const&) {
     if (name == switches::kCommunicatePyUpdateApkAlive) {
@@ -379,10 +393,14 @@ namespace phone_module {
             data->progress = UTF8ToWide(response->info(3));
           }
           PointerWrapper<ApkUpdateInfo> tmp(data);
-          ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-            new L2U_ApkUpdateInfo(tmp));
+          NotifyApkCheckUpdateInfo(tmp);
+          
         } else if (std::string(command::kRemoveLocalPackageList) == response->cmd()) {
-        } 
+        } else if (std::string(command::kPyAdbInit) == response->cmd()) {
+          if (now_mode_ == 2) {
+            ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI, new L2U_ApkTotalAutoModeInfoToString(UTF8ToWide(response->info(0))));
+          }
+        }
       } else if (p->GetTypeName() == "apk.CommandInstallApkResponse") {
         apk::CommandInstallApkResponse const* response = static_cast<apk::CommandInstallApkResponse const*>(p.get());
         if (std::string(command::kPyAdbInstallApk) == response->cmd()) {
@@ -434,8 +452,7 @@ namespace phone_module {
               data->push_back(info);
             }
             PointerWrapper<std::vector< ApkInstallInfo>> tmp(data);
-            ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-              new L2U_ApkInstallInfo(tmp));
+            NotifyGetApkList(tmp);
           } else {
             DCHECK(false);
           }
@@ -539,37 +556,9 @@ namespace phone_module {
 
   }
 
-  //void CTPModule::OnLoginAll() {
-  //  TradeMapIt it = trade_map_.begin();
-  //  for (; it != trade_map_.end(); ++it) {
-  //    it->second->LoginFromLoginAll();
-  //  }
-  //}
 
   void CTPModule::OnPlaySound(uint32 const v) {
-    /*FilePath dir_path;
-    PathService::Get(base::DIR_EXE, &dir_path);
-
-    if (v == PLAYSOUND_LOGIN) {
-      dir_path = dir_path.Append(L"login.wav");
-      PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    } else if (v == PLAYSOUND_LOGOUT) {
-      dir_path = dir_path.Append(L"logout.wav");
-      PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    } else if (v == PLAYSOUND_ORDER) {
-      dir_path = dir_path.Append(L"order.wav");
-      PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    } else if (v == PLAYSOUND_WITHDRAW) {
-      dir_path = dir_path.Append(L"withdraw.wav");
-      PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    } else if (v == PLAYSOUND_CLINCH) {
-      dir_path = dir_path.Append(L"clinch.wav");
-      PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    } else if (v == PLAYSOUND_BT_FINISH) {
-      dir_path = dir_path.Append(L"bt_finish.wav");
-      PlaySound(dir_path.value().c_str(), NULL, SND_FILENAME | SND_ASYNC);
-    }
-*/
+   
   }
 
 
@@ -584,64 +573,6 @@ namespace phone_module {
     if (py_adb_.get()) {
       py_adb_->ScanDevices();
     }
-    //if (adb_.get()) {
-    //  CString strTitle;
-    //  adb_->Init();
-
-    //  for (int i = 0; i < 3; i++)
-    //  {
-    //    adb_->GetDevices();
-    //    if (adb_->IsMultiDevConnected()) {
-    //      //多个设备，默认选第一个
-    //      adb_->SelectDevice(0);
-    //      //CDialogSelectDevice  sddlg(g_pToolDlg);
-    //      //sddlg.DoModal();
-    //      //Sleep(1000);
-    //    }
-    //    if (adb_->IsConnected())
-    //    {
-    //      InitConnectedDevice();
-    //      break;
-    //    }
-    //    Sleep(100);
-    //  }
-
-    //  if (adb_->IsConnected())
-    //  {
-    //    strTitle = TEXT("Android Dev: ");
-    //    strTitle += adb_->GetModel();
-    //    strTitle.AppendFormat(TEXT("(%s)"), adb_->GetSerialNo());
-    //    strTitle += TEXT(" Connected");
-    //    if (adb_->IsRooted()) {
-    //      strTitle += TEXT("(Root)");
-    //    }
-    //  } else
-    //  {
-    //    strTitle = TEXT("Disconnected, Please Connect Android Device!");
-    //  }
-
-    //  //通知ui=================================
-    //  if (adb_->IsConnected()) {
-    //    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-    //      new L2U_AdbInfo("", std::wstring(strTitle.GetBuffer())));
-    //    strTitle.ReleaseBuffer();
-
-    //    //DeviceData * date = new DeviceData(adb_->GetSerialNo2());
-    //    //PointerWrapper<DeviceData> tmp(date);
-    //    //ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-    //    //  new L2U_DeviceUpdate(tmp));
-
-    //    //做一些其余的动作，先放在这里做
-    //    CommonThread::PostTask(CommonThread::CTP,
-    //      FROM_HERE,
-    //      base::Bind(&CTPModule::OnGetPackageList, base::Unretained(this), L""));
-    //  } else {
-    //    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-    //      new L2U_AdbInfo("", std::wstring(L"No devices")));
-    //  }
-    //}
-	  
-
   }
 
   void CTPModule::OnGetPackageList(std::wstring const &) {
@@ -713,28 +644,6 @@ namespace phone_module {
   }
   
 
-  //void CTPModule::OnInstallApkList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
-  //  std::vector<phone_module::ApkInstallInfo> & info = *p.get();
-  //  for (auto it = info.begin(); it != info.end(); ++it) {
-  //    std::wstring dir = apk_dir_;
-  //    std::wstring file = dir.append(it->package_name).append(L".apk");
-  //    std::pair<bool, std::wstring> result = adb_->InstallApk(file.c_str());
-
-  //    StatusInfo * data = new StatusInfo(adb_->GetSerialNo2());
-  //    data->op = StringPrintf(L"装包：%ls", it->package_name.c_str());
-
-  //    if (result.first == true) {
-  //      data->result = L"成功";
-  //    } else {
-  //      data->result = StringPrintf(L"失败：%ls", result.second.c_str());
-  //    }
-  //    PointerWrapper<StatusInfo> tmp(data);
-  //    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
-  //      new L2U_StatusInfo(tmp));
-  //  }
-	 // //adb_->InstallApk(L"E:\\workspace\\chromium24\\src\\build\\Debug\\apks\\AutoUnlock.apk");
-  //}
-
 
   void CTPModule::OnInstallApkList(std::wstring const & type, PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p) {
     std::vector<phone_module::ApkInstallInfo> & info = *p.get();
@@ -773,6 +682,40 @@ namespace phone_module {
     codec::MessagePtr ptr(cmd);
     current_cmd_no_set_.insert(cmd->cmd_no());
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+  }
+
+  void CTPModule::OnInnerTotalAutoInstall(bool b) {
+    apk::Command * cmd = new apk::Command;
+    cmd->set_cmd(command::kPyAdbTotalAutoInstall);
+    cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
+    if (b) {
+      cmd->add_param("1");
+    } else {
+      cmd->add_param("0");
+    }
+    codec::MessagePtr ptr(cmd);
+    current_cmd_no_set_.insert(cmd->cmd_no());
+    channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+  }
+
+  void CTPModule::OnModeChange(int mode) {
+    now_mode_ = mode;
+  }
+
+  void CTPModule::OnTotalAutoInstall(bool b) {
+    //首先判断py是不是启动了。没py先启动py
+    if (channel_host_->HasConnection(switches::kCommunicatePyUpdateApk)) {
+      OnInnerTotalAutoInstall(b);
+    } else {
+#if !defined(_DEBUG)
+      OnLaunchPY();
+#endif
+      pending_total_auto_ = true;
+      total_param_ = b;
+    }
+
+    
   }
 
   void CTPModule::OnAutoInstall(bool b) {

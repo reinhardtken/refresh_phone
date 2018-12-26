@@ -36,6 +36,8 @@
 
 #include "../../phone_common/common/common_common.h"
 
+#include "adb_view/auto_install_apk_list_table.h"
+
 namespace views {
 namespace examples {
 
@@ -52,6 +54,15 @@ class ComboboxModelExampleList : public ui::ComboboxModel {
   }
 
   View* GetItemViewAt(int index) {
+    string16 temp = example_list_[index]->example_title();
+    if (temp == L"手动模式") {
+      AutoInstallApkListTable::g_current_mode_ = 1;
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_ModeChange(1));
+    } else {
+      AutoInstallApkListTable::g_current_mode_ = 2;
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_ModeChange(2));
+    }
+    
     return example_list_[index]->example_view();
   }
 
@@ -104,7 +115,7 @@ class CTPWindowContents : public WidgetDelegateView,
   virtual bool CanMaximize() const OVERRIDE { return true; }
   virtual string16 GetWindowTitle() const OVERRIDE {
     
-    std::wstring head = L"刷包大师 (1.0.0.19) ";    
+    std::wstring head = L"刷包大师 (1.0.0.20) ";    
     return head;
   }
   virtual View* GetContentsView() OVERRIDE { return this; }
@@ -192,8 +203,9 @@ class CTPWindowContents : public WidgetDelegateView,
     
     //combobox_model_.AddExample(new MQTable);
     if (process_type_.size() == 0) {
-      combobox_model_.AddExample(new CTPTabbedPane); 
       combobox_model_.AddExample(new AutoTabbedPane);
+      combobox_model_.AddExample(new CTPTabbedPane); 
+      
     } else {
       combobox_model_.AddExample(new GuardView);
     }

@@ -54,6 +54,7 @@ public:
   }
 private:
   T * v;
+  PointerWrapper(PointerWrapper & p);
 };
 
 namespace IPC {
@@ -359,8 +360,12 @@ IPC_MESSAGE_CONTROL1(L2U_ApkIRStatus,
 IPC_MESSAGE_CONTROL1(L2U_InstallApkDigest,
   PointerWrapper<phone_module::InstallDigest>)
 
+IPC_MESSAGE_CONTROL1(L2U_ApkTotalAutoModeInfoToString,
+    std::wstring)
+
   IPC_MESSAGE_CONTROL1(U2L_AutoApkInstallCmd, bool)
   IPC_MESSAGE_CONTROL1(U2L_TotalAutoCmd, bool)
+  IPC_MESSAGE_CONTROL1(U2L_ModeChange, int)
                           
 
 //must last one

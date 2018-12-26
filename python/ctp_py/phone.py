@@ -225,16 +225,19 @@ class PhoneLogic(util.thread_class.ThreadClass):
           self.InitGlobalLogByParam(config.CreateProp(msg))
           self.Init2(config.CreateProp(msg))
           # 先尝试把自己的adb server启动起来
-          self.ProcessStartServer(None)
+          init = pb.apk_protomsg_pb2.Command()
+          init.cmd = consts.COMMAND_INIT
+          init.cmd_no = -1
+          self.ProcessStartServer(init)
       elif self.prop is not None:
         # 只有完成了初始化才能响应业务请求
-        if msg.cmd == 'check_net_package_list':
+        if msg.cmd == consts.COMMAND_CHECK_UPDATE:
           msg.sub_cmd_no = self._GenSubCommandID()
           self.ProcessCheckUpdatePackageList(msg)
         elif msg.cmd == 'remove_local_package_list':
           msg.sub_cmd_no = self._GenSubCommandID()
           self.ProcessRemoveLocalPackageList(msg)
-        elif msg.cmd == 'get_local_package_list':
+        elif msg.cmd == consts.COMMAND_GET_LOCAL_PACKAGELIST:
           msg.sub_cmd_no = self._GenSubCommandID()
           self.ProcessGetLocalPackageList(msg)
         elif msg.cmd == consts.COMMAND_INSTALL_APK:
@@ -247,9 +250,12 @@ class PhoneLogic(util.thread_class.ThreadClass):
           self.ProcessRefresh(msg)
         elif msg.cmd == consts.COMMAND_AUTO_INSTALL:
           self.ProcessAutoInstall(msg)
+        elif msg.cmd == consts.COMMAND_TOTAL_AUTO_INSTALL:
+          self.ProcessTotalAutoInstall(msg)
   
   def ProcessStartServer(self, command):
     # 遍历所有的server，尝试kill，保留kill不掉的
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['初始化运行环境...', ])
     live = adbtool.find_server.FindAllServer()
     adbtool.find_server.KillAllServer(live)
     live = adbtool.find_server.FindAllServer()
@@ -266,7 +272,8 @@ class PhoneLogic(util.thread_class.ThreadClass):
       start_server = adbtool.start_server.Command(port)
       start_server.Execute()
       succ, pid = start_server.GetReturnCode()
-    
+
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['初始化完成！', ])
     # # 总是尝试先看看这个port有没有人用
     # netstat = cmdtool.netstat.Command(port)
     # netstat.Execute()
@@ -286,6 +293,24 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.master.EnterAutoInstall(command)
     pass
   
+  
+  
+  
+  def ProcessTotalAutoInstall(self, command):
+    if int(command.param[0]) == 1:
+      #检查网络更新
+      check = pb.apk_protomsg_pb2.Command()
+      check.cmd = consts.COMMAND_CHECK_UPDATE
+      check.cmd_no = -1
+      self.ProcessCheckUpdatePackageList(check)
+      #获取本地列表
+      get_local = pb.apk_protomsg_pb2.Command()
+      get_local.cmd = consts.COMMAND_GET_LOCAL_PACKAGELIST
+      get_local.cmd_no = -1
+      self.ProcessGetLocalPackageList(get_local)
+      
+    #进入自动模式
+    self.ProcessAutoInstall(command)
   
   
   def ProcessRefresh(self, command):

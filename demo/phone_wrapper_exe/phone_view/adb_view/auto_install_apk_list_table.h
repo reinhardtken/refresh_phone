@@ -98,7 +98,7 @@ class AutoInstallApkListTable : public CTPViewBase,
                      //public CCTableView::Delegate,
                      public ComboboxListener {
  public:
-
+   static int g_current_mode_;
 
   AutoInstallApkListTable(CTPViewBase *p, bool );
   virtual ~AutoInstallApkListTable();
@@ -134,6 +134,7 @@ class AutoInstallApkListTable : public CTPViewBase,
   virtual void OnSelectedIndexChanged(Combobox* combobox) OVERRIDE;
   void OnFirstTableSelectionChanged();
 
+  void InnerUpdateInstallApkDigest(phone_module::InstallDigest & digest);
   /*virtual bool GetCellColors(
     CCTableView* who,
     int model_row,
@@ -147,6 +148,9 @@ class AutoInstallApkListTable : public CTPViewBase,
   void OnMarginRate(PointerWrapper<CThostFtdcInstrumentMarginRateField> const & p);
   void OnUpdatePackageList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p);
   void OnUpdateInstallApkDigest(PointerWrapper<phone_module::InstallDigest> const & p);
+  void OnApkUpdateInfoToString(std::wstring const & s);
+
+  
 
 
   gfx::ImageSkia GetIcon2(int row);
@@ -184,6 +188,7 @@ class AutoInstallApkListTable : public CTPViewBase,
   content::NotificationRegistrar registrar_;
   CTPViewBase* pane_;
   bool const total_auto_;//标明当前UI是局部自动化模式的装包还是全局自动化的UI
+  
   std::wstring GetAutoModeText(bool auto_mode);
   
   void EnsureVisible();

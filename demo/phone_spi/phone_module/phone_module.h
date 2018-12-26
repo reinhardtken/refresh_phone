@@ -105,6 +105,11 @@ private:
   void OnRemoveLocalInstallApkList();
   void OnLaunchPY();
   void OnAutoInstall(bool b);
+  void OnTotalAutoInstall(bool b);
+  void OnInnerTotalAutoInstall(bool b);
+  void OnModeChange(int mode);
+  void NotifyApkCheckUpdateInfo(PointerWrapper<ApkUpdateInfo> &tmp);
+  void NotifyGetApkList(PointerWrapper<std::vector< ApkInstallInfo>> &tmp);
   private:
     //scoped_ptr<MarketQuotationBase> market_quotation_base_;
 
@@ -126,6 +131,9 @@ private:
 
     FilePath exe_dir_;
     std::wstring apk_dir_;
+    bool pending_total_auto_;
+    bool total_param_;
+    int now_mode_;
 
     //scoped_ptr<backtesting::BacktestingModule> backtesting_module_;
     

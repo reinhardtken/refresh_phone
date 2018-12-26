@@ -31,7 +31,7 @@ namespace {
 
 namespace views {
 namespace examples {
-
+  
   int ApkIRStatusModel2::RowCount() {
     return table_->RowCount2();
   }
@@ -55,9 +55,9 @@ namespace examples {
   std::wstring AutoInstallApkListTable::GetAutoModeText(bool auto_mode) {
     if (total_auto_) {
       if (auto_mode) {
-        return L"启动";
-      } else {
         return L"停止";
+      } else {
+        return L"启动";
       }
     } else {
       if (auto_mode) {
@@ -68,6 +68,7 @@ namespace examples {
     }
   }
   //=================================================
+  int AutoInstallApkListTable::g_current_mode_;
 AutoInstallApkListTable::AutoInstallApkListTable(CTPViewBase *p, bool b)
   :CTPViewBase(L"Table"),
   pane_(p),
@@ -77,13 +78,11 @@ AutoInstallApkListTable::AutoInstallApkListTable(CTPViewBase *p, bool b)
   auto_install_mode_(false),
   ThreadMessageFilter(true) {
 
-
-    /*if (pane_->HasID(bc_)) {
-      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP,
-        new CTP_TU_QryTypeList(pane_->GetID(bc_)));
-    } else {
-      DCHECK(false);
-    }*/
+  
+  registrar_.Add(this, phone_module::NOTIFICATION_PHONE_TRANSFER_APK_UPDATE_INFO,
+    content::NotificationService::AllSources());
+  registrar_.Add(this, phone_module::NOTIFICATION_PHONE_TRANSFER_INSTALL_APK_DIGEST,
+    content::NotificationService::AllSources());
 
 }
 
@@ -336,6 +335,9 @@ void AutoInstallApkListTable::OnTableViewDelete(TableView* table_view) {}
 
 void AutoInstallApkListTable::OnTableView2Delete(TableView2* table_view) {}
 
+
+
+
 void AutoInstallApkListTable::ButtonPressed(Button* sender, const ui::Event& event) {
 	if (sender == auto_mode_) {
     bool old = auto_install_mode_;
@@ -345,7 +347,11 @@ void AutoInstallApkListTable::ButtonPressed(Button* sender, const ui::Event& eve
       auto_install_mode_ = true;
     }
     auto_mode_->SetText(GetAutoModeText(auto_install_mode_));
-		ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_TotalAutoCmd(auto_install_mode_));
+    if (total_auto_) {
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_TotalAutoCmd(auto_install_mode_));
+    } else {
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_AutoApkInstallCmd(auto_install_mode_));
+    }
 	} 
  // else if (sender == install_apk_list_all_device_force_ ||
  //   sender == install_apk_list_all_device_) {
@@ -371,7 +377,12 @@ void AutoInstallApkListTable::ButtonPressed(Button* sender, const ui::Event& eve
 void AutoInstallApkListTable::Observe(int type,
   const content::NotificationSource& source,
   const content::NotificationDetails& details) {
-
+  if (type == phone_module::NOTIFICATION_PHONE_TRANSFER_APK_UPDATE_INFO) {
+    status_label_->SetText(content::Details<std::wstring const>(details)->c_str());
+  } else if (type == phone_module::NOTIFICATION_PHONE_TRANSFER_INSTALL_APK_DIGEST) {
+    InnerUpdateInstallApkDigest(*content::Details<phone_module::InstallDigest>(details).ptr());
+  }
+  
 }
 
 bool AutoInstallApkListTable::OnMessageReceived(IPC::Message const & msg) {
@@ -383,6 +394,7 @@ bool AutoInstallApkListTable::OnMessageReceived(IPC::Message const & msg) {
 
 			//IPC_MESSAGE_HANDLER(L2U_ApkInstallInfo, OnUpdatePackageList)
       IPC_MESSAGE_HANDLER(L2U_InstallApkDigest, OnUpdateInstallApkDigest)
+      IPC_MESSAGE_HANDLER(L2U_ApkTotalAutoModeInfoToString, OnApkUpdateInfoToString)
       
 
 			//IPC_MESSAGE_UNHANDLED_ERROR()
@@ -421,8 +433,7 @@ void AutoInstallApkListTable::OnUpdatePackageList(PointerWrapper<std::vector<pho
 	//table_->OnModelChanged();
 }
 
-void AutoInstallApkListTable::OnUpdateInstallApkDigest(PointerWrapper<phone_module::InstallDigest> const & p) {
-  phone_module::InstallDigest & digest = *p.get();
+void AutoInstallApkListTable::InnerUpdateInstallApkDigest(phone_module::InstallDigest & digest) {
   auto it = install_digest_map_.find(digest.serial_number);
   if (it != install_digest_map_.end()) {
     install_digest_data_[it->second] = digest;
@@ -440,6 +451,21 @@ void AutoInstallApkListTable::OnUpdateInstallApkDigest(PointerWrapper<phone_modu
     failed_list_ = digest.failed_list;
     table_->OnModelChanged();
   }
+}
+
+void AutoInstallApkListTable::OnUpdateInstallApkDigest(PointerWrapper<phone_module::InstallDigest> const & p) {
+  phone_module::InstallDigest & digest = *p.get();
+  //当前是手动模式，本实例是手动实例
+  if (g_current_mode_ == 1 && total_auto_ == false) {
+    InnerUpdateInstallApkDigest(digest);
+  } else {
+    content::NotificationService::current()->Notify(
+      phone_module::NOTIFICATION_PHONE_TRANSFER_INSTALL_APK_DIGEST,
+      content::Source<AutoInstallApkListTable>(this),
+      content::Details<phone_module::InstallDigest const>(&digest));
+  }
+  
+  
   
 }
 
@@ -454,6 +480,19 @@ void AutoInstallApkListTable::OnFirstTableSelectionChanged() {
     failed_list_.clear();
     table_->OnModelChanged();
   }
+}
+
+void AutoInstallApkListTable::OnApkUpdateInfoToString(std::wstring const & s) {
+  //当前是手动模式，本实例是手动实例
+  if (g_current_mode_ == 1 && total_auto_ == false) {
+    status_label_->SetText(s);
+  } else {
+    content::NotificationService::current()->Notify(
+      phone_module::NOTIFICATION_PHONE_TRANSFER_APK_UPDATE_INFO,
+      content::Source<AutoInstallApkListTable>(this),
+      content::Details<std::wstring const>(&s));
+  }
+  
 }
 
 }  // namespace examples

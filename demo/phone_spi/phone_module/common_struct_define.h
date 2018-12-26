@@ -517,6 +517,10 @@ struct ApkUpdateInfo {
     time_string = base::StringPrintf(L"%02d:%02d:%02d", e.hour, e.minute, e.second);
   }
 
+  std::wstring ToString() {
+    return base::StringPrintf(L"%ls-%ls-%ls-%ls", op.c_str(), package_name.c_str(), info.c_str(), progress.c_str());
+  }
+
   base::Time time;//时间=
   std::wstring time_string;//用于显示=
   std::wstring op;

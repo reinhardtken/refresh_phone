@@ -55,13 +55,16 @@ def error_string(code):
 
 
 
-
+COMMAND_CHECK_UPDATE = 'check_net_package_list'
+COMMAND_GET_LOCAL_PACKAGELIST = 'get_local_package_list'
 COMMAND_SCAN_DEVICES = 'pyadb.scan_devices'
 COMMAND_INSTALL_APK = 'pyadb.install_apk'
 COMMAND_GET_PACKAGE_LIST = 'pyadb.get_package_list'
 COMMAND_REFRESH = 'pyadb.refresh'
 COMMAND_AUTO_INSTALL = 'pyadb.auto_install'
 COMMAND_NOTIFY_INSTALL_APK_DIGEST = 'pyadb.notify.install_digest'
+COMMAND_TOTAL_AUTO_INSTALL = 'pyadb.total_auto_install'
+COMMAND_INIT = 'pyadb.init'
 
 
 #inner

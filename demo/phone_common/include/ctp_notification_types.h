@@ -15,6 +15,7 @@
 #define END_NOTIFICATION_TYPE_MACOR };
 
 namespace phone_module {
+
 #include "ctp_notification_types_internal.h"
 }
 
