@@ -83,6 +83,8 @@ AutoInstallApkListTable::AutoInstallApkListTable(CTPViewBase *p, bool b)
     content::NotificationService::AllSources());
   registrar_.Add(this, phone_module::NOTIFICATION_PHONE_TRANSFER_INSTALL_APK_DIGEST,
     content::NotificationService::AllSources());
+  registrar_.Add(this, phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST,
+    content::NotificationService::AllSources());
 
 }
 
@@ -381,29 +383,53 @@ void AutoInstallApkListTable::Observe(int type,
     status_label_->SetText(content::Details<std::wstring const>(details)->c_str());
   } else if (type == phone_module::NOTIFICATION_PHONE_TRANSFER_INSTALL_APK_DIGEST) {
     InnerUpdateInstallApkDigest(*content::Details<phone_module::InstallDigest>(details).ptr());
+  } else if (type == phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST) {
+    InnerOnDeviceUpdate(*content::Details<phone_module::DevicesList>(details).ptr());
   }
   
 }
 
+
+void AutoInstallApkListTable::InnerOnDeviceUpdate(phone_module::DevicesList const & list) {
+  //phone_module::DevicesList & list = *p.get();
+  //pane_->OnUpdateDevicesList(p);
+  //根据设备信息更新安装信息
+  for (auto i = list.begin(); i != list.end(); ++i) {
+    auto it = install_digest_map_.find((*i).serial_no);
+    if (it == install_digest_map_.end()) {
+      phone_module::InstallDigest digest;
+      digest.serial_number = (*i).serial_no;
+      digest.model = (*i).model;
+      install_digest_data_.push_back(digest);
+      install_digest_map_.insert(std::make_pair(digest.serial_number, install_digest_data_.size() - 1));
+      table_apk_ir_->OnItemsAdded(install_digest_data_.size() - 1, 1);
+      if (install_digest_data_.size()) {
+        table_apk_ir_->Select(install_digest_data_.size() - 1);
+      }
+    }
+  }
+}
+
 bool AutoInstallApkListTable::OnMessageReceived(IPC::Message const & msg) {
 
-	if (msg.routing_id() == MSG_ROUTING_CONTROL) {
-		// Dispatch control messages.
-		bool msg_is_ok = false;
-		IPC_BEGIN_MESSAGE_MAP_EX(AutoInstallApkListTable, msg, msg_is_ok)
+	//if (msg.routing_id() == MSG_ROUTING_CONTROL) {
+	//	// Dispatch control messages.
+	//	bool msg_is_ok = false;
+	//	IPC_BEGIN_MESSAGE_MAP_EX(AutoInstallApkListTable, msg, msg_is_ok)
 
-			//IPC_MESSAGE_HANDLER(L2U_ApkInstallInfo, OnUpdatePackageList)
-      IPC_MESSAGE_HANDLER(L2U_InstallApkDigest, OnUpdateInstallApkDigest)
-      IPC_MESSAGE_HANDLER(L2U_ApkTotalAutoModeInfoToString, OnApkUpdateInfoToString)
-      
+	//		//IPC_MESSAGE_HANDLER(L2U_ApkInstallInfo, OnUpdatePackageList)
+ //     //IPC_MESSAGE_HANDLER(L2U_InstallApkDigest, OnUpdateInstallApkDigest)
+ //     //IPC_MESSAGE_HANDLER(L2U_ApkTotalAutoModeInfoToString, OnApkUpdateInfoToString)
+ //     //IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
+ //     
 
-			//IPC_MESSAGE_UNHANDLED_ERROR()
-			IPC_END_MESSAGE_MAP_EX()
+	//		//IPC_MESSAGE_UNHANDLED_ERROR()
+	//		IPC_END_MESSAGE_MAP_EX()
 
-			if (msg_is_ok) {
-				return true;
-			}
-	}
+	//		if (msg_is_ok) {
+	//			return true;
+	//		}
+	//}
 
   // Dispatch incoming messages to the appropriate RenderView/WidgetHost.
   //RenderWidgetHost* rwh = render_widget_hosts_.Lookup(msg.routing_id());

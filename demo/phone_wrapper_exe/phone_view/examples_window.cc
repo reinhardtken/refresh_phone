@@ -10,6 +10,11 @@
 #include "base/utf_string_conversions.h"
 #include "content/browser/notification_service_impl.h"
 #include "content/public/common/content_switches.h"
+
+#include "content/public/browser/notification_registrar.h"
+#include "content/public/browser/notification_observer.h"
+#include "content/browser/notification_service_impl.h"
+
 #include "ui/base/models/combobox_model.h"
 #include "ui/base/ui_base_paths.h"
 #include "ui/views/controls/button/text_button.h"
@@ -37,6 +42,8 @@
 #include "../../phone_common/common/common_common.h"
 
 #include "adb_view/auto_install_apk_list_table.h"
+#include "../../phone_common/common/thread_message_filter.h"
+#include "../../phone_common/include/ctp_notification_types.h"
 
 namespace views {
 namespace examples {
@@ -77,6 +84,7 @@ class ComboboxModelExampleList : public ui::ComboboxModel {
 };
 
 class CTPWindowContents : public WidgetDelegateView,
+                               public ThreadMessageFilter,
                                public ComboboxListener {
  public:
   CTPWindowContents(Operation operation, CommandLine const & c)
@@ -85,6 +93,7 @@ class CTPWindowContents : public WidgetDelegateView,
         status_label_(new Label),
         command_(c),
         icon_(NULL),
+        ThreadMessageFilter(true),
         operation_(operation) {
     instance_ = this;
     combobox_->set_listener(this);
@@ -93,6 +102,54 @@ class CTPWindowContents : public WidgetDelegateView,
     
   }
   virtual ~CTPWindowContents() {}
+
+  virtual bool OnMessageReceived(IPC::Message const & message) OVERRIDE {
+    if (message.routing_id() == MSG_ROUTING_CONTROL) {
+      // Dispatch control messages.
+      bool msg_is_ok = false;
+      IPC_BEGIN_MESSAGE_MAP_EX(CTPWindowContents, message, msg_is_ok)
+
+        //IPC_MESSAGE_HANDLER(L2U_ApkInstallInfo, OnUpdatePackageList)
+        IPC_MESSAGE_HANDLER(L2U_InstallApkDigest, OnUpdateInstallApkDigest)
+        IPC_MESSAGE_HANDLER(L2U_ApkTotalAutoModeInfoToString, OnApkUpdateInfoToString)
+        IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
+
+
+        //IPC_MESSAGE_UNHANDLED_ERROR()
+        IPC_END_MESSAGE_MAP_EX()
+
+        if (msg_is_ok) {
+          return true;
+        }
+    }
+    return false;
+  }
+
+  void OnUpdateInstallApkDigest(PointerWrapper<phone_module::InstallDigest> const & p) {
+    phone_module::InstallDigest & digest = *p.get();
+    content::NotificationService::current()->Notify(
+      phone_module::NOTIFICATION_PHONE_TRANSFER_INSTALL_APK_DIGEST,
+      content::Source<CTPWindowContents>(this),
+      content::Details<phone_module::InstallDigest const>(&digest));
+  }
+
+
+  void OnApkUpdateInfoToString(std::wstring const & s) {
+    content::NotificationService::current()->Notify(
+      phone_module::NOTIFICATION_PHONE_TRANSFER_APK_UPDATE_INFO,
+      content::Source<CTPWindowContents>(this),
+      content::Details<std::wstring const>(&s));
+
+  }
+
+  void OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
+    phone_module::DevicesList & list = *p.get();
+    content::NotificationService::current()->Notify(
+      phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST,
+      content::Source<CTPWindowContents>(this),
+      content::Details<phone_module::DevicesList const>(&list));
+
+  }
 
   void Command(CommandLine const & c) {
     //command_ = &c;

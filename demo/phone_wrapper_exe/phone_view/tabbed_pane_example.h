@@ -84,7 +84,7 @@ class CTPTabbedPane : public CTPViewBase,
     }
   }
 
-  void OnUpdateDevicesList(PointerWrapper<phone_module::DevicesList> const & p);
+  void OnUpdateDevicesList(phone_module::DevicesList const & list);
 
  private:
    void OnTradeUnitCreated(PointerWrapper<phone_module::TradeUnitInfo> const & p);

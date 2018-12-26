@@ -25,6 +25,7 @@
 
 
 #include "../tabbed_pane_example.h"
+#include "auto_install_apk_list_table.h"
 
 namespace {
 
@@ -106,7 +107,7 @@ MainView::MainView(CTPTabbedPane *p, std::string const &bc)
 
  
     //========================================================
-    registrar_.Add(this, phone_module::NOTIFICATION_CTP_MQ_MQLEVEL_INFO,
+    registrar_.Add(this, phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST,
       content::NotificationService::AllSources());
 
 }
@@ -315,8 +316,8 @@ void MainView::ButtonPressed(Button* sender, const ui::Event& event) {
 void MainView::Observe(int type,
   const content::NotificationSource& source,
   const content::NotificationDetails& details) {
-    if (type == phone_module::NOTIFICATION_CTP_MQ_MQLEVEL_INFO) {
-
+    if (type == phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST) {
+      InnerOnDeviceUpdate(*content::Details<phone_module::DevicesList>(details).ptr());
     }
 }
 
@@ -327,7 +328,7 @@ bool MainView::OnMessageReceived(IPC::Message const & msg) {
     bool msg_is_ok = false;
     IPC_BEGIN_MESSAGE_MAP_EX(MainView, msg, msg_is_ok)
 
-      IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
+      //IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
       IPC_MESSAGE_HANDLER(L2U_StatusInfo, OnStatusInfo)
       //IPC_MESSAGE_UNHANDLED_ERROR()
       IPC_END_MESSAGE_MAP_EX()
@@ -379,19 +380,23 @@ bool MainView::OverrideThreadForMessage(IPC::Message const& message,
 }
 
 
-
-void MainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
-  phone_module::DevicesList & list = *p.get();
-  pane_->OnUpdateDevicesList(p);
+void MainView::InnerOnDeviceUpdate(phone_module::DevicesList const & list) {
+  pane_->OnUpdateDevicesList(list);
 
   std::size_t old_size = device_data_.size();
-  device_data_.swap(list);
-  
+  device_data_ = list;
+
   if (old_size == device_data_.size() && old_size > 0) {
     table_device_->OnItemsChanged(0, device_data_.size());
   } else {
     table_device_->OnModelChanged();
   }
+}
+
+
+void MainView::OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
+  phone_module::DevicesList & list = *p.get();
+  InnerOnDeviceUpdate(list);
 
   
 }

@@ -214,7 +214,7 @@ class MainView : public CTPViewBase,
   //void OnCash(PointerWrapper<CThostFtdcTradingAccountField> const & p);
   void OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p);
   void OnStatusInfo(PointerWrapper<phone_module::StatusInfo> const & p);
-  
+  void InnerOnDeviceUpdate(phone_module::DevicesList const & list);
 
   int size() ;
   string16 text(int row, int column_id);

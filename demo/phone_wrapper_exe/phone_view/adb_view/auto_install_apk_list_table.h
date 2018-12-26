@@ -135,6 +135,7 @@ class AutoInstallApkListTable : public CTPViewBase,
   void OnFirstTableSelectionChanged();
 
   void InnerUpdateInstallApkDigest(phone_module::InstallDigest & digest);
+  void InnerOnDeviceUpdate(phone_module::DevicesList const & list);
   /*virtual bool GetCellColors(
     CCTableView* who,
     int model_row,

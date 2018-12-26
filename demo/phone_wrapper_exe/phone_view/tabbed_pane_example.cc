@@ -278,9 +278,8 @@ void CTPTabbedPane::OnAdbInfo(std::string const & id, std::wstring const & info)
 	//L"恢复出厂设置"
 }
 
-void CTPTabbedPane::OnUpdateDevicesList(PointerWrapper< phone_module::DevicesList> const & p) {
+void CTPTabbedPane::OnUpdateDevicesList(phone_module::DevicesList const & list) {
   std::wstring device(L"当前设备ID: ");
-  phone_module::DevicesList & list = *p.get();
   for (auto it = list.begin(); it != list.end(); ++it) {
     device.append(it->serial_no).append(L", ");
   }

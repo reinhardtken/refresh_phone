@@ -559,6 +559,13 @@ struct FailedTuple {
 };
 //typedef std::pair<std::wstring, std::wstring> FailedPair;
 struct InstallDigest {
+  InstallDigest()
+    :total_number(0),
+    success_number(0),
+    failed_number(0),
+    time_cost(0) {
+
+  }
   int total_number;
   int success_number;
   int failed_number;
