@@ -80,6 +80,7 @@ INSTALL_TYPE_JUST_INSTALL = r'全新安装'
 
 def AdbMessage2UserMessage(msg):
   #INSTALL_FAILED_CONFLICTING_PROVIDER
+  #cannot stat 'C:\workspace\code\chromium24\src\build\Release\ctp_data\apk\com.youku.phone.apk': No such file or directory
   message = {
     u'INSTALL_FAILED_VERSION_DOWNGRADE': u'版本降级',
     u'INSTALL_FAILED_INSUFFICIENT_STORAGE': u'存储已满',
@@ -87,6 +88,7 @@ def AdbMessage2UserMessage(msg):
   
   contain_message = {
     u'INSTALL_FAILED_USER_RESTRICTED': u'用户拒绝',
+    u'No such file or directory': u'apk安装文件不存在'
   }
   
   if msg in message:

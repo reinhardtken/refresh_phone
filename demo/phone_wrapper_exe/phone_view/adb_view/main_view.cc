@@ -381,7 +381,7 @@ bool MainView::OverrideThreadForMessage(IPC::Message const& message,
 
 
 void MainView::InnerOnDeviceUpdate(phone_module::DevicesList const & list) {
-  pane_->OnUpdateDevicesList(list);
+  //pane_->OnUpdateDevicesList(list);
 
   std::size_t old_size = device_data_.size();
   device_data_ = list;

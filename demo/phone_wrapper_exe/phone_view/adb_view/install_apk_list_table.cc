@@ -56,6 +56,9 @@ InstallApkListTable::InstallApkListTable(CTPTabbedPane *p, std::wstring const &)
   ThreadMessageFilter(true) {
 
 
+  registrar_.Add(this, phone_module::NOTIFICATION_PHONE_TRANSFER_APK_IR_STATUS,
+    content::NotificationService::AllSources());
+  
     /*if (pane_->HasID(bc_)) {
       ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP,
         new CTP_TU_QryTypeList(pane_->GetID(bc_)));
@@ -391,7 +394,9 @@ void InstallApkListTable::ButtonPressed(Button* sender, const ui::Event& event) 
 void InstallApkListTable::Observe(int type,
   const content::NotificationSource& source,
   const content::NotificationDetails& details) {
-
+  if (type == phone_module::NOTIFICATION_PHONE_TRANSFER_APK_IR_STATUS) {
+    InnerOnUpdateApkIRStatus(*content::Details<phone_module::ApkIRStatus>(details).ptr());
+  }
 }
 
 bool InstallApkListTable::OnMessageReceived(IPC::Message const & msg) {
@@ -402,7 +407,7 @@ bool InstallApkListTable::OnMessageReceived(IPC::Message const & msg) {
 		IPC_BEGIN_MESSAGE_MAP_EX(InstallApkListTable, msg, msg_is_ok)
 
 			IPC_MESSAGE_HANDLER(L2U_ApkInstallInfo, OnUpdatePackageList)
-      IPC_MESSAGE_HANDLER(L2U_ApkIRStatus, OnUpdateApkIRStatus)
+      /*IPC_MESSAGE_HANDLER(L2U_ApkIRStatus, OnUpdateApkIRStatus)*/
       
 
 			//IPC_MESSAGE_UNHANDLED_ERROR()
@@ -443,6 +448,12 @@ void InstallApkListTable::OnUpdatePackageList(PointerWrapper<std::vector<phone_m
 
 void InstallApkListTable::OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIRStatus> const & p) {
   phone_module::ApkIRStatus & status = *p.get();
+  InnerOnUpdateApkIRStatus(status);
+}
+
+
+void InstallApkListTable::InnerOnUpdateApkIRStatus(phone_module::ApkIRStatus & status) {
+  
   auto it = apk_ir_data_map_.find(status.get_key());
   if (it != apk_ir_data_map_.end()) {
     apk_ir_data_[it->second] = status;

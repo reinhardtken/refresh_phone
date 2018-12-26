@@ -147,7 +147,7 @@ class InstallApkListTable : public CTPViewBase,
   void OnMarginRate(PointerWrapper<CThostFtdcInstrumentMarginRateField> const & p);
   void OnUpdatePackageList(PointerWrapper<std::vector<phone_module::ApkInstallInfo>> const & p);
   void OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIRStatus> const & p);
-
+  void InnerOnUpdateApkIRStatus(phone_module::ApkIRStatus & status);
 
   gfx::ImageSkia GetIcon2(int row);
   string16 GetText2(int row, int column_id);

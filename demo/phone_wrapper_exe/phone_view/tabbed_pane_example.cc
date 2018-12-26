@@ -279,11 +279,11 @@ void CTPTabbedPane::OnAdbInfo(std::string const & id, std::wstring const & info)
 }
 
 void CTPTabbedPane::OnUpdateDevicesList(phone_module::DevicesList const & list) {
-  std::wstring device(L"当前设备ID: ");
-  for (auto it = list.begin(); it != list.end(); ++it) {
-    device.append(it->serial_no).append(L", ");
-  }
-  this->PrintStatus(L"%ls", device.c_str());
+  //std::wstring device(L"当前设备ID: ");
+  //for (auto it = list.begin(); it != list.end(); ++it) {
+  //  device.append(it->serial_no).append(L", ");
+  //}
+  //this->PrintStatus(L"%ls", device.c_str());
 }
 
 

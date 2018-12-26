@@ -27,6 +27,46 @@ class FailedItem(object):
     self.try_times = 0
     self.error_code = None
     self.error_message = None
+    #根据error_message产生的内部错误码，比如如果文件不存在则没必要重试，
+    #INSTALL_FAILED_VERSION_DOWNGRADE则可以尝试先卸载后安装
+    #0表示默认重试
+    self.inner_error_code = 0
+    
+  
+  def TryAgain(self):
+    self._GenInnerErrorCode()
+    if self.try_times < FailedItem.MAX_TRY and self.inner_error_code < 1000:
+      return (True, self.inner_error_code)
+    else:
+      self.try_times = FailedItem.MAX_TRY
+      return (False, self.inner_error_code)
+  
+  
+  
+  def _GenInnerErrorCode(self):
+    allow_try = {
+      u'INSTALL_FAILED_VERSION_DOWNGRADE': 1,
+      
+    }
+  
+    no_need_try = {
+      u'No such file or directory': 1000,
+      u'INSTALL_FAILED_INSUFFICIENT_STORAGE': 1001,
+    }
+    if self.error_message is not None:
+      for k, v in allow_try.items():
+        if k in self.error_message:
+          self.inner_error_code = v
+          return
+        
+      
+      for k, v in no_need_try.items():
+        if k in self.error_message:
+          self.inner_error_code = v
+          return
+      
+        
+      
   
   
   
@@ -344,6 +384,30 @@ class Master(object):
       
       
   
+  def MayTryAgain(self, device, apk):
+    # 检查所有设备，如果要安装包数大于已经成功包数，且失败次数位超过阈值，重新把安装请求塞到队列中
+    # 没有失败过或者失败重试没有到达上限
+    if not device.IsInstallFailed(apk):
+      command = device._GenInstallApkCommand(apk)
+      device.ProcessInstallApk(command)
+
+    else:
+      one = device.installed_failed[apk]
+      try_again, way = one.TryAgain()
+      if try_again:
+        goon = False
+        command = device._GenInstallApkCommand(apk)
+        if way == 1:
+          # 需要先卸载后安装
+          command.param.append(consts.INSTALL_TYPE_DELTE_FIRST.decode('utf-8'))
+          goon = True
+    
+        # if goon:
+        device.ProcessInstallApk(command)
+      
+      
+
+
 
   def TriggerAutoInstall(self):
     # 自动安装逻辑
@@ -354,11 +418,7 @@ class Master(object):
           for apk in device.todo_install_apk_set:
             # 没有安装成功
             if not device.IsInstalled(apk):
-              # 检查所有设备，如果要安装包数大于已经成功包数，且失败次数位超过阈值，重新把安装请求塞到队列中
-              # 没有失败过或者失败重试没有到达上限
-              if not device.IsInstallFailed(apk) or device.installed_failed[apk].try_times < FailedItem.MAX_TRY:
-                command = device._GenInstallApkCommand(apk)
-                device.ProcessInstallApk(command)
+              self.MayTryAgain(device, apk)
       
     
     

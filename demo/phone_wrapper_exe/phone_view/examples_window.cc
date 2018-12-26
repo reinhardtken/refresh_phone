@@ -113,7 +113,7 @@ class CTPWindowContents : public WidgetDelegateView,
         IPC_MESSAGE_HANDLER(L2U_InstallApkDigest, OnUpdateInstallApkDigest)
         IPC_MESSAGE_HANDLER(L2U_ApkTotalAutoModeInfoToString, OnApkUpdateInfoToString)
         IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
-
+        IPC_MESSAGE_HANDLER(L2U_ApkIRStatus, OnUpdateApkIRStatus)
 
         //IPC_MESSAGE_UNHANDLED_ERROR()
         IPC_END_MESSAGE_MAP_EX()
@@ -144,11 +144,27 @@ class CTPWindowContents : public WidgetDelegateView,
 
   void OnDeviceUpdate(PointerWrapper< phone_module::DevicesList> const & p) {
     phone_module::DevicesList & list = *p.get();
+    OnUpdateStatusLine(list);
     content::NotificationService::current()->Notify(
       phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST,
       content::Source<CTPWindowContents>(this),
       content::Details<phone_module::DevicesList const>(&list));
+  }
 
+  void OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIRStatus> const & p) {
+    phone_module::ApkIRStatus & status = *p.get();
+    content::NotificationService::current()->Notify(
+      phone_module::NOTIFICATION_PHONE_TRANSFER_APK_IR_STATUS,
+      content::Source<CTPWindowContents>(this),
+      content::Details<phone_module::ApkIRStatus const>(&status));
+  }
+
+  void OnUpdateStatusLine(phone_module::DevicesList const & list) {
+    std::wstring device(L"当前设备ID: ");
+    for (auto it = list.begin(); it != list.end(); ++it) {
+      device.append(it->serial_no).append(L", ");
+    }
+    SetStatus(device);
   }
 
   void Command(CommandLine const & c) {
@@ -172,7 +188,7 @@ class CTPWindowContents : public WidgetDelegateView,
   virtual bool CanMaximize() const OVERRIDE { return true; }
   virtual string16 GetWindowTitle() const OVERRIDE {
     
-    std::wstring head = L"刷包大师 (1.0.0.20) ";    
+    std::wstring head = L"刷包大师 (1.0.0.22) ";    
     return head;
   }
   virtual View* GetContentsView() OVERRIDE { return this; }
