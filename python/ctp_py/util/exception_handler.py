@@ -57,7 +57,7 @@ class ExceptHookHandler(object):
         err_msg += '\n Your App happen an exception, please contact administration.'
         # Here collecting traceback and some log files to be sent for debugging.
         # But also possible to handle the error and continue working.
-        import wx
-        dlg = wx.MessageDialog(None, err_msg, 'Administration', wx.OK | wx.ICON_ERROR)
-        dlg.ShowModal()
-        dlg.Destroy()
+        # import wx
+        # dlg = wx.MessageDialog(None, err_msg, 'Administration', wx.OK | wx.ICON_ERROR)
+        # dlg.ShowModal()
+        # dlg.Destroy()

@@ -22,6 +22,8 @@ import requests.packages.urllib3
 
 requests.packages.urllib3.disable_warnings()
 
+import defer
+
 
 
 def test_psutil():
@@ -71,10 +73,46 @@ def test_down():
         f.flush()
         now += len(chunk)
       print(float(now)/total_length)
+      
+      
+      
+      
+def b_callback(arg):
+  print(  "b_callback called with arg =", arg)
+  return b
+
+
+def on_done(arg):
+  print( "on_done called with arg =", arg)
+  return arg
+
+
+
+a = defer.Deferred()
+b = defer.Deferred()
+
+
+def testa():
+  print(dir(a))
+  a.add_callback(b_callback)
+  a.add_callback(on_done)
+  a.callback(3)
+  b.callback(4)
+
+def testb():
+  a.add_callback(b_callback)
+  a.add_callback(on_done)
+  b.callback(4)
+  a.callback(3)
+
+
+def test_defer():
+  pass
+
 
 
 if __name__ == '__main__':
-  
+  testa()
   live = adbtool.find_server.FindAllServer()
   adbtool.find_server.KillAllServer(live)
   live = adbtool.find_server.FindAllServer()

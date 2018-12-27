@@ -35,6 +35,7 @@ import device.master
 import device.callback
 import my_globals
 import check_update.master
+import defer
 # =======================================================
 
 # ======================================================================
@@ -84,6 +85,9 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.sub_command_id = 0
     
     self.package_set = set()
+    
+    
+    self.total_auto_defer = None
 
 
 
@@ -231,19 +235,40 @@ class PhoneLogic(util.thread_class.ThreadClass):
   
   def ProcessTotalAutoInstall(self, command):
     if int(command.param[0]) == 1:
-      #检查网络更新
-      check = pb.apk_protomsg_pb2.Command()
-      check.cmd = consts.COMMAND_CHECK_UPDATE
-      check.cmd_no = -1
-      self.ProcessCheckUpdatePackageList(check)
-      #获取本地列表
-      get_local = pb.apk_protomsg_pb2.Command()
-      get_local.cmd = consts.COMMAND_GET_LOCAL_PACKAGELIST
-      get_local.cmd_no = -1
-      self.ProcessGetLocalPackageList(get_local)
-      
-    #进入自动模式
-    self.ProcessAutoInstall(command)
+      self.log.info('ProcessTotalAutoInstall enter total auto')
+      if self.total_auto_defer is None:
+        self.log.info('ProcessTotalAutoInstall begin total auto')
+        self.total_auto_defer = defer.Deferred()
+        
+        def step1(result, phone):
+          #获取本地列表
+          phone.log.info('ProcessTotalAutoInstall step1')
+          get_local = pb.apk_protomsg_pb2.Command()
+          get_local.cmd = consts.COMMAND_GET_LOCAL_PACKAGELIST
+          get_local.cmd_no = -1
+          phone.ProcessGetLocalPackageList(get_local)
+
+          
+        def step2(result, phone, command):
+          #进入自动模式
+          phone.log.info('ProcessTotalAutoInstall step2')
+          phone.ProcessAutoInstall(command)
+          #这是最后一步了，defer没事情做了，要把自己设置成None
+          phone.total_auto_defer = None
+        
+        self.total_auto_defer.add_callback(step1, self)
+        self.total_auto_defer.add_callback(step2, self, command)
+
+        # 检查网络更新
+        check = pb.apk_protomsg_pb2.Command()
+        check.cmd = consts.COMMAND_CHECK_UPDATE
+        check.cmd_no = -1
+        self.ProcessCheckUpdatePackageList(check, self.total_auto_defer)
+      else:
+        self.log.info('ProcessTotalAutoInstall total_auto_defer not None, just wait')
+    else:
+      self.log.info('ProcessTotalAutoInstall leave total auto')
+      self.ProcessAutoInstall(command)
   
   
   def ProcessRefresh(self, command):
@@ -359,15 +384,11 @@ class PhoneLogic(util.thread_class.ThreadClass):
     except Exception as e:
       pass
   
-  def ProcessCheckUpdatePackageList(self, command):
+  
+  
+  def ProcessCheckUpdatePackageList(self, command, deferred=None):
     self.check_update.apk_path = self.prop['apkPath']
-    re, data = self.check_update.PullJsonFile()
-    if re == consts.ERROR_CODE_OK:
-      self.check_update.CheckUpdate(data, command)
-      pass
-    else:
-      # 失败了，通知c++侧
-      self.SendCommandResponse(command, re, [consts.error_string(re), ])
+    self.check_update.ProcessCheckUpdate(command, deferred)
   
   
   
