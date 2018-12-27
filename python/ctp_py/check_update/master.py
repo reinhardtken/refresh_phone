@@ -12,6 +12,7 @@ from collections import deque
 import traceback
 import requests
 import requests.exceptions
+
 import json
 import os
 # ====================================
@@ -110,10 +111,11 @@ class Master(object):
     }
     ret = False
     try:
+      timeout = (10, 180)
       try:
-        response = requests.request("GET", url, stream=True, data=None, headers=headers)
+        response = requests.request("GET", url, stream=True, data=None, headers=headers, timeout=timeout)
       except requests.exceptions.SSLError as e:
-        response = requests.request("GET", url, stream=True, data=None, headers=headers, verify=False)
+        response = requests.request("GET", url, stream=True, data=None, headers=headers, verify=False, timeout=timeout)
     
       total_length = int(response.headers.get("Content-Length"))
       now = 0
@@ -127,6 +129,14 @@ class Master(object):
         else:
           callback(total_length, total_length)
           return True
+    except requests.exceptions.Timeout as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      self.log.info(exstr)
+      self.SendCommandResponse(command, consts.ERROR_CODE_DOWNLOAD_APK_TIMEOUT_FAILED,
+                               ['包更新',
+                                consts.error_string(consts.ERROR_CODE_DOWNLOAD_APK_TIMEOUT_FAILED),
+                                one['apkname']])
     except Exception as e:
       exstr = traceback.format_exc()
       print(exstr)
@@ -246,7 +256,7 @@ class Master(object):
     s.mount('http://', requests.adapters.HTTPAdapter(max_retries=5))
     s.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
     try:
-      r = s.get(URL, headers=headers, timeout=5)
+      r = s.get(URL, headers=headers, timeout=10)
       if r.status_code == 200:
         try:
           json_data = json.loads(r.content)
