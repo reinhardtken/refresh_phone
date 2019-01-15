@@ -366,6 +366,7 @@ IPC_MESSAGE_CONTROL1(L2U_ApkTotalAutoModeInfoToString,
   IPC_MESSAGE_CONTROL1(U2L_AutoApkInstallCmd, bool)
   IPC_MESSAGE_CONTROL1(U2L_TotalAutoCmd, bool)
   IPC_MESSAGE_CONTROL1(U2L_ModeChange, int)
+  IPC_MESSAGE_CONTROL2(U2L_Login, std::wstring, std::wstring)
                           
 
 //must last one

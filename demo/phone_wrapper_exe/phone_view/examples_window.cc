@@ -37,6 +37,8 @@
 #include "auto_tabbed_pane_example.h"
 #include "guard_view.h"
 #include "combobox_example.h"
+//#include "button_example.h"
+#include "login_example.h"
 
 
 #include "../../phone_common/common/common_common.h"
@@ -188,7 +190,7 @@ class CTPWindowContents : public WidgetDelegateView,
   virtual bool CanMaximize() const OVERRIDE { return true; }
   virtual string16 GetWindowTitle() const OVERRIDE {
     
-    std::wstring head = L"刷包大师 (1.0.0.22) ";    
+    std::wstring head = L"刷包大师 (1.0.0.23) ";    
     return head;
   }
   virtual View* GetContentsView() OVERRIDE { return this; }
@@ -260,6 +262,7 @@ class CTPWindowContents : public WidgetDelegateView,
     // Please keep this list in alphabetical order!
     //combobox_model_.AddExample(new BubbleExample);
     //combobox_model_.AddExample(new ButtonExample);
+    combobox_model_.AddExample(new LoginExample);
     
     // combobox_model_.AddExample(new DoubleSplitViewExample);
     // combobox_model_.AddExample(new LabelExample);

@@ -363,6 +363,8 @@
 		'../phone/demo/phone_wrapper_exe/phone_view/ui_common.h',
 		'../phone/demo/phone_wrapper_exe/phone_view/test_view.cc',
 		'../phone/demo/phone_wrapper_exe/phone_view/test_view.h',
+		'../phone/demo/phone_wrapper_exe/phone_view/login_example.cc',
+		'../phone/demo/phone_wrapper_exe/phone_view/login_example.h',
 		
 		#ctp_message.cc
 		'../phone/demo/phone_common/include/ctp_messages.cc',
