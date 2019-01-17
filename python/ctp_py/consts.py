@@ -21,6 +21,7 @@ ERROR_CODE_PYADB_OP_TIMEOUT_FAILED = 12
 ERROR_CODE_PYADB_UNINSTALL_APK_FAILED = 13
 
 ERROR_CODE_DOWNLOAD_APK_TIMEOUT_FAILED = 14
+ERROR_CODE_LOGIN_FAILED = 100
 
 
 
@@ -66,6 +67,8 @@ COMMAND_AUTO_INSTALL = 'pyadb.auto_install'
 COMMAND_NOTIFY_INSTALL_APK_DIGEST = 'pyadb.notify.install_digest'
 COMMAND_TOTAL_AUTO_INSTALL = 'pyadb.total_auto_install'
 COMMAND_INIT = 'pyadb.init'
+COMMAND_VERIFY_CODE = 'pyadb.get_verify_code'
+COMMAND_LOGIN = 'pyadb.login'
 
 
 #inner

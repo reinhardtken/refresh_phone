@@ -24,10 +24,12 @@ LoginExample::~LoginExample() {
 
 void LoginExample::CreateExampleView(View* container) {
   name_ = new Textfield();
-  password_ = new Textfield(Textfield::STYLE_OBSCURED);
-  password_->set_placeholder_text(ASCIIToUTF16("password"));
-  show_password_ = new TextButton(this, L"登录");
-  show_password_->set_alignment(TextButton::ALIGN_CENTER);
+  password_ = new Textfield();//Textfield::STYLE_OBSCURED
+  password_->set_placeholder_text(L"验证码");
+  login_ = new TextButton(this, L"登录");
+  login_->set_alignment(TextButton::ALIGN_CENTER);
+  verify_code_ = new TextButton(this, L"获取验证码");
+  verify_code_->set_alignment(TextButton::ALIGN_CENTER);
   //clear_all_ = new TextButton(this, ASCIIToUTF16("Clear All"));
   //append_ = new TextButton(this, ASCIIToUTF16("Append"));
   //set_ = new TextButton(this, ASCIIToUTF16("Set"));
@@ -49,14 +51,14 @@ void LoginExample::CreateExampleView(View* container) {
     1.0f, GridLayout::USE_PREF, 0, 0);
 
   layout->StartRow(0, 0);
-  layout->AddView(new Label(L"账号"));
+  layout->AddView(new Label(L"手机号"));
   layout->AddView(name_);
   layout->StartRow(0, 0);
-  layout->AddView(new Label(L"密码"));
+  layout->AddView(verify_code_);
   layout->AddView(password_);
 
   layout->StartRow(0, 1);
-  layout->AddView(show_password_);
+  layout->AddView(login_);
 
   //layout->StartRow(0, 0);
   //layout->AddView(clear_all_);
@@ -83,14 +85,13 @@ bool LoginExample::HandleKeyEvent(Textfield* sender,
 }
 
 void LoginExample::ButtonPressed(Button* sender, const ui::Event& event) {
-  if (sender == show_password_) {
+  if (sender == login_) {
     std::wstring name = name_->text();
     std::wstring password = password_->text();
     ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_Login(name, password));
-  } else if (sender == clear_all_) {
-    string16 empty;
-    name_->SetText(empty);
-    password_->SetText(empty);
+  } else if (sender == verify_code_) {
+    std::wstring name = name_->text();
+    ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_VerfiyCode(name));
   } else if (sender == append_) {
     name_->AppendText(ASCIIToUTF16("[append]"));
   } else if (sender == set_) {

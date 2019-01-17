@@ -108,4 +108,6 @@ namespace command {
   PHONE_COMMON_EXPORT extern const char kPyAdbTotalAutoInstall[];
   PHONE_COMMON_EXPORT extern const char kPyAdbNotifyInstallDigest[];
   PHONE_COMMON_EXPORT extern const char kPyAdbInit[];
+  PHONE_COMMON_EXPORT extern const char kPyAdbVerifyCode[];
+  PHONE_COMMON_EXPORT extern const char kPyAdbLogin[];
 }

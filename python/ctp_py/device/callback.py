@@ -74,7 +74,11 @@ def SendCommandResponse(queue, cmd, code, info=None):
   response = pb.apk_protomsg_pb2.CommandResponse()
   response.cmd = cmd.cmd
   response.cmd_no = cmd.cmd_no
-  response.sub_cmd_no = cmd.sub_cmd_no
+  if cmd.sub_cmd_no is not None:
+    response.sub_cmd_no = cmd.sub_cmd_no
+  else:
+    response.sub_cmd_no = 0
+    
   start_timestamp = cmd.timestamp
   response.time_cost = util.utility.UTCTime2TimeInMicroseconds(int(time.time())) - start_timestamp
   response.code = code

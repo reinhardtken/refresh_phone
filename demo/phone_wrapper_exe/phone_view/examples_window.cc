@@ -116,6 +116,8 @@ class CTPWindowContents : public WidgetDelegateView,
         IPC_MESSAGE_HANDLER(L2U_ApkTotalAutoModeInfoToString, OnApkUpdateInfoToString)
         IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
         IPC_MESSAGE_HANDLER(L2U_ApkIRStatus, OnUpdateApkIRStatus)
+        IPC_MESSAGE_HANDLER(L2U_LoginResponse, OnLoginResponse)
+        
 
         //IPC_MESSAGE_UNHANDLED_ERROR()
         IPC_END_MESSAGE_MAP_EX()
@@ -151,6 +153,25 @@ class CTPWindowContents : public WidgetDelegateView,
       phone_module::NOTIFICATION_PHONE_TRANSFER_DEVICES_LIST,
       content::Source<CTPWindowContents>(this),
       content::Details<phone_module::DevicesList const>(&list));
+  }
+
+  void OnLoginResponse(bool const success, std::wstring const & info) {
+    if (success) {
+      //切换到自动界面
+      example_shown_->RemoveAllChildViews(false);
+      example_shown_->AddChildView(example_list_["auto"]->example_view());
+      example_shown_->RequestFocus();
+      Layout();
+      //通知切换到自动模式
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_AutoApkInstallCmd(true));
+    } else {
+      //切换到登录界面
+      example_shown_->RemoveAllChildViews(false);
+      example_shown_->AddChildView(example_list_["login"]->example_view());
+      example_shown_->RequestFocus();
+      Layout();
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_AutoApkInstallCmd(false));
+    }
   }
 
   void OnUpdateApkIRStatus(PointerWrapper<phone_module::ApkIRStatus> const & p) {
@@ -262,7 +283,7 @@ class CTPWindowContents : public WidgetDelegateView,
     // Please keep this list in alphabetical order!
     //combobox_model_.AddExample(new BubbleExample);
     //combobox_model_.AddExample(new ButtonExample);
-    combobox_model_.AddExample(new LoginExample);
+    
     
     // combobox_model_.AddExample(new DoubleSplitViewExample);
     // combobox_model_.AddExample(new LabelExample);
@@ -279,8 +300,15 @@ class CTPWindowContents : public WidgetDelegateView,
     
     //combobox_model_.AddExample(new MQTable);
     if (process_type_.size() == 0) {
-      combobox_model_.AddExample(new AutoTabbedPane);
-      combobox_model_.AddExample(new CTPTabbedPane); 
+      CTPViewBase* p = new LoginExample;
+      example_list_.insert(std::make_pair("login", p));
+      combobox_model_.AddExample(p);
+      p = new AutoTabbedPane;
+      example_list_.insert(std::make_pair("auto", p));
+      combobox_model_.AddExample(p);
+      p = new CTPTabbedPane;
+      example_list_.insert(std::make_pair("manual", p));
+      combobox_model_.AddExample(p); 
       
     } else {
       combobox_model_.AddExample(new GuardView);
@@ -295,6 +323,7 @@ class CTPWindowContents : public WidgetDelegateView,
 
   static CTPWindowContents* instance_;
   ComboboxModelExampleList combobox_model_;
+  std::map<std::string, CTPViewBase*> example_list_;
   Combobox* combobox_;
   View* example_shown_;
   Label* status_label_;

@@ -108,6 +108,8 @@ private:
   void OnTotalAutoInstall(bool b);
   void OnInnerTotalAutoInstall(bool b);
   void OnModeChange(int mode);
+  void OnGetVerifyCode(std::wstring const & phone_number);
+  void OnLogin(std::wstring const & phone_number, std::wstring const & code);
   void NotifyApkCheckUpdateInfo(PointerWrapper<ApkUpdateInfo> &tmp);
   void NotifyGetApkList(PointerWrapper<std::vector< ApkInstallInfo>> &tmp);
   private:

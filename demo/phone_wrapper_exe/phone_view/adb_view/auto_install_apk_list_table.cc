@@ -181,7 +181,7 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   //check_update_apk_list_->set_alignment(TextButton::ALIGN_CENTER);
   auto_mode_ = new TextButton(this, GetAutoModeText(auto_install_mode_));
   auto_mode_->set_alignment(TextButton::ALIGN_CENTER);
-
+  auto_mode_->SetEnabled(false);
 
   column_set = layout->AddColumnSet(index);
   column_set->AddColumn(GridLayout::FILL, GridLayout::FILL,

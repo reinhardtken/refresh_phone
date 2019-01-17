@@ -107,4 +107,6 @@ namespace command {
   const char kPyAdbTotalAutoInstall[] = "pyadb.total_auto_install";
   const char kPyAdbNotifyInstallDigest[] = "pyadb.notify.install_digest";
   const char kPyAdbInit[] = "pyadb.init";
+  const char kPyAdbVerifyCode[] = "pyadb.get_verify_code";
+  const char kPyAdbLogin[] = "pyadb.login";
 }

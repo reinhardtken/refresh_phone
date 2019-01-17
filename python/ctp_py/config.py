@@ -117,6 +117,7 @@ def CreateProp(msg):
   prop['localPath'] = msg.param[0] + '\\ctp_data\\apk_local'
   prop['logPath'] = msg.param[0] + '\\ctp_data\\log'
   prop['debugPath'] = msg.param[0] + '\\ctp_data\\log'
+  prop['token'] = msg.param[0] + '\\ctp_data\\token'
 
   # 判断操作系统版本，根据版本选择adb版本
   if util.utility.XP:

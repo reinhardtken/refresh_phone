@@ -36,6 +36,7 @@ import device.callback
 import my_globals
 import check_update.master
 import defer
+import my_token
 # =======================================================
 
 # ======================================================================
@@ -165,6 +166,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
           init.cmd = consts.COMMAND_INIT
           init.cmd_no = -1
           self.ProcessStartServer(init)
+          self.ProcessInitToken()
       elif self.prop is not None:
         # 只有完成了初始化才能响应业务请求
         if msg.cmd == consts.COMMAND_CHECK_UPDATE:
@@ -188,6 +190,116 @@ class PhoneLogic(util.thread_class.ThreadClass):
           self.ProcessAutoInstall(msg)
         elif msg.cmd == consts.COMMAND_TOTAL_AUTO_INSTALL:
           self.ProcessTotalAutoInstall(msg)
+        elif msg.cmd == consts.COMMAND_VERIFY_CODE:
+          self.ProcessGetVerifyCode(msg)
+        elif msg.cmd == consts.COMMAND_LOGIN:
+          self.ProcessLogin(msg)
+  
+  
+  
+  
+  def ProcessInitToken(self):
+    my_token.token.Init(self.prop['token'])
+    #如果有token，则假设token有效，告知界面切换
+    if my_token.token.Get() is not None:
+      command = pb.apk_protomsg_pb2.Command()
+      command.cmd = consts.COMMAND_LOGIN
+      command.cmd_no = -1
+      self.SendCommandResponse(command,
+                               consts.ERROR_CODE_OK,
+                               [])
+    
+  
+  
+  
+  def ProcessLogin(self, command):
+    url = 'https://apkins.yfbro.com/api/auth/login'
+  
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    }
+    # params = {
+    #   'mobile': command.param[0].encode('utf-8')
+    # }
+    data = {
+      'mobile': command.param[0].encode('utf-8'),
+      'vcode': command.param[1].encode('utf-8'),
+    }
+    ret = False
+    try:
+      timeout = (10, 180)
+      try:
+        response = requests.request("post", url, stream=True, data=data, headers=headers, timeout=timeout)
+      except requests.exceptions.SSLError as e:
+        response = requests.request("post", url, stream=True, data=data, headers=headers, verify=False, timeout=timeout)
+    
+      if response.status_code == 200:
+        json_data = json.loads(response.content)
+        if json_data['code'] == 200:
+          my_token.token.Set(json_data['data']['token'])
+          self.SendCommandResponse(command,
+                                   consts.ERROR_CODE_OK,
+                                   [])
+          return
+        else:
+          self.SendCommandResponse(command,
+                                   consts.ERROR_CODE_LOGIN_FAILED,
+                                   [])
+          return
+      else:
+        self.SendCommandResponse(command,
+                                 consts.ERROR_CODE_LOGIN_FAILED,
+                                 [])
+        print('net Error', response.status_code)
+        return
+  
+  
+    except requests.ConnectionError as e:
+      print('Error', e.args)
+    except Exception as e:
+      print('Error', e.args)
+
+    self.SendCommandResponse(command,
+                             consts.ERROR_CODE_LOGIN_FAILED,
+                             [])
+  
+  
+  
+  
+  def ProcessGetVerifyCode(self, command):
+    url = 'https://apkins.yfbro.com/api/auth/getcode'
+    
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+    }
+    params = {
+      'mobile': command.param[0].encode('utf-8')
+    }
+    ret = False
+    try:
+      timeout = (10, 180)
+      try:
+        response = requests.request("GET", url, stream=True, data=None, headers=headers, params=params, timeout=timeout)
+      except requests.exceptions.SSLError as e:
+        response = requests.request("GET", url, stream=True, data=None, headers=headers, verify=False, params=params, timeout=timeout)
+
+      if response.status_code == 200:
+        json_data = json.loads(response.content)
+        if json_data['code'] == 200:
+          self.SendCommandResponse(command,
+                                   consts.ERROR_CODE_OK,
+                                   [])
+      else:
+        print('net Error', response.status_code)
+      
+
+    except requests.ConnectionError as e:
+      print('Error', e.args)
+    except Exception as e:
+      print('Error', e.args)
+
+  
+  
   
   
   def ProcessStartServer(self, command):

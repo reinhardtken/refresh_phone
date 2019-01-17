@@ -328,6 +328,9 @@ namespace phone_module {
         IPC_MESSAGE_HANDLER(U2L_AutoApkInstallCmd, OnAutoInstall)
         IPC_MESSAGE_HANDLER(U2L_TotalAutoCmd, OnTotalAutoInstall)
         IPC_MESSAGE_HANDLER(U2L_ModeChange, OnModeChange)
+        IPC_MESSAGE_HANDLER(U2L_VerfiyCode, OnGetVerifyCode)
+        IPC_MESSAGE_HANDLER(U2L_Login, OnLogin)
+        
 		  
 		  
         IPC_MESSAGE_UNHANDLED(msg_is_ok = false)
@@ -400,6 +403,10 @@ namespace phone_module {
           if (now_mode_ == 2) {
             ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI, new L2U_ApkTotalAutoModeInfoToString(UTF8ToWide(response->info(0))));
           }
+        } else if (std::string(command::kPyAdbLogin) == response->cmd()) {
+          bool success = response->code() == ERROR_CODE_OK;
+          std::wstring info;//UTF8ToWide(response->info(0)
+          ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI, new L2U_LoginResponse(success, info));
         }
       } else if (p->GetTypeName() == "apk.CommandInstallApkResponse") {
         apk::CommandInstallApkResponse const* response = static_cast<apk::CommandInstallApkResponse const*>(p.get());
@@ -701,6 +708,33 @@ namespace phone_module {
 
   void CTPModule::OnModeChange(int mode) {
     now_mode_ = mode;
+  }
+
+
+  void CTPModule::OnLogin(std::wstring const & phone_number, std::wstring const & code) {
+    apk::Command * cmd = new apk::Command;
+    cmd->set_cmd(command::kPyAdbLogin);
+    cmd->set_cmd_no(cmd_no());
+    cmd->set_timestamp(base::Time::Now().ToInternalValue());
+    cmd->add_param(WideToUTF8(phone_number));
+    cmd->add_param(WideToUTF8(code));
+    codec::MessagePtr ptr(cmd);
+    current_cmd_no_set_.insert(cmd->cmd_no());
+    channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+  }
+
+  void CTPModule::OnGetVerifyCode(std::wstring const & phone_number) {
+    if (channel_host_->HasConnection(switches::kCommunicatePyUpdateApk)) {
+      apk::Command * cmd = new apk::Command;
+      cmd->set_cmd(command::kPyAdbVerifyCode);
+      cmd->set_cmd_no(cmd_no());
+      cmd->set_timestamp(base::Time::Now().ToInternalValue());
+      cmd->add_param(WideToUTF8(phone_number));
+      codec::MessagePtr ptr(cmd);
+      current_cmd_no_set_.insert(cmd->cmd_no());
+      channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
+    } else {
+    }
   }
 
   void CTPModule::OnTotalAutoInstall(bool b) {

@@ -367,7 +367,9 @@ IPC_MESSAGE_CONTROL1(L2U_ApkTotalAutoModeInfoToString,
   IPC_MESSAGE_CONTROL1(U2L_TotalAutoCmd, bool)
   IPC_MESSAGE_CONTROL1(U2L_ModeChange, int)
   IPC_MESSAGE_CONTROL2(U2L_Login, std::wstring, std::wstring)
-                          
+  IPC_MESSAGE_CONTROL1(U2L_VerfiyCode, std::wstring)
+  IPC_MESSAGE_CONTROL2(L2U_LoginResponse,
+    bool, std::wstring)
 
 //must last one
 IPC_MESSAGE_ROUTED0(CTP_LAST)

@@ -51,8 +51,8 @@ class LoginExample : public CTPViewBase,
   Textfield* password_;
 
   // Various buttons to control textfield.
-  TextButton* show_password_;
-  TextButton* clear_all_;
+  TextButton* login_;
+  TextButton* verify_code_;
   TextButton* append_;
   TextButton* set_;
   TextButton* set_style_;
