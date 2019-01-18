@@ -21,6 +21,7 @@ import adbtool.list_devices
 import adbtool.list_package
 import adbtool.uninstall
 import adbtool.recovery
+import adbtool.imei
 import callback
 
 import util.log
@@ -110,6 +111,8 @@ class Proxy(object):
       self.ProcessGetPackageList(command)
     elif command.cmd == consts.COMMAND_REFRESH:
       self.ProcessRefresh(command)
+    elif command.cmd == consts.COMMAND_GET_IMEI:
+      self.ProcessIMEI(command)
     
     self.AfterCommand(command)
   
@@ -192,10 +195,14 @@ class Proxy(object):
     self._CleanCurrentInstallApkResponse()
     
     if command.cmd == consts.COMMAND_INSTALL_APK:
+      # cmd->add_param(WideToUTF8(type));
+      # cmd->add_param(WideToUTF8(it->package_name));
+      # cmd->add_param(WideToUTF8(it->id));
+      
       apk_path = command.param[1].encode('utf-8')
       package_size = util.utility.GetFileSize(apk_path)
       package_name = util.utility.GetPackageNameNoApkExt(apk_path)
-      op = command.param[2].encode('utf-8')
+      op = command.param[3].encode('utf-8')
       #目前看，最慢速度是0.5mb/s，所以按这个数值+30s作为超时时长
       # if 'air.tv.douyu' in package_name and self.debug_once and package_size > 30:
       #   self.debug_once = False
@@ -261,10 +268,14 @@ class Proxy(object):
 
   def ProcessInstallApk(self, command):
     try:
+  
+      # cmd->add_param(WideToUTF8(type));
+      # cmd->add_param(WideToUTF8(it->package_name));
+      # cmd->add_param(WideToUTF8(it->id));
       
       apk_path = command.param[1].encode('utf-8')
       package_name = util.utility.GetPackageNameNoApkExt(apk_path)
-      op = command.param[2].encode('utf-8')
+      op = command.param[3].encode('utf-8')
       if op == consts.INSTALL_TYPE_DELTE_FIRST:
         #先要做删除操作
         self.ProcessUninstallApk(command)
@@ -372,6 +383,31 @@ class Proxy(object):
     except Exception as e:
       pass
     
+  
+  def ProcessIMEI(self, command):
+    try:
+      self.log.info(self)
+      self.log.info('command ' + command.cmd)
+      self.log.info('command id ' + str(command.cmd_no))
+    
+      def Callback(data):
+        self.log.info(data)
+    
+      self.log.info('before ProcessIMEI ')
+      worker = adbtool.imei.Command(self.serial_number, Callback, Callback)
+      worker.Execute()
+
+      #通知外部
+      out = {}
+      out['c'] = consts.COMMAND_INNER_GET_IMEI
+      out['s'] = self.serial_number
+      out['imei'] = worker.GetIMEI()
+      self.queue_master.put(out)
+    
+      self.log.info('end ProcessIMEI')
+  
+    except Exception as e:
+      pass
 # ======================================
 if __name__ == '__main__':
   pass

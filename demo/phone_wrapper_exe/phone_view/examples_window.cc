@@ -163,14 +163,14 @@ class CTPWindowContents : public WidgetDelegateView,
       example_shown_->RequestFocus();
       Layout();
       //通知切换到自动模式
-      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_AutoApkInstallCmd(true));
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_TotalAutoCmd(true));
     } else {
       //切换到登录界面
       example_shown_->RemoveAllChildViews(false);
       example_shown_->AddChildView(example_list_["login"]->example_view());
       example_shown_->RequestFocus();
       Layout();
-      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_AutoApkInstallCmd(false));
+      ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_TotalAutoCmd(false));
     }
   }
 

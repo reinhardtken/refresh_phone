@@ -69,12 +69,19 @@ COMMAND_TOTAL_AUTO_INSTALL = 'pyadb.total_auto_install'
 COMMAND_INIT = 'pyadb.init'
 COMMAND_VERIFY_CODE = 'pyadb.get_verify_code'
 COMMAND_LOGIN = 'pyadb.login'
+COMMAND_GET_IMEI = 'pyadb.imei'
 
 
 #inner
 COMMAND_INNER_START_CHECKOUT_TIMEOUT = 'inner.start_check_timeout'
 COMMAND_INNER_STOP_CHECKOUT_TIMEOUT = 'inner.stop_check_timeout'
 COMMAND_INNER_PACKAGE_LIST = 'inner.package_list'
+COMMAND_INNER_GET_IMEI = 'inner.get_imei'
+
+
+#net打点
+COMMAND_NET_REPORT_DEVICE_INFO = 'net.report_device_info'
+COMMAND_NET_REPORT_INSTALL_APK = 'net.report_install_apk'
 
 
 INSTALL_TYPE_DELTE_FIRST = r'先删除\后安装'
@@ -103,3 +110,25 @@ def AdbMessage2UserMessage(msg):
       return contain_message[key]
     
   return u''
+
+
+
+def LoginCode2ErrorString(code):
+  message = {
+    1000: u'请输入正确的手机号码',
+    1001: u'验证码发送频繁',
+    1002: u'短信发送失败',
+    1003: u'验证码验证失败',
+    1004: u'登录失败',
+    1005: u'设备已存在',
+    1006: u'设备不存在',
+    9993: u'服务器异常',
+    10001: u'无效标识，用户登录失效',
+  }
+  
+  
+  if code in message:
+    return message[code]
+  
+  return u'未知错误'
+  

@@ -449,6 +449,7 @@ namespace phone_module {
             std::vector<ApkInstallInfo> * data = new std::vector<ApkInstallInfo>;
             for (auto i = 0; i < apk_list->apk_list_size(); ++i) {
               ApkInstallInfo info;
+              info.id = apk_list->apk_list(i).id();
               info.package_name = UTF8ToWide(apk_list->apk_list(i).apk_name());
               info.md5 = UTF8ToWide(apk_list->apk_list(i).md5());
               info.name = UTF8ToWide(apk_list->apk_list(i).name());
@@ -665,6 +666,7 @@ namespace phone_module {
       cmd->set_timestamp(base::Time::Now().ToInternalValue());
       cmd->add_param(WideToUTF8(type));
       cmd->add_param(WideToUTF8(it->package_name));
+      cmd->add_param(base::IntToString(it->id));
       codec::MessagePtr ptr(cmd);
       current_cmd_no_set_.insert(cmd->cmd_no());
       channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);

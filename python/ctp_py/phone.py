@@ -72,20 +72,20 @@ class PhoneLogic(util.thread_class.ThreadClass):
     # self.device = adb_wrapper.ADBWrapper()
     # self.device2 = adb_wrapper2.AdbInstall()
     self.last_devices_list = None
-    
-    #设备管理
-    self.master = device.master.Master(queue_out)
-    self.master.Start()
-    
-    
-    #网络拉包
+
+    # 网络拉包
     self.check_update = check_update.master.Master(queue_out)
     self.check_update.Start()
+    
+    
+    #设备管理
+    self.master = device.master.Master(queue_out, self.check_update)
+    self.master.Start()
     
 
     self.sub_command_id = 0
     
-    self.package_set = set()
+    self.package_map = {}
     
     
     self.total_auto_defer = None
@@ -427,12 +427,14 @@ class PhoneLogic(util.thread_class.ThreadClass):
   def ProcessGetLocalPackageList(self, command):
     try:
       local_prop = self.LoadLocalProp()
-      
+      #存储包信息
+
       apk_list = []
       if local_prop is not None:
-        self.package_set.clear()
+        self.package_map.clear()
         for one in local_prop['data']['install']:
           one_apk = pb.apk_protomsg_pb2.OneApk()
+          one_apk.id = one['id']
           one_apk.md5 = one['apkmd5']
           one_apk.name = one['name']
           one_apk.brief = one['brief']
@@ -440,7 +442,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
           one_apk.price = one['price']
           one_apk.type = consts.PACKAGE_BOTH
           one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['apkname'] + '.apk')
-          self.package_set.add(one_apk.apk_name)
+          self.package_map[one_apk.apk_name] = one
           apk_list.append(one_apk)
         
         for one in local_prop['data']['remove']:
@@ -454,7 +456,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
           one_apk.package_size = 0
           apk_list.append(one_apk)
         
-        self.master.UpdateApkList(self.package_set)
+        self.master.UpdateApkList(self.package_map)
         
         self.SendApkList(command,
                          consts.ERROR_CODE_OK, apk_list)

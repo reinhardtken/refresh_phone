@@ -15,6 +15,12 @@ import requests.exceptions
 
 import json
 import os
+
+#########################################################
+if __name__ == '__main__':
+  import sys
+  sys.path.append(r'C:\workspace\code\chromium24\src\phone\python\ctp_py')
+#########################################################
 # ====================================
 
 
@@ -23,6 +29,7 @@ import device.callback
 import consts
 import pb.apk_protomsg_pb2
 import my_globals
+import my_token
 # ====================================
 
 #########################################################
@@ -67,9 +74,16 @@ class Master(object):
   
     
   def ProcessIncome(self, command):
-    if command[0].cmd == consts.COMMAND_CHECK_UPDATE:
+    if isinstance(command, dict):
+      if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
+        self.ProcessReportDeviceInfo(command)
+      elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
+        self.ProcessReportInstallApk(command)
+    elif command[0].cmd == consts.COMMAND_CHECK_UPDATE:
       self.tmp_defferd = command[1]
       self.ProcessInnerCheckUpdate(command[0])
+    
+        
 
     
       
@@ -231,7 +245,7 @@ class Master(object):
     try:
       if data['code'] == 0:
         for one in data['data']['install']:
-          if 'apkname' not in one or 'apkurl' not in one or 'apkmd5' not in one or 'name' not in one or 'price' not in one:
+          if 'apkname' not in one or 'apkurl' not in one or 'apkmd5' not in one or 'name' not in one or 'price' not in one or 'id' not in one:
             return False
       
         for one in data['data']['remove']:
@@ -275,6 +289,9 @@ class Master(object):
   def ProcessCheckUpdate(self, command, deferred=None):
     self.queue_in.put((command, deferred))
     
+    
+  def ProcessReport(self, command):
+    self.queue_in.put(command)
     
   
   def CallbackDeferred(self):
@@ -374,9 +391,108 @@ class Master(object):
         response.info.append(one.decode('utf-8'))
 
     self.queue_out.put(response)
+    
+    
+  @staticmethod
+  def ProcessReportDeviceInfo(command):
+    try:
+      url = 'https://apkins.yfbro.com/api/add/equipment'
+    
+      headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'X-atoken-Authorization': my_token.token.Get(),
+      }
+      # params = {
+      #   'mobile': command.param[0].encode('utf-8')
+      # }
+      data = {
+        'product': command['product'].encode('utf-8'),
+        'model': command['model'].encode('utf-8'),
+        'device': command['device'].encode('utf-8'),
+        'imei': command['imei'].encode('utf-8'),
+        'serialNum': command['serial_number'].encode('utf-8'),
+        'applist': '{}',
+      }
+    
+      timeout = (10, 180)
+      try:
+        response = requests.request("post", url, stream=True, data=data, headers=headers, timeout=timeout)
+      except requests.exceptions.SSLError as e:
+        response = requests.request("post", url, stream=True, data=data, headers=headers, verify=False, timeout=timeout)
+    
+      if response.status_code == 200:
+        json_data = json.loads(response.content)
+        if json_data['code'] == 200:
+          pass
+          return
+        else:
+          return
+      else:
+
+        print('net Error', response.status_code)
+        return
   
   
+    except requests.ConnectionError as e:
+      print('Error', e.args)
+    except Exception as e:
+      print('Error', e.args)
+
+
+
+
+  @staticmethod
+  def ProcessReportInstallApk(command):
+    try:
+      url = 'https://apkins.yfbro.com/api/install/apk'
+    
+      headers = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+        'X-atoken-Authorization': my_token.token.Get(),
+      }
+      # params = {
+      #   'mobile': command.param[0].encode('utf-8')
+      # }
+      data = {
+        'id': command['id'],
+        'status': command['status'],
+        'reason': command['reason'].encode('utf-8'),
+        'imei': command['imei'].encode('utf-8'),
+        'serialNum': command['serial_number'].encode('utf-8'),
+      }
+    
+      timeout = (10, 180)
+      try:
+        response = requests.request("post", url, stream=True, data=data, headers=headers, timeout=timeout)
+      except requests.exceptions.SSLError as e:
+        response = requests.request("post", url, stream=True, data=data, headers=headers, verify=False, timeout=timeout)
+    
+      if response.status_code == 200:
+        json_data = json.loads(response.content)
+        if json_data['code'] == 200:
+          pass
+          return
+        else:
+          return
+      else:
+      
+        print('net Error', response.status_code)
+        return
+  
+  
+    except requests.ConnectionError as e:
+      print('Error', e.args)
+    except Exception as e:
+      print('Error', e.args)
 
 # ======================================
 if __name__ == '__main__':
+  command = {}
+  command['product'] = '123'
+  command['model'] = '123'
+  command['device'] = '123'
+  command['imei'] = '123'
+  command['serial_number'] = '123'
+  my_token.token.Init(r'C:\workspace\code\chromium24\src\build\Debug\ctp_data\token')
+  Master.ProcessReportDeviceInfo(command)
   pass

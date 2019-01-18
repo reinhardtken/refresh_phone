@@ -13,7 +13,7 @@ class CommandBase(object):
   # 如果成功通过ANDROID_ADB_SERVER_PORT设置了自己的端口，则下面的类变量被设置
   global_env = os.environ.copy()
   #for test
-  global_env['ANDROID_ADB_SERVER_PORT'] = '5678'
+  global_env['ANDROID_ADB_SERVER_PORT'] = '5038'
   
   # adb = None
   

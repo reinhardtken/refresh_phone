@@ -17,6 +17,7 @@ import callback
 import consts
 import pb.apk_protomsg_pb2
 import my_globals
+#import check_update
 # ====================================
 class FailedItem(object):
   MAX_TRY = 3
@@ -79,7 +80,11 @@ class OneDevice(object):
     self.serial_number = serial_number
     self.proxy = None
     
+    self.imei = None
+    
     self.model = None
+    self.device = None
+    self.product = None
     # 记录所有已经成功安装的包，除非强制清空，不然不再重复安装
     self.installed_set = set()
 
@@ -113,9 +118,15 @@ class OneDevice(object):
     self.sub_command_id = 0
     
     #需要进行安装的apk集合
-    self.todo_install_apk_set = set()
+    self.todo_install_apk_map = {}
     
     
+  
+  
+  def UpdateProduct(self, info):
+    self.product = info['product']
+    self.model = info['model']
+    self.device = info['device']
   
   
   def _GenSubCommandID(self):
@@ -171,7 +182,7 @@ class OneDevice(object):
 
 
   def UpdateApkList(self, data):
-    self.todo_install_apk_set = data
+    self.todo_install_apk_map = data
     
     
       
@@ -233,7 +244,7 @@ class OneDevice(object):
   def NotifyInstallApkDigest(self, command):
     out = pb.apk_protomsg_pb2.CommandInstallApkDigest()
     out.cmd = consts.COMMAND_NOTIFY_INSTALL_APK_DIGEST
-    out.total_number = len(self.todo_install_apk_set)
+    out.total_number = len(self.todo_install_apk_map)
     out.success_number = len(self.installed_set)
     out.failed_number = len(self.installed_failed)
     out.time_cost = self.digest['time_cost']
@@ -250,17 +261,30 @@ class OneDevice(object):
     
 
 
-  def ProcessInstallApkResponse(self, command):
+  def ProcessInstallApkResponse(self, command, net_report):
+    status = 2
     if command.sub_cmd_no > self.min_sub_command_id:
       if command.stage == '完成'.decode('utf-8'):
         if command.progress == 'Success'.decode('utf-8'):
           self.AddInstalled(command)
+          status = 0
         else:
           self.AddInstallFailed(command.package_name, FailedItem.ERROR_ADB, command.progress, command.time_cost)
 
         # 发送装包摘要
         notify = self.NotifyInstallApkDigest(command)
         my_globals.queue_network.put(notify)
+        
+        #打点
+        new_command = {
+          'c': consts.COMMAND_NET_REPORT_INSTALL_APK,
+          'serial_number': self.serial_number,
+          'id': int(self.todo_install_apk_map[command.package_name]['id']),
+          'imei': self.imei,
+          'status': status,
+          'reason': command.progress.decode('utf-8'),
+        }
+        net_report.ProcessReport(new_command)
       
         
           
@@ -278,6 +302,10 @@ class OneDevice(object):
     for one in self.package_list:
       self.log.info(one)
       
+      
+  def ProcessIMEIResponse(self, command):
+    self.imei = command['imei']
+
       
       
   def IsInPackageList(self, package):
@@ -339,14 +367,16 @@ class OneDevice(object):
     command.param.append(u'all')
     apk_path = my_globals.apk_dir + '\\' + package_name + '.apk'
     command.param.append(apk_path)
+    command.param.append(str(self.todo_install_apk_map[package_name]))
     return command
 #########################################################
 class Master(object):
-  def __init__(self, queue_out):
+  def __init__(self, queue_out, net_report):
     print("Master.init=======================================")
     # self.host = host
     self.queue_out = queue_out
     self.queue_in = Queue.Queue()
+    self.net_report = net_report
     self.devices_map = {}
     # self.last_alive = {}
     self.last_devices_list = []
@@ -356,7 +386,7 @@ class Master(object):
     
     
     # self.apk_map = {}
-    self.todo_install_apk_set = set()
+    self.todo_install_apk_map = {}
     
     
     
@@ -378,9 +408,11 @@ class Master(object):
   def EnterAutoInstall(self, command):
     if int(command.param[0]) == 1:
       self.auto_install_mode = True
+      self.log.info('EnterAutoInstall  true')
       self.TriggerAutoInstall()
     else:
       self.auto_install_mode = False
+      self.log.info('EnterAutoInstall  false')
       
       
   
@@ -415,16 +447,18 @@ class Master(object):
       for one in self.last_devices_list:
         device = self._Add(one['serial_no'])
         if device.Empty():
-          for apk in device.todo_install_apk_set:
+          self.log.info('TriggerAutoInstall  begin')
+          for k, v in device.todo_install_apk_map.items():
             # 没有安装成功
-            if not device.IsInstalled(apk):
-              self.MayTryAgain(device, apk)
+            if not device.IsInstalled(k):
+              self.log.info('TriggerAutoInstall  one ' + k)
+              self.MayTryAgain(device, k)
       
     
     
   
   def UpdateApkList(self, data):
-    self.todo_install_apk_set = data
+    self.todo_install_apk_map = data
     for one in self.last_devices_list:
       device = self._Add(one['serial_no'])
       device.UpdateApkList(data)
@@ -439,9 +473,9 @@ class Master(object):
     else:
       one = OneDevice(self.queue_in, serial_number)
       if serial_number != '-':
-        one.model = self.last_devices_map[serial_number]['model']
+        one.UpdateProduct(self.last_devices_map[serial_number])
       #把要装的包集合设置好
-      one.UpdateApkList(self.todo_install_apk_set)
+      one.UpdateApkList(self.todo_install_apk_map)
       self.devices_map[serial_number] = one
       one.MaybeCreate()
       return one
@@ -510,7 +544,14 @@ class Master(object):
       self.last_devices_list.append(one)
       self.last_devices_map[one['serial_no']] = one
       
-    
+    #对于所有手机，获取IMEI信息
+    for one in self.last_devices_list:
+      new_one = pb.apk_protomsg_pb2.Command()
+      new_one.cmd = consts.COMMAND_GET_IMEI
+      new_one.cmd_no = -1
+      self.ProcessCommand(one['serial_no'], new_one)
+      
+    #对于所有手机，获取已经安装的包列表
     #对于所有手机，如果自动模式，开始装包
     self.TriggerAutoInstall()
       
@@ -520,7 +561,7 @@ class Master(object):
 
 
   def ProcessInstallApkResponse(self, command):
-    return self._Get(command.serial_number).ProcessInstallApkResponse(command)
+    return self._Get(command.serial_number).ProcessInstallApkResponse(command, self.net_report)
   
 
   
@@ -536,6 +577,8 @@ class Master(object):
         forword = self.ProcessStopCheckTimeOut(command)
       elif command['c'] == consts.COMMAND_INNER_PACKAGE_LIST:
         forword = self.ProcessPackageListResponse(command)
+      elif command['c'] == consts.COMMAND_INNER_GET_IMEI:
+        forword = self.ProcessIMEIResponse(command)
     elif command.cmd == consts.COMMAND_INSTALL_APK:
       forword = self.ProcessInstallApkResponse(command)
     
@@ -560,6 +603,23 @@ class Master(object):
     serial_number = command['s']
     return self._Get(serial_number).ProcessPackageListResponse(command)
     pass
+  
+  
+  def ProcessIMEIResponse(self, command):
+    serial_number = command['s']
+    device = self._Get(serial_number)
+    device.ProcessIMEIResponse(command)
+    #这个到了就触发一次update操作，上报数据
+    new_command = {
+      'c':consts.COMMAND_NET_REPORT_DEVICE_INFO,
+      'serial_number': device.serial_number,
+      'product': device.product,
+      'model': device.model,
+      'device': device.device,
+      'imei': device.imei,
+    }
+    self.net_report.ProcessReport(new_command)
+    
     
   
   def ProcessStopCheckTimeOut(self, command):

@@ -3,6 +3,8 @@
 
 import util.utility
 
+
+#http://note.youdao.com/noteshare?id=7019a6d986d313ce13da19ed423fef56
 class Token(object):
   def __init__(self):
     self.__GToken = None

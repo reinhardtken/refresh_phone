@@ -532,6 +532,7 @@ struct ApkUpdateInfo {
 
 
 struct ApkInstallInfo {
+  int id;
   std::wstring package_name;
   std::wstring md5;
   std::wstring name;
