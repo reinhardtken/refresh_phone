@@ -247,7 +247,9 @@ class OneDevice(object):
     out.total_number = len(self.todo_install_apk_map)
     out.success_number = len(self.installed_set)
     out.failed_number = len(self.installed_failed)
-    out.time_cost = self.digest['time_cost']
+    #ValueError: Value out of range: 2185000000
+    #过大了，反正本来也不准，先不填了
+    out.time_cost = 0#self.digest['time_cost']
     out.serial_number = self.serial_number
     out.model = self.model
     for one in self.installed_failed.values():
@@ -256,6 +258,14 @@ class OneDevice(object):
       failed.adb_message = one.error_message
       failed.user_message = consts.AdbMessage2UserMessage(one.error_message)
       failed.try_times = one.try_times
+    
+    #成功的也回传
+    for one in self.installed_set:
+      failed = out.fail_list.add()
+      failed.package_name = one
+      failed.try_times = -1
+      failed.adb_message = ''
+      failed.user_message = ''
       
     return out
     

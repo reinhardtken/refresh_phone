@@ -268,7 +268,14 @@ namespace phone_module {
       content::NotificationService::AllSources(),
       content::NotificationService::NoDetails());
     
-
+#if !defined(_DEBUG)
+    //因为socket创建也是异步的，如果py起来，socket还没好就无法通讯了
+    CommonThread::PostDelayedTask(CommonThread::CTP,
+      FROM_HERE,
+      base::Bind(&CTPModule::OnLaunchPYWrapper, base::Unretained(this)),
+      5 * 1000);
+    //OnLaunchPY();
+#endif
     LOG(INFO)<<"CTPModule::CTPModule over";
   }
 
@@ -769,6 +776,12 @@ namespace phone_module {
     channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
   }
 
+
+  void CTPModule::OnLaunchPYWrapper() {
+    if (!channel_host_->HasConnection(switches::kCommunicatePyUpdateApk)) {
+      OnLaunchPY();
+    }
+  }
 
   void CTPModule::OnLaunchPY() {
     FilePath cur;

@@ -225,27 +225,41 @@ string16 AutoInstallApkListTable::GetText(int row, int column_id) {
   if ((uint32)row >= failed_list_.size()) {
     return string16();
   }
-  switch (column_id) {
-      case 0: {
-		  return failed_list_[row].package_name;
-        break;
-      }
-      case 1: {
-        return base::IntToString16(failed_list_[row].try_times);
-        break;
-      }
-      case 2: {
-        return failed_list_[row].user_message;
-        break;
-      }
-      case 3: {
-        return failed_list_[row].error_message;
-        break;
-      }
-      default: {
-        //DCHECK(false);
-      }
+  if (failed_list_[row].try_times > 0) {
+    switch (column_id) {
+    case 0: {
+      return failed_list_[row].package_name;
+      break;
+    }
+    case 1: {
+      return base::IntToString16(failed_list_[row].try_times);
+      break;
+    }
+    case 2: {
+      return failed_list_[row].user_message;
+      break;
+    }
+    case 3: {
+      return failed_list_[row].error_message;
+      break;
+    }
+    default: {
+      //DCHECK(false);
+    }
+    }
+  } else {
+    //³É¹¦µÄ
+    switch (column_id) {
+    case 0: {
+      return failed_list_[row].package_name;
+      break;
+    }
+    default: {
+      //DCHECK(false);
+    }
+    }
   }
+  
  
 
   return string16();
@@ -287,7 +301,9 @@ string16 AutoInstallApkListTable::GetText2(int row, int column_id) {
   case 6: {
     std::wstring tmp;
     for (auto it = install_digest_data_[row].failed_list.begin(); it != install_digest_data_[row].failed_list.end(); ++it) {
-      tmp.append(it->package_name).append(L",");
+      if (it->try_times > 0) {
+        tmp.append(it->package_name).append(L",");
+      }
     }
     
     return tmp;
@@ -305,6 +321,9 @@ string16 AutoInstallApkListTable::GetText2(int row, int column_id) {
 
 
 gfx::ImageSkia AutoInstallApkListTable::GetIcon(int row) {
+  if ((int)failed_list_.size() > row) {
+    return failed_list_[row].try_times > 0 ? *die_ : *alive_;
+  }
   return *die_;
 }
 

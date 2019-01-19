@@ -112,6 +112,7 @@ private:
   void OnLogin(std::wstring const & phone_number, std::wstring const & code);
   void NotifyApkCheckUpdateInfo(PointerWrapper<ApkUpdateInfo> &tmp);
   void NotifyGetApkList(PointerWrapper<std::vector< ApkInstallInfo>> &tmp);
+  void OnLaunchPYWrapper();
   private:
     //scoped_ptr<MarketQuotationBase> market_quotation_base_;
 
