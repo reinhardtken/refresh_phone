@@ -229,7 +229,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     #   'mobile': command.param[0].encode('utf-8'),
     #   'vcode': command.param[1].encode('utf-8'),
     # }
-    ret = False
+
     try:
       timeout = (10, 180)
       try:
@@ -472,29 +472,29 @@ class PhoneLogic(util.thread_class.ThreadClass):
       apk_list = []
       if local_prop is not None:
         self.package_map.clear()
-        for one in local_prop['data']['install']:
+        for one in local_prop['data']:
           one_apk = pb.apk_protomsg_pb2.OneApk()
           one_apk.id = one['id']
-          one_apk.md5 = one['apkmd5']
-          one_apk.name = one['name']
-          one_apk.brief = one['brief']
-          one_apk.apk_name = one['apkname']
+          one_apk.md5 = one['md5']
+          one_apk.name = one['apkName']
+          one_apk.brief = one['introduction']
+          one_apk.apk_name = one['packageName']
           one_apk.price = one['price']
           one_apk.type = consts.PACKAGE_BOTH
-          one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['apkname'] + '.apk')
+          one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['packageName'] + '.apk')
           self.package_map[one_apk.apk_name] = one
           apk_list.append(one_apk)
         
-        for one in local_prop['data']['remove']:
-          one_apk = pb.apk_protomsg_pb2.OneApk()
-          one_apk.md5 = ''.decode('utf-8')
-          one_apk.name = one['name']
-          one_apk.brief = ''.decode('utf-8')
-          one_apk.apk_name = one['apkname']
-          one_apk.price = one['price']
-          one_apk.type = consts.PACKAGE_REMOVE
-          one_apk.package_size = 0
-          apk_list.append(one_apk)
+        # for one in local_prop['data']['remove']:
+        #   one_apk = pb.apk_protomsg_pb2.OneApk()
+        #   one_apk.md5 = ''.decode('utf-8')
+        #   one_apk.name = one['packageName']
+        #   one_apk.brief = ''.decode('utf-8')
+        #   one_apk.apk_name = one['apkName']
+        #   one_apk.price = one['price']
+        #   one_apk.type = consts.PACKAGE_REMOVE
+        #   one_apk.package_size = 0
+        #   apk_list.append(one_apk)
         
         self.master.UpdateApkList(self.package_map)
         

@@ -112,6 +112,12 @@ def test_defer():
 
 
 if __name__ == '__main__':
+  from HTMLParser import HTMLParser
+  xx = unichr(20013)
+  aa = u"&#xE426;&#xF78F;&#xE891;&#xF78F;&#xF2F8;&#xF78F;&#xEBED;&#xF2F8;&#xF2F8;"
+  a = "&#xE426;&#xF78F;&#xE891;&#xF78F;&#xF2F8;&#xF78F;&#xEBED;&#xF2F8;&#xF2F8;"
+  b = HTMLParser().unescape(a)
+  bb = HTMLParser().unescape(aa)
   testa()
   live = adbtool.find_server.FindAllServer()
   adbtool.find_server.KillAllServer(live)

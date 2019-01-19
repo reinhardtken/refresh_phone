@@ -327,27 +327,28 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       
       apk_list = []
       if local_prop is not None:
-        for one in local_prop['data']['install']:
+        for one in local_prop['data']:
           one_apk = pb.apk_protomsg_pb2.OneApk()
-          one_apk.md5 = one['apkmd5']
-          one_apk.name = one['name']
-          one_apk.brief = one['brief']
-          one_apk.apk_name = one['apkname']
+          one_apk.md5 = one['md5']
+          #packagename和apkname互换了。。。
+          one_apk.packageName = one['packageName']
+          one_apk.brief = one['introduction']
+          one_apk.apk_name = one['packageName']
           one_apk.price = one['price']
           one_apk.type = consts.PACKAGE_BOTH
-          one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['apkname'] + '.apk')
+          one_apk.package_size = util.utility.GetFileSize(self.prop['apkPath'] + '/' + one['packageName'] + '.apk')
           apk_list.append(one_apk)
 
-        for one in local_prop['data']['remove']:
-          one_apk = pb.apk_protomsg_pb2.OneApk()
-          one_apk.md5 = ''.decode('utf-8')
-          one_apk.name = one['name']
-          one_apk.brief = ''.decode('utf-8')
-          one_apk.apk_name = one['apkname']
-          one_apk.price = one['price']
-          one_apk.type = consts.PACKAGE_REMOVE
-          one_apk.package_size = 0
-          apk_list.append(one_apk)
+        # for one in local_prop['data']['remove']:
+        #   one_apk = pb.apk_protomsg_pb2.OneApk()
+        #   one_apk.md5 = ''.decode('utf-8')
+        #   one_apk.name = one['packageName']
+        #   one_apk.brief = ''.decode('utf-8')
+        #   one_apk.apk_name = one['packageName']
+        #   one_apk.price = one['price']
+        #   one_apk.type = consts.PACKAGE_REMOVE
+        #   one_apk.package_size = 0
+        #   apk_list.append(one_apk)
 
 
         # self.device.UpdateApkList(apk_list)
@@ -413,33 +414,33 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
         if self.local_prop is not None:
           #检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
           old_package_name_set = set()
-          for old_one in self.local_prop['data']['install']:
-            old_package_name_set.add(old_one['apkname'])
+          for old_one in self.local_prop['data']:
+            old_package_name_set.add(old_one['packageName'])
           new_package_name_set = set()
-          for new_one in data['data']['install']:
-            new_package_name_set.add(new_one['apkname'])
+          for new_one in data['data']:
+            new_package_name_set.add(new_one['packageName'])
             
           diff_set = new_package_name_set - old_package_name_set
           solved_package_name = set()
-          for new_one in data['data']['install']:
-            for old_one in self.local_prop['data']['install']:
+          for new_one in data['data']:
+            for old_one in self.local_prop['data']:
               #1 如果包名在差集合，说明是新增，需要下载
               # 2 如果包名不在差集，说明不是新增，但md5不一致，说明换包了，需要下载
               #3 如果包名不在差集，说明不是新增，md5一致，但是本地没文件，需要下载
-              file_path = self.prop['apkPath'] + '/' + new_one['apkname'] + '.apk'
+              file_path = self.prop['apkPath'] + '/' + new_one['packageName'] + '.apk'
 
-              if new_one['apkname'] in diff_set or \
-                  (new_one['apkname'] == old_one['apkname'] and new_one['apkmd5'] != old_one['apkmd5']) or \
-                        (new_one['apkname'] == old_one['apkname'] and os.path.exists(file_path) == False):
+              if new_one['packageName'] in diff_set or \
+                  (new_one['packageName'] == old_one['packageName'] and new_one['md5'] != old_one['md5']) or \
+                        (new_one['packageName'] == old_one['packageName'] and os.path.exists(file_path) == False):
                 need_save_json = True
-                if new_one['apkname'] not in solved_package_name and self.DownloadOneApk(new_one, command):
-                  solved_package_name.add(new_one['apkname'])
+                if new_one['packageName'] not in solved_package_name and self.DownloadOneApk(new_one, command):
+                  solved_package_name.add(new_one['packageName'])
 
           
         else:
           #不存在本地配置
           need_save_json = True
-          for new_one in data['data']['install']:
+          for new_one in data['data']:
             self.DownloadOneApk(new_one, command)
             
         
@@ -534,7 +535,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
 
 
   def DownloadFile(self, command, one, file_path, callback):
-    url = one['apkurl']
+    url = one['downUrl']
     
     headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
@@ -565,7 +566,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       self.SendCommandResponse(command, consts.ERROR_CODE_DOWNLOAD_APK_FAILED,
                                ['包更新',
                                 consts.error_string(consts.ERROR_CODE_DOWNLOAD_APK_FAILED),
-                                one['apkname']])
+                                one['packageName']])
     return ret
   
   
@@ -581,7 +582,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       if percent - self.last_report > 0.05 or now == total:
         self.last_report = percent
         data = ("%.2f%%" % (percent *100))
-        self.host.SendCommandResponse(self.command, consts.ERROR_CODE_OK, ['包更新', '下载中', self.one['apkname'], data])
+        self.host.SendCommandResponse(self.command, consts.ERROR_CODE_OK, ['包更新', '下载中', self.one['packageName'], data])
       pass
  
   
@@ -590,22 +591,22 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
   
   def DownloadOneApk(self, one, command):
     result = False
-    file_path = self.prop['apkPath'] + '/' + one['apkname'] + '.apk'
+    file_path = self.prop['apkPath'] + '/' + one['packageName'] + '.apk'
 
     #检查文件是否存在
     if os.path.exists(file_path):
       #文件存在判断md5是否匹配
       md5 = util.utility.GetFileMD5(file_path)
-      if md5 != one['apkmd5']:
+      if md5 != one['md5']:
         os.remove(file_path)
       else:
-        self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['apkname']])
+        self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['packageName']])
         result = True
         return result
 
 
     #开始下载
-    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '开始下载', one['apkname']])
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '开始下载', one['packageName']])
     
     
     
@@ -615,17 +616,17 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       ret = self.DownloadFile(command, one, file_path, dc.callback_progress)
       if ret:
         md5 = util.utility.GetFileMD5(file_path)
-        if md5 != one['apkmd5']:
+        if md5 != one['md5']:
           # 删除文件
           os.remove(file_path)
           self.SendCommandResponse(command, consts.ERROR_CODE_MD5_APK_FAILED,
                                    ['包更新', consts.error_string(consts.ERROR_CODE_MD5_APK_FAILED),
-                                    one['apkname']])
+                                    one['packageName']])
         else:
           self.SendCommandResponse(command, consts.ERROR_CODE_OK,
                                    ['包更新',
                                     '下载成功',
-                                    one['apkname']])
+                                    one['packageName']])
           result = True
       
     except Exception as e:
@@ -636,7 +637,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
       self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_APK_FILE_FAILED,
                                ['包更新',
                                 consts.error_string(consts.ERROR_CODE_SAVE_APK_FILE_FAILED),
-                                one['apkname']])
+                                one['packageName']])
       
     
     return result
@@ -651,26 +652,26 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
      "msg": "",
      "data":
        {"install":
-          [{"id": 2, "apkurl": "http:\/\/s0qrdt.kdndj.com\/files\/d5e4ce46458ce2c4940b8702cefa9e44.apk",
-            "apkmd5": "d3edb026aa97b5f429b6da1ebe746005",
-            "name": "\u817e\u8baf\u5e94\u7528\u5b9d",
+          [{"id": 2, "downUrl": "http:\/\/s0qrdt.kdndj.com\/files\/d5e4ce46458ce2c4940b8702cefa9e44.apk",
+            "md5": "d3edb026aa97b5f429b6da1ebe746005",
+            "packageName": "\u817e\u8baf\u5e94\u7528\u5b9d",
             "brief": "\u4e3a\u667a\u80fd\u624b\u673a\u7528\u6237\u6253\u9020\u7684\u4e00\u4e2a\u624b\u673a\u5e94\u7528\u83b7\u53d6\u5e73\u53f0",
             "orderid": 1,
             "updated_at": "2018-10-24 17:21:44",
             "created_at": "2018-10-24 11:38:28",
-            "apkname": "com.tencent.android.qqdownloader",
+            "apkName": "com.tencent.android.qqdownloader",
             "price": "2.00"}
     """
     result = False
     try:
       if data['code'] == 0:
-        for one in data['data']['install']:
-          if 'apkname' not in one or 'apkurl'  not in one or 'apkmd5' not in one or 'name' not in one or 'price' not in one:
+        for one in data['data']:
+          if 'apkName' not in one or 'downUrl'  not in one or 'md5' not in one or 'packageName' not in one or 'price' not in one:
             return False
 
-        for one in data['data']['remove']:
-          if 'apkname'  not in one:
-            return False
+        # for one in data['data']['remove']:
+        #   if 'apkName'  not in one:
+        #     return False
 
         return True
 
