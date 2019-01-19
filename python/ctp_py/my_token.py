@@ -13,7 +13,7 @@ class Token(object):
   def Init(self, path):
     self.__path = path
     tmp = util.utility.ReadJsonProp(path)
-    if tmp is not None:
+    if tmp is not None and len(tmp['token']) > 0:
       self.__GToken = tmp['token']
     
     
@@ -21,7 +21,10 @@ class Token(object):
   def Set(self, new_token):
     self.__GToken = new_token
     tmp = {}
-    tmp['token'] = new_token
+    if new_token is not None:
+      tmp['token'] = new_token
+    else:
+      tmp['token'] = ''
     util.utility.WriteJsonFile(self.__path, tmp)
     
     

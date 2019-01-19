@@ -423,9 +423,9 @@ class Master(object):
       if response.status_code == 200:
         json_data = json.loads(response.content)
         if json_data['code'] == 200:
-          pass
           return
         else:
+          my_token.token.Set(None)
           return
       else:
 
@@ -470,9 +470,9 @@ class Master(object):
       if response.status_code == 200:
         json_data = json.loads(response.content)
         if json_data['code'] == 200:
-          pass
           return
         else:
+          my_token.token.Set(None)
           return
       else:
       

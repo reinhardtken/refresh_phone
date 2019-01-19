@@ -200,17 +200,57 @@ class PhoneLogic(util.thread_class.ThreadClass):
   
   def ProcessInitToken(self):
     my_token.token.Init(self.prop['token'])
-    #如果有token，则假设token有效，告知界面切换
+    #如果有token
     if my_token.token.Get() is not None:
-      command = pb.apk_protomsg_pb2.Command()
-      command.cmd = consts.COMMAND_LOGIN
-      command.cmd_no = -1
-      self.SendCommandResponse(command,
-                               consts.ERROR_CODE_OK,
-                               [])
+      #验证token有效性，有效则切换，告知界面切换
+      if self.VerifyToken():
+        command = pb.apk_protomsg_pb2.Command()
+        command.cmd = consts.COMMAND_LOGIN
+        command.cmd_no = -1
+        self.SendCommandResponse(command,
+                                 consts.ERROR_CODE_OK,
+                                 [])
+      else:
+        my_token.token.Set(None)
     
   
   
+  def VerifyToken(self):
+    url = 'https://apkins.yfbro.com/api/applist'
+  
+    headers = {
+      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+      'X-atoken-Authorization': my_token.token.Get(),
+    }
+    # params = {
+    #   'mobile': command.param[0].encode('utf-8')
+    # }
+    # data = {
+    #   'mobile': command.param[0].encode('utf-8'),
+    #   'vcode': command.param[1].encode('utf-8'),
+    # }
+    ret = False
+    try:
+      timeout = (10, 180)
+      try:
+        response = requests.request("get", url, stream=True, data=None, headers=headers, timeout=timeout)
+      except requests.exceptions.SSLError as e:
+        response = requests.request("get", url, stream=True, data=None, headers=headers, verify=False, timeout=timeout)
+    
+      if response.status_code == 200:
+        json_data = json.loads(response.content)
+        if json_data['code'] == 200:
+          return True
+        else:
+          my_token.token.Set(None)
+    except requests.ConnectionError as e:
+      print('Error', e.args)
+    except Exception as e:
+      print('Error', e.args)
+  
+    return False
+    
+    
   
   def ProcessLogin(self, command):
     url = 'https://apkins.yfbro.com/api/auth/login'
