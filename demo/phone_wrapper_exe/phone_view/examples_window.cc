@@ -95,6 +95,7 @@ class CTPWindowContents : public WidgetDelegateView,
         status_label_(new Label),
         command_(c),
         icon_(NULL),
+        debug_(false),
         ThreadMessageFilter(true),
         operation_(operation) {
     instance_ = this;
@@ -117,7 +118,7 @@ class CTPWindowContents : public WidgetDelegateView,
         IPC_MESSAGE_HANDLER(L2U_DevicesList, OnDeviceUpdate)
         IPC_MESSAGE_HANDLER(L2U_ApkIRStatus, OnUpdateApkIRStatus)
         IPC_MESSAGE_HANDLER(L2U_LoginResponse, OnLoginResponse)
-        
+        IPC_MESSAGE_HANDLER(L2U_DebugMode, OnDebugMode)
 
         //IPC_MESSAGE_UNHANDLED_ERROR()
         IPC_END_MESSAGE_MAP_EX()
@@ -154,6 +155,11 @@ class CTPWindowContents : public WidgetDelegateView,
       content::Source<CTPWindowContents>(this),
       content::Details<phone_module::DevicesList const>(&list));
   }
+  
+  void OnDebugMode(bool const debug) {
+    debug_ = debug;
+    CTPWindowContents::instance()->GetWidget()->UpdateWindowTitle();
+  }
 
   void OnLoginResponse(bool const success, std::wstring const & info) {
     if (success) {
@@ -171,6 +177,10 @@ class CTPWindowContents : public WidgetDelegateView,
       example_shown_->RequestFocus();
       Layout();
       ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::CTP, new U2L_TotalAutoCmd(false));
+      content::NotificationService::current()->Notify(
+        phone_module::NOTIFICATION_PHONE_LOGIN_FAILED_STATUS,
+        content::Source<CTPWindowContents>(this),
+        content::Details<std::wstring const>(&info));
     }
   }
 
@@ -210,8 +220,12 @@ class CTPWindowContents : public WidgetDelegateView,
   virtual bool CanResize() const OVERRIDE { return true; }
   virtual bool CanMaximize() const OVERRIDE { return true; }
   virtual string16 GetWindowTitle() const OVERRIDE {
-    
-    std::wstring head = L"刷包大师 (1.0.0.25) ";    
+    std::wstring head = L"刷包大师 (1.0.0.29) ";
+    if (debug_) {
+      head.append(L" : debug");
+    } else {
+
+    }
     return head;
   }
   virtual View* GetContentsView() OVERRIDE { return this; }
@@ -332,6 +346,7 @@ class CTPWindowContents : public WidgetDelegateView,
   CommandLine const& command_;
   std::string process_type_;
   gfx::ImageSkia* icon_;
+  bool debug_;
 
   DISALLOW_COPY_AND_ASSIGN(CTPWindowContents);
 };

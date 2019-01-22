@@ -643,10 +643,22 @@ class FailTuple : public ::google::protobuf::Message {
   inline ::std::string* release_package_name();
   inline void set_allocated_package_name(::std::string* package_name);
 
-  // required string adb_message = 2;
+  // required string app_name = 2;
+  inline bool has_app_name() const;
+  inline void clear_app_name();
+  static const int kAppNameFieldNumber = 2;
+  inline const ::std::string& app_name() const;
+  inline void set_app_name(const ::std::string& value);
+  inline void set_app_name(const char* value);
+  inline void set_app_name(const char* value, size_t size);
+  inline ::std::string* mutable_app_name();
+  inline ::std::string* release_app_name();
+  inline void set_allocated_app_name(::std::string* app_name);
+
+  // required string adb_message = 3;
   inline bool has_adb_message() const;
   inline void clear_adb_message();
-  static const int kAdbMessageFieldNumber = 2;
+  static const int kAdbMessageFieldNumber = 3;
   inline const ::std::string& adb_message() const;
   inline void set_adb_message(const ::std::string& value);
   inline void set_adb_message(const char* value);
@@ -655,10 +667,10 @@ class FailTuple : public ::google::protobuf::Message {
   inline ::std::string* release_adb_message();
   inline void set_allocated_adb_message(::std::string* adb_message);
 
-  // required string user_message = 3;
+  // required string user_message = 4;
   inline bool has_user_message() const;
   inline void clear_user_message();
-  static const int kUserMessageFieldNumber = 3;
+  static const int kUserMessageFieldNumber = 4;
   inline const ::std::string& user_message() const;
   inline void set_user_message(const ::std::string& value);
   inline void set_user_message(const char* value);
@@ -667,10 +679,10 @@ class FailTuple : public ::google::protobuf::Message {
   inline ::std::string* release_user_message();
   inline void set_allocated_user_message(::std::string* user_message);
 
-  // required int32 try_times = 4;
+  // required int32 try_times = 5;
   inline bool has_try_times() const;
   inline void clear_try_times();
-  static const int kTryTimesFieldNumber = 4;
+  static const int kTryTimesFieldNumber = 5;
   inline ::google::protobuf::int32 try_times() const;
   inline void set_try_times(::google::protobuf::int32 value);
 
@@ -678,6 +690,8 @@ class FailTuple : public ::google::protobuf::Message {
  private:
   inline void set_has_package_name();
   inline void clear_has_package_name();
+  inline void set_has_app_name();
+  inline void clear_has_app_name();
   inline void set_has_adb_message();
   inline void clear_has_adb_message();
   inline void set_has_user_message();
@@ -688,12 +702,13 @@ class FailTuple : public ::google::protobuf::Message {
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
   ::std::string* package_name_;
+  ::std::string* app_name_;
   ::std::string* adb_message_;
   ::std::string* user_message_;
   ::google::protobuf::int32 try_times_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(4 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(5 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -2577,15 +2592,85 @@ inline void FailTuple::set_allocated_package_name(::std::string* package_name) {
   }
 }
 
-// required string adb_message = 2;
-inline bool FailTuple::has_adb_message() const {
+// required string app_name = 2;
+inline bool FailTuple::has_app_name() const {
   return (_has_bits_[0] & 0x00000002u) != 0;
 }
-inline void FailTuple::set_has_adb_message() {
+inline void FailTuple::set_has_app_name() {
   _has_bits_[0] |= 0x00000002u;
 }
-inline void FailTuple::clear_has_adb_message() {
+inline void FailTuple::clear_has_app_name() {
   _has_bits_[0] &= ~0x00000002u;
+}
+inline void FailTuple::clear_app_name() {
+  if (app_name_ != &::google::protobuf::internal::kEmptyString) {
+    app_name_->clear();
+  }
+  clear_has_app_name();
+}
+inline const ::std::string& FailTuple::app_name() const {
+  return *app_name_;
+}
+inline void FailTuple::set_app_name(const ::std::string& value) {
+  set_has_app_name();
+  if (app_name_ == &::google::protobuf::internal::kEmptyString) {
+    app_name_ = new ::std::string;
+  }
+  app_name_->assign(value);
+}
+inline void FailTuple::set_app_name(const char* value) {
+  set_has_app_name();
+  if (app_name_ == &::google::protobuf::internal::kEmptyString) {
+    app_name_ = new ::std::string;
+  }
+  app_name_->assign(value);
+}
+inline void FailTuple::set_app_name(const char* value, size_t size) {
+  set_has_app_name();
+  if (app_name_ == &::google::protobuf::internal::kEmptyString) {
+    app_name_ = new ::std::string;
+  }
+  app_name_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* FailTuple::mutable_app_name() {
+  set_has_app_name();
+  if (app_name_ == &::google::protobuf::internal::kEmptyString) {
+    app_name_ = new ::std::string;
+  }
+  return app_name_;
+}
+inline ::std::string* FailTuple::release_app_name() {
+  clear_has_app_name();
+  if (app_name_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = app_name_;
+    app_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void FailTuple::set_allocated_app_name(::std::string* app_name) {
+  if (app_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete app_name_;
+  }
+  if (app_name) {
+    set_has_app_name();
+    app_name_ = app_name;
+  } else {
+    clear_has_app_name();
+    app_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// required string adb_message = 3;
+inline bool FailTuple::has_adb_message() const {
+  return (_has_bits_[0] & 0x00000004u) != 0;
+}
+inline void FailTuple::set_has_adb_message() {
+  _has_bits_[0] |= 0x00000004u;
+}
+inline void FailTuple::clear_has_adb_message() {
+  _has_bits_[0] &= ~0x00000004u;
 }
 inline void FailTuple::clear_adb_message() {
   if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
@@ -2647,15 +2732,15 @@ inline void FailTuple::set_allocated_adb_message(::std::string* adb_message) {
   }
 }
 
-// required string user_message = 3;
+// required string user_message = 4;
 inline bool FailTuple::has_user_message() const {
-  return (_has_bits_[0] & 0x00000004u) != 0;
+  return (_has_bits_[0] & 0x00000008u) != 0;
 }
 inline void FailTuple::set_has_user_message() {
-  _has_bits_[0] |= 0x00000004u;
+  _has_bits_[0] |= 0x00000008u;
 }
 inline void FailTuple::clear_has_user_message() {
-  _has_bits_[0] &= ~0x00000004u;
+  _has_bits_[0] &= ~0x00000008u;
 }
 inline void FailTuple::clear_user_message() {
   if (user_message_ != &::google::protobuf::internal::kEmptyString) {
@@ -2717,15 +2802,15 @@ inline void FailTuple::set_allocated_user_message(::std::string* user_message) {
   }
 }
 
-// required int32 try_times = 4;
+// required int32 try_times = 5;
 inline bool FailTuple::has_try_times() const {
-  return (_has_bits_[0] & 0x00000008u) != 0;
+  return (_has_bits_[0] & 0x00000010u) != 0;
 }
 inline void FailTuple::set_has_try_times() {
-  _has_bits_[0] |= 0x00000008u;
+  _has_bits_[0] |= 0x00000010u;
 }
 inline void FailTuple::clear_has_try_times() {
-  _has_bits_[0] &= ~0x00000008u;
+  _has_bits_[0] &= ~0x00000010u;
 }
 inline void FailTuple::clear_try_times() {
   try_times_ = 0;

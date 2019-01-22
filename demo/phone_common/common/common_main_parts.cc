@@ -61,6 +61,9 @@ namespace {
 
   local_state->RegisterStringPref(prefs::kCheckUpdateApkList, "127.0.0.1:7789");
   local_state->RegisterStringPref(prefs::kAdbServer, "127.0.0.1:5037");
+  //debugmode
+  local_state->RegisterBooleanPref(prefs::kDebugMode, false);
+  
     
   }
 
@@ -69,12 +72,12 @@ namespace {
     common::RegisterPathProvider();
     FilePath local_state_path;
     PathService::Get(common::CTP_DATA, &local_state_path);
-    std::wstring filename_tail = ASCIIToWide(process_type);
-    if (filename_tail.size() == 0) {
-      filename_tail = ASCIIToWide(switches::kProcessTypeGuard);
-    }
-    std::wstring filename = L"local_state_";
-    filename.append(filename_tail);
+    //std::wstring filename_tail = ASCIIToWide(process_type);
+    //if (filename_tail.size() == 0) {
+    //  filename_tail = ASCIIToWide(switches::kProcessTypeGuard);
+    //}
+    std::wstring filename = L"local_state_phone";
+    //filename.append(filename_tail);
     local_state_path = local_state_path.Append(filename);
     
 

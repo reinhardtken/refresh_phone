@@ -15,6 +15,7 @@ import psutil
 import re
 import util.utility
 import adbtool.find_server
+import check_update.master
 
 import requests
 # import progressbar
@@ -112,6 +113,13 @@ def test_defer():
 
 
 if __name__ == '__main__':
+  import my_token
+  import config
+  import check_update.master
+  my_token.token.Init(r'C:\workspace\code\chromium24\src\build\Release\ctp_data\token')
+  config.URL = 'https://apkins.yfbro.com'
+  check_update.master.Master.PullJsonFile()
+  
   from HTMLParser import HTMLParser
   xx = unichr(20013)
   aa = u"&#xE426;&#xF78F;&#xE891;&#xF78F;&#xF2F8;&#xF78F;&#xEBED;&#xF2F8;&#xF2F8;"

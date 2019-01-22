@@ -93,6 +93,10 @@ def CheckUpdateParams(param):
 
 
 
+URL = None
+__debugURL = r'http://es.kdndj.com'
+__releaseURL = r'https://apkins.yfbro.com'
+
 # def KeepAliveCheckUpdateParams():
 #   params = {}
 #   params["port"] = __KEEPALIVE_CHECK_UPDATE_PORT
@@ -126,6 +130,15 @@ def CreateProp(msg):
     prop['adb_exe'] = msg.param[0] + '\\adb_1.0.39\\adb.exe'
 
   # prop['adb_exe'] = msg.param[0] + '\\adb_1.0.32\\adb.exe'
+  
+  
+  #判断使用debug还是release的server
+  global URL
+  debug = int(msg.param[1])
+  if debug == 0:
+    URL = __releaseURL
+  else:
+    URL = __debugURL
   
   return prop
 

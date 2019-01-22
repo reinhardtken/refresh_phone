@@ -216,7 +216,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
   
   
   def VerifyToken(self):
-    url = 'https://apkins.yfbro.com/api/applist'
+    url = config.URL + '/api/applist'
   
     headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
@@ -253,7 +253,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     
   
   def ProcessLogin(self, command):
-    url = 'https://apkins.yfbro.com/api/auth/login'
+    url = config.URL + '/api/auth/login'
   
     headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
@@ -272,6 +272,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
         response = requests.request("post", url, stream=True, data=data, headers=headers, timeout=timeout)
       except requests.exceptions.SSLError as e:
         response = requests.request("post", url, stream=True, data=data, headers=headers, verify=False, timeout=timeout)
+        
     
       if response.status_code == 200:
         json_data = json.loads(response.content)
@@ -284,7 +285,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
         else:
           self.SendCommandResponse(command,
                                    consts.ERROR_CODE_LOGIN_FAILED,
-                                   [])
+                                   [json_data['msg'].encode('utf-8')])
           return
       else:
         self.SendCommandResponse(command,
@@ -307,7 +308,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
   
   
   def ProcessGetVerifyCode(self, command):
-    url = 'https://apkins.yfbro.com/api/auth/getcode'
+    url = config.URL + '/api/auth/getcode'
     
     headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',

@@ -13,14 +13,29 @@
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/view.h"
 
+#include "../../phone_common/include/ctp_notification_types.h"
+
 namespace views {
 namespace examples {
 
 LoginExample::LoginExample() : CTPViewBase(L"Textfield") {
+  registrar_.Add(this, phone_module::NOTIFICATION_PHONE_LOGIN_FAILED_STATUS,
+    content::NotificationService::AllSources());
 }
 
 LoginExample::~LoginExample() {
 }
+
+
+void LoginExample::Observe(int type,
+  const content::NotificationSource& source,
+  const content::NotificationDetails& details) {
+  if (type == phone_module::NOTIFICATION_PHONE_LOGIN_FAILED_STATUS) {
+    status_->SetText(content::Details<std::wstring const>(details)->c_str());
+  } 
+
+}
+
 
 void LoginExample::CreateExampleView(View* container) {
   name_ = new Textfield();
@@ -30,6 +45,7 @@ void LoginExample::CreateExampleView(View* container) {
   login_->set_alignment(TextButton::ALIGN_CENTER);
   verify_code_ = new TextButton(this, L"获取验证码");
   verify_code_->set_alignment(TextButton::ALIGN_CENTER);
+  status_ = new Label;
   //clear_all_ = new TextButton(this, ASCIIToUTF16("Clear All"));
   //append_ = new TextButton(this, ASCIIToUTF16("Append"));
   //set_ = new TextButton(this, ASCIIToUTF16("Set"));
@@ -59,6 +75,9 @@ void LoginExample::CreateExampleView(View* container) {
 
   layout->StartRow(0, 1);
   layout->AddView(login_);
+
+  layout->StartRow(0, 1);
+  layout->AddView(status_);
 
   //layout->StartRow(0, 0);
   //layout->AddView(clear_all_);

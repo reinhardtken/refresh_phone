@@ -215,7 +215,13 @@ namespace phone_module {
           cmd->set_cmd_no(cmd_no());
           cmd->set_timestamp(base::Time::Now().ToInternalValue());
           cmd->add_param(WideToUTF8(exe_dir_.value()));
-            
+          //服务器使用测试还是正式
+          bool debug = local_state()->GetBoolean(prefs::kDebugMode);
+          cmd->add_param(base::IntToString(debug));
+          //通知UI
+          ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI,
+            new L2U_DebugMode(debug));
+
           codec::MessagePtr ptr(cmd);
           current_cmd_no_set_.insert(cmd->cmd_no());
           channel_host_->SendProtobufMsg(switches::kCommunicatePyUpdateApk, ptr);
@@ -412,7 +418,10 @@ namespace phone_module {
           }
         } else if (std::string(command::kPyAdbLogin) == response->cmd()) {
           bool success = response->code() == ERROR_CODE_OK;
-          std::wstring info;//UTF8ToWide(response->info(0)
+          std::wstring info;
+          if (response->info_size() > 0) {
+            info = UTF8ToWide(response->info(0));
+          }
           ThreadMessageDispatcherImpl::DispatchHelper(CommonThread::UI, new L2U_LoginResponse(success, info));
         }
       } else if (p->GetTypeName() == "apk.CommandInstallApkResponse") {
@@ -504,6 +513,7 @@ namespace phone_module {
         out->time_cost = (int)base::TimeDelta::FromMicroseconds(digest->time_cost()).InSeconds();
         for (auto i = 0; i < digest->fail_list_size(); ++i) {
           FailedTuple tmp;
+          tmp.app_name = UTF8ToWide(digest->fail_list(i).app_name());
           tmp.package_name = UTF8ToWide(digest->fail_list(i).package_name());
           tmp.error_message = UTF8ToWide(digest->fail_list(i).adb_message());
           tmp.user_message = UTF8ToWide(digest->fail_list(i).user_message());

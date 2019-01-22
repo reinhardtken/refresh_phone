@@ -44,9 +44,10 @@ message CommandInstallApkResponse {
 
 message FailTuple {
   required string package_name = 1;
-  required string adb_message = 2;
-  required string user_message = 3;
-  required int32 try_times = 4;
+  required string app_name = 2;
+  required string adb_message = 3;
+  required string user_message = 4;
+  required int32 try_times = 5;
 };
 
 message CommandInstallApkDigest {

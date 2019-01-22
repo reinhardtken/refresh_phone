@@ -553,6 +553,7 @@ struct AdbDevice {
 typedef std::vector<AdbDevice> DevicesList;
 
 struct FailedTuple {
+  std::wstring app_name;
   std::wstring package_name;
   std::wstring error_message;
   std::wstring user_message;

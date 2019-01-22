@@ -241,7 +241,7 @@ class OneDevice(object):
 
 
 
-  def NotifyInstallApkDigest(self, command):
+  def NotifyInstallApkDigest(self):
     out = pb.apk_protomsg_pb2.CommandInstallApkDigest()
     out.cmd = consts.COMMAND_NOTIFY_INSTALL_APK_DIGEST
     out.total_number = len(self.todo_install_apk_map)
@@ -254,6 +254,7 @@ class OneDevice(object):
     out.model = self.model
     for one in self.installed_failed.values():
       failed = out.fail_list.add()
+      failed.app_name = self.todo_install_apk_map[one.package_name]['apkName']
       failed.package_name = one.package_name
       failed.adb_message = one.error_message
       failed.user_message = consts.AdbMessage2UserMessage(one.error_message)
@@ -262,6 +263,7 @@ class OneDevice(object):
     #成功的也回传
     for one in self.installed_set:
       failed = out.fail_list.add()
+      failed.app_name = self.todo_install_apk_map[one]['apkName']
       failed.package_name = one
       failed.try_times = -1
       failed.adb_message = ''
@@ -282,10 +284,15 @@ class OneDevice(object):
           self.AddInstallFailed(command.package_name, FailedItem.ERROR_ADB, command.progress, command.time_cost)
 
         # 发送装包摘要
-        notify = self.NotifyInstallApkDigest(command)
+        notify = self.NotifyInstallApkDigest()
         my_globals.queue_network.put(notify)
         
         #打点
+        if command.package_name in self.package_set:
+          self.log.info('ProcessInstallApkResponse package_name already exist  %s', command.package_name)
+          if status == 0:
+            status = 1
+            
         new_command = {
           'c': consts.COMMAND_NET_REPORT_INSTALL_APK,
           'serial_number': self.serial_number,
@@ -458,6 +465,9 @@ class Master(object):
         device = self._Add(one['serial_no'])
         if device.Empty():
           self.log.info('TriggerAutoInstall  begin')
+          # 发送装包摘要
+          notify = device.NotifyInstallApkDigest()
+          self.queue_out.put(notify)
           for k, v in device.todo_install_apk_map.items():
             # 没有安装成功
             if not device.IsInstalled(k):
@@ -528,7 +538,7 @@ class Master(object):
           #超时的包，记录超时失败，不再继续
           self._Get(k).AddTimeOut(package_name, v['max'])
           # 发送装包摘要
-          notify = self._Get(k).NotifyInstallApkDigest(None)
+          notify = self._Get(k).NotifyInstallApkDigest()
           self.queue_out.put(notify)
           #发送超时通知
           callback.SendCommandResponse(self.queue_out, v['c'],
@@ -554,14 +564,25 @@ class Master(object):
       self.last_devices_list.append(one)
       self.last_devices_map[one['serial_no']] = one
       
-    #对于所有手机，获取IMEI信息
+    
     for one in self.last_devices_list:
-      new_one = pb.apk_protomsg_pb2.Command()
-      new_one.cmd = consts.COMMAND_GET_IMEI
-      new_one.cmd_no = -1
-      self.ProcessCommand(one['serial_no'], new_one)
+      device = self._Add(one['serial_no'])
+      # 对于所有手机，获取IMEI信息
+      if device.imei is None:
+        new_one = pb.apk_protomsg_pb2.Command()
+        new_one.cmd = consts.COMMAND_GET_IMEI
+        new_one.cmd_no = -1
+        self.ProcessCommand(one['serial_no'], new_one)
       
-    #对于所有手机，获取已经安装的包列表
+      #对于所有手机，如果没有获取过包list，获取包list
+      if len(device.package_set) == 0:
+        new_one = pb.apk_protomsg_pb2.Command()
+        new_one.cmd = consts.COMMAND_GET_PACKAGE_LIST
+        new_one.cmd_no = -1
+        self.ProcessCommand(one['serial_no'], new_one)
+      
+      
+      
     #对于所有手机，如果自动模式，开始装包
     self.TriggerAutoInstall()
       

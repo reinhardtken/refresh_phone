@@ -152,14 +152,15 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   ++index;
 
   std::vector<ui::TableColumn> columns;
-
-  columns.push_back(ui::TableColumn(0, L"包名",
+  columns.push_back(ui::TableColumn(0, L"应用名称",
+    ui::TableColumn::LEFT, 400));
+  columns.push_back(ui::TableColumn(1, L"包名",
     ui::TableColumn::LEFT, 250));
-  columns.push_back(ui::TableColumn(1, L"重试次数",
+  columns.push_back(ui::TableColumn(2, L"重试次数",
     ui::TableColumn::LEFT, 70));
-  columns.push_back(ui::TableColumn(2, L"错误信息",
+  columns.push_back(ui::TableColumn(3, L"错误信息",
     ui::TableColumn::LEFT, 200));
-  columns.push_back(ui::TableColumn(3, L"原始错误信息",
+  columns.push_back(ui::TableColumn(4, L"原始错误信息",
     ui::TableColumn::LEFT, 800));
   
 
@@ -228,18 +229,22 @@ string16 AutoInstallApkListTable::GetText(int row, int column_id) {
   if (failed_list_[row].try_times > 0) {
     switch (column_id) {
     case 0: {
-      return failed_list_[row].package_name;
+      return failed_list_[row].app_name;
       break;
     }
     case 1: {
-      return base::IntToString16(failed_list_[row].try_times);
+      return failed_list_[row].package_name;
       break;
     }
     case 2: {
-      return failed_list_[row].user_message;
+      return base::IntToString16(failed_list_[row].try_times);
       break;
     }
     case 3: {
+      return failed_list_[row].user_message;
+      break;
+    }
+    case 4: {
       return failed_list_[row].error_message;
       break;
     }
@@ -251,6 +256,10 @@ string16 AutoInstallApkListTable::GetText(int row, int column_id) {
     //成功的
     switch (column_id) {
     case 0: {
+      return failed_list_[row].app_name;
+      break;
+    }
+    case 1: {
       return failed_list_[row].package_name;
       break;
     }

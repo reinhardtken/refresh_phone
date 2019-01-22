@@ -30,6 +30,7 @@ import consts
 import pb.apk_protomsg_pb2
 import my_globals
 import my_token
+import config
 # ====================================
 
 #########################################################
@@ -269,12 +270,14 @@ class Master(object):
       print(e)
   
     return result
-
-  def PullJsonFile(self):
+  
+  
+  @staticmethod
+  def PullJsonFile():
     #URL = 'https://www.ppndj.com/jc/user/apkinstall?ch=1234'
     # URL = 'https://www.xppndj.com/jc/user/apkinstall?ch=1234'
     try:
-      url = 'https://apkins.yfbro.com/api/applist'
+      url = config.URL + '/api/applist'
   
       headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
@@ -287,21 +290,16 @@ class Master(object):
       except requests.exceptions.SSLError as e:
         response = requests.request("get", url, stream=True, data=None, headers=headers, verify=False, timeout=timeout)
         
-      # s = requests.Session()
-      # s.mount('http://', requests.adapters.HTTPAdapter(max_retries=5))
-      # s.mount('https://', requests.adapters.HTTPAdapter(max_retries=5))
-      
-        
-        if response.status_code == 200:
-          try:
-            json_data = json.loads(response.content)
-            if json_data['code'] == 200:
-              return (consts.ERROR_CODE_OK, json_data)
-          except Exception as e:
-            print(e)
-            return (consts.ERROR_CODE_PARSE_JSON_FAILED, None)
-        else:
-          print('net Error', response.status_code)
+      if response.status_code == 200:
+        try:
+          json_data = json.loads(response.content)
+          if json_data['code'] == 200:
+            return (consts.ERROR_CODE_OK, json_data)
+        except Exception as e:
+          print(e)
+          return (consts.ERROR_CODE_PARSE_JSON_FAILED, None)
+      else:
+        print('net Error', response.status_code)
     except requests.ConnectionError as e:
       print('Error', e.args)
     except Exception as e:
@@ -420,7 +418,7 @@ class Master(object):
   @staticmethod
   def ProcessReportDeviceInfo(command):
     try:
-      url = 'https://apkins.yfbro.com/api/add/equipment'
+      url = config.URL + '/api/add/equipment'
     
       headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
@@ -439,28 +437,43 @@ class Master(object):
       }
     
       timeout = (10, 180)
+      log = util.log.GetCurrentLogger()
+      log.info('ProcessReportDeviceInfo')
+      log.info(url)
+      log.info(data)
       try:
         response = requests.request("post", url, stream=True, data=data, headers=headers, timeout=timeout)
       except requests.exceptions.SSLError as e:
         response = requests.request("post", url, stream=True, data=data, headers=headers, verify=False, timeout=timeout)
+        
+      try:
+        # 打点到自己的服务器
+        # http://60.205.224.225/api/add/equipment
+        myURL = 'http://112.74.182.109/api/add/equipment'
+        r = requests.request("post", myURL, stream=True, data=data, headers=headers, timeout=timeout)
+        if r.status_code == 200:
+          pass
+      except Exception as e:
+        pass
     
       if response.status_code == 200:
         json_data = json.loads(response.content)
         if json_data['code'] == 200:
+          log.info('success')
           return
         else:
-          my_token.token.Set(None)
+          #my_token.token.Set(None)
+          log.warning('failed code not 200: %d', json_data['code'])
           return
       else:
-
-        print('net Error', response.status_code)
+        log.warning('status code not 200: %d', response.status_code)
         return
   
   
     except requests.ConnectionError as e:
-      print('Error', e.args)
+      log.warning('ConnectionError %s', str(e.args))
     except Exception as e:
-      print('Error', e.args)
+      log.warning('Exception %s', str(e.args))
 
 
 
@@ -468,7 +481,7 @@ class Master(object):
   @staticmethod
   def ProcessReportInstallApk(command):
     try:
-      url = 'https://apkins.yfbro.com/api/install/apk'
+      url = config.URL + '/api/install/apk'
     
       headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
@@ -486,28 +499,44 @@ class Master(object):
       }
     
       timeout = (10, 180)
+      log = util.log.GetCurrentLogger()
+      log.info('ProcessReportInstallApk')
+      log.info(url)
+      log.info(data)
       try:
         response = requests.request("post", url, stream=True, data=data, headers=headers, timeout=timeout)
       except requests.exceptions.SSLError as e:
         response = requests.request("post", url, stream=True, data=data, headers=headers, verify=False, timeout=timeout)
+        
+      
+      try:
+        # 打点到自己的服务器
+        # http://10.58.72.57:8099/api/install/apk
+        myURL = 'http://112.74.182.109/api/install/apk'
+        r = requests.request("post", myURL, stream=True, data=data, headers=headers, timeout=timeout)
+        if r.status_code == 200:
+          pass
+      except Exception as e:
+        pass
+      
     
       if response.status_code == 200:
         json_data = json.loads(response.content)
         if json_data['code'] == 200:
+          log.info('success')
           return
         else:
-          my_token.token.Set(None)
+          #my_token.token.Set(None)
+          log.warning('failed code not 200: %d', json_data['code'])
           return
       else:
-      
-        print('net Error', response.status_code)
+        log.warning('status code not 200: %d', response.status_code)
         return
-  
-  
+
     except requests.ConnectionError as e:
-      print('Error', e.args)
+      log.warning('ConnectionError %s', str(e.args))
     except Exception as e:
-      print('Error', e.args)
+      log.warning('Exception %s', str(e.args))
 
 # ======================================
 if __name__ == '__main__':

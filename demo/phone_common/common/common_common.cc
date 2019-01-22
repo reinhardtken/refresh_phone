@@ -60,6 +60,7 @@ namespace prefs {
   //const char kCheckUpdateApkListAlive[] = "tcp_server.adbtool_alive_server";
   const char kCheckUpdateApkList[] = "tcp_server.adbtool_py_server";
   const char kAdbServer[] = "tcp_server.adb_server";
+  const char kDebugMode[] = "phone.debug";
 
   const char kTUPyPathAndCmd[] = "TUPyPathAndCmd";
   const char kMQPyPathAndCmd[] = "MQPyPathAndCmd";

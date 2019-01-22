@@ -125,8 +125,9 @@ void protobuf_AssignDesc_apk_5fprotomsg_2eproto() {
       ::google::protobuf::MessageFactory::generated_factory(),
       sizeof(CommandInstallApkResponse));
   FailTuple_descriptor_ = file->message_type(3);
-  static const int FailTuple_offsets_[4] = {
+  static const int FailTuple_offsets_[5] = {
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, package_name_),
+    GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, app_name_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, adb_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, user_message_),
     GOOGLE_PROTOBUF_GENERATED_MESSAGE_FIELD_OFFSET(FailTuple, try_times_),
@@ -315,26 +316,27 @@ void protobuf_AddDesc_apk_5fprotomsg_2eproto() {
     "me\030\006 \002(\t\022\020\n\010progress\030\007 \002(\t\022\014\n\004type\030\010 \002(\t"
     "\022\025\n\rserial_number\030\t \002(\t\022\020\n\010time_max\030\n \002("
     "\005\022\024\n\014package_size\030\013 \002(\001\022\023\n\013adb_message\030\014"
-    " \002(\t\022\r\n\005stage\030\r \002(\t\022\014\n\004info\030\016 \003(\t\"_\n\tFai"
-    "lTuple\022\024\n\014package_name\030\001 \002(\t\022\023\n\013adb_mess"
-    "age\030\002 \002(\t\022\024\n\014user_message\030\003 \002(\t\022\021\n\ttry_t"
-    "imes\030\004 \002(\005\"\307\001\n\027CommandInstallApkDigest\022\013"
-    "\n\003cmd\030\001 \002(\t\022\024\n\014total_number\030\002 \002(\005\022\026\n\016suc"
-    "cess_number\030\003 \002(\005\022\025\n\rfailed_number\030\004 \002(\005"
-    "\022\021\n\ttime_cost\030\005 \002(\005\022\025\n\rserial_number\030\006 \002"
-    "(\t\022\r\n\005model\030\007 \002(\t\022!\n\tfail_list\030\010 \003(\0132\016.a"
-    "pk.FailTuple\"\313\001\n\006OneApk\022\n\n\002id\030\001 \001(\005\022\013\n\003u"
-    "rl\030\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022\014\n\004name\030\004 \002(\t\022\r\n\005b"
-    "rief\030\005 \001(\t\022\017\n\007orderid\030\006 \001(\005\022\023\n\013update_ti"
-    "me\030\007 \001(\t\022\023\n\013create_time\030\010 \001(\t\022\020\n\010apk_nam"
-    "e\030\t \002(\t\022\r\n\005price\030\n \002(\001\022\014\n\004type\030\013 \002(\005\022\024\n\014"
-    "package_size\030\014 \002(\001\"L\n\007ApkList\022\"\n\004head\030\001 "
-    "\002(\0132\024.apk.CommandResponse\022\035\n\010apk_list\030\002 "
-    "\003(\0132\013.apk.OneApk\"]\n\tAdbDevice\022\021\n\tserial_"
-    "no\030\001 \002(\t\022\r\n\005state\030\002 \001(\t\022\r\n\005model\030\003 \001(\t\022\017"
-    "\n\007product\030\004 \001(\t\022\016\n\006device\030\005 \001(\t\"W\n\013Devic"
-    "esList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRespon"
-    "se\022$\n\014devices_list\030\002 \003(\0132\016.apk.AdbDevice", 1280);
+    " \002(\t\022\r\n\005stage\030\r \002(\t\022\014\n\004info\030\016 \003(\t\"q\n\tFai"
+    "lTuple\022\024\n\014package_name\030\001 \002(\t\022\020\n\010app_name"
+    "\030\002 \002(\t\022\023\n\013adb_message\030\003 \002(\t\022\024\n\014user_mess"
+    "age\030\004 \002(\t\022\021\n\ttry_times\030\005 \002(\005\"\307\001\n\027Command"
+    "InstallApkDigest\022\013\n\003cmd\030\001 \002(\t\022\024\n\014total_n"
+    "umber\030\002 \002(\005\022\026\n\016success_number\030\003 \002(\005\022\025\n\rf"
+    "ailed_number\030\004 \002(\005\022\021\n\ttime_cost\030\005 \002(\005\022\025\n"
+    "\rserial_number\030\006 \002(\t\022\r\n\005model\030\007 \002(\t\022!\n\tf"
+    "ail_list\030\010 \003(\0132\016.apk.FailTuple\"\313\001\n\006OneAp"
+    "k\022\n\n\002id\030\001 \001(\005\022\013\n\003url\030\002 \001(\t\022\013\n\003md5\030\003 \001(\t\022"
+    "\014\n\004name\030\004 \002(\t\022\r\n\005brief\030\005 \001(\t\022\017\n\007orderid\030"
+    "\006 \001(\005\022\023\n\013update_time\030\007 \001(\t\022\023\n\013create_tim"
+    "e\030\010 \001(\t\022\020\n\010apk_name\030\t \002(\t\022\r\n\005price\030\n \002(\001"
+    "\022\014\n\004type\030\013 \002(\005\022\024\n\014package_size\030\014 \002(\001\"L\n\007"
+    "ApkList\022\"\n\004head\030\001 \002(\0132\024.apk.CommandRespo"
+    "nse\022\035\n\010apk_list\030\002 \003(\0132\013.apk.OneApk\"]\n\tAd"
+    "bDevice\022\021\n\tserial_no\030\001 \002(\t\022\r\n\005state\030\002 \001("
+    "\t\022\r\n\005model\030\003 \001(\t\022\017\n\007product\030\004 \001(\t\022\016\n\006dev"
+    "ice\030\005 \001(\t\"W\n\013DevicesList\022\"\n\004head\030\001 \002(\0132\024"
+    ".apk.CommandResponse\022$\n\014devices_list\030\002 \003"
+    "(\0132\016.apk.AdbDevice", 1298);
   ::google::protobuf::MessageFactory::InternalRegisterGeneratedFile(
     "apk_protomsg.proto", &protobuf_RegisterTypes);
   Command::default_instance_ = new Command();
@@ -2057,6 +2059,7 @@ void CommandInstallApkResponse::Swap(CommandInstallApkResponse* other) {
 
 #ifndef _MSC_VER
 const int FailTuple::kPackageNameFieldNumber;
+const int FailTuple::kAppNameFieldNumber;
 const int FailTuple::kAdbMessageFieldNumber;
 const int FailTuple::kUserMessageFieldNumber;
 const int FailTuple::kTryTimesFieldNumber;
@@ -2079,6 +2082,7 @@ FailTuple::FailTuple(const FailTuple& from)
 void FailTuple::SharedCtor() {
   _cached_size_ = 0;
   package_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  app_name_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   adb_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   user_message_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
   try_times_ = 0;
@@ -2092,6 +2096,9 @@ FailTuple::~FailTuple() {
 void FailTuple::SharedDtor() {
   if (package_name_ != &::google::protobuf::internal::kEmptyString) {
     delete package_name_;
+  }
+  if (app_name_ != &::google::protobuf::internal::kEmptyString) {
+    delete app_name_;
   }
   if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
     delete adb_message_;
@@ -2131,6 +2138,11 @@ void FailTuple::Clear() {
         package_name_->clear();
       }
     }
+    if (has_app_name()) {
+      if (app_name_ != &::google::protobuf::internal::kEmptyString) {
+        app_name_->clear();
+      }
+    }
     if (has_adb_message()) {
       if (adb_message_ != &::google::protobuf::internal::kEmptyString) {
         adb_message_->clear();
@@ -2165,12 +2177,29 @@ bool FailTuple::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(18)) goto parse_adb_message;
+        if (input->ExpectTag(18)) goto parse_app_name;
         break;
       }
 
-      // required string adb_message = 2;
+      // required string app_name = 2;
       case 2: {
+        if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
+            ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
+         parse_app_name:
+          DO_(::google::protobuf::internal::WireFormatLite::ReadString(
+                input, this->mutable_app_name()));
+          ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+            this->app_name().data(), this->app_name().length(),
+            ::google::protobuf::internal::WireFormat::PARSE);
+        } else {
+          goto handle_uninterpreted;
+        }
+        if (input->ExpectTag(26)) goto parse_adb_message;
+        break;
+      }
+
+      // required string adb_message = 3;
+      case 3: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_adb_message:
@@ -2182,12 +2211,12 @@ bool FailTuple::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(26)) goto parse_user_message;
+        if (input->ExpectTag(34)) goto parse_user_message;
         break;
       }
 
-      // required string user_message = 3;
-      case 3: {
+      // required string user_message = 4;
+      case 4: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_LENGTH_DELIMITED) {
          parse_user_message:
@@ -2199,12 +2228,12 @@ bool FailTuple::MergePartialFromCodedStream(
         } else {
           goto handle_uninterpreted;
         }
-        if (input->ExpectTag(32)) goto parse_try_times;
+        if (input->ExpectTag(40)) goto parse_try_times;
         break;
       }
 
-      // required int32 try_times = 4;
-      case 4: {
+      // required int32 try_times = 5;
+      case 5: {
         if (::google::protobuf::internal::WireFormatLite::GetTagWireType(tag) ==
             ::google::protobuf::internal::WireFormatLite::WIRETYPE_VARINT) {
          parse_try_times:
@@ -2246,27 +2275,36 @@ void FailTuple::SerializeWithCachedSizes(
       1, this->package_name(), output);
   }
 
-  // required string adb_message = 2;
+  // required string app_name = 2;
+  if (has_app_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->app_name().data(), this->app_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    ::google::protobuf::internal::WireFormatLite::WriteString(
+      2, this->app_name(), output);
+  }
+
+  // required string adb_message = 3;
   if (has_adb_message()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->adb_message().data(), this->adb_message().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      2, this->adb_message(), output);
+      3, this->adb_message(), output);
   }
 
-  // required string user_message = 3;
+  // required string user_message = 4;
   if (has_user_message()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->user_message().data(), this->user_message().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     ::google::protobuf::internal::WireFormatLite::WriteString(
-      3, this->user_message(), output);
+      4, this->user_message(), output);
   }
 
-  // required int32 try_times = 4;
+  // required int32 try_times = 5;
   if (has_try_times()) {
-    ::google::protobuf::internal::WireFormatLite::WriteInt32(4, this->try_times(), output);
+    ::google::protobuf::internal::WireFormatLite::WriteInt32(5, this->try_times(), output);
   }
 
   if (!unknown_fields().empty()) {
@@ -2287,29 +2325,39 @@ void FailTuple::SerializeWithCachedSizes(
         1, this->package_name(), target);
   }
 
-  // required string adb_message = 2;
+  // required string app_name = 2;
+  if (has_app_name()) {
+    ::google::protobuf::internal::WireFormat::VerifyUTF8String(
+      this->app_name().data(), this->app_name().length(),
+      ::google::protobuf::internal::WireFormat::SERIALIZE);
+    target =
+      ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
+        2, this->app_name(), target);
+  }
+
+  // required string adb_message = 3;
   if (has_adb_message()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->adb_message().data(), this->adb_message().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        2, this->adb_message(), target);
+        3, this->adb_message(), target);
   }
 
-  // required string user_message = 3;
+  // required string user_message = 4;
   if (has_user_message()) {
     ::google::protobuf::internal::WireFormat::VerifyUTF8String(
       this->user_message().data(), this->user_message().length(),
       ::google::protobuf::internal::WireFormat::SERIALIZE);
     target =
       ::google::protobuf::internal::WireFormatLite::WriteStringToArray(
-        3, this->user_message(), target);
+        4, this->user_message(), target);
   }
 
-  // required int32 try_times = 4;
+  // required int32 try_times = 5;
   if (has_try_times()) {
-    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(4, this->try_times(), target);
+    target = ::google::protobuf::internal::WireFormatLite::WriteInt32ToArray(5, this->try_times(), target);
   }
 
   if (!unknown_fields().empty()) {
@@ -2330,21 +2378,28 @@ int FailTuple::ByteSize() const {
           this->package_name());
     }
 
-    // required string adb_message = 2;
+    // required string app_name = 2;
+    if (has_app_name()) {
+      total_size += 1 +
+        ::google::protobuf::internal::WireFormatLite::StringSize(
+          this->app_name());
+    }
+
+    // required string adb_message = 3;
     if (has_adb_message()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->adb_message());
     }
 
-    // required string user_message = 3;
+    // required string user_message = 4;
     if (has_user_message()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::StringSize(
           this->user_message());
     }
 
-    // required int32 try_times = 4;
+    // required int32 try_times = 5;
     if (has_try_times()) {
       total_size += 1 +
         ::google::protobuf::internal::WireFormatLite::Int32Size(
@@ -2381,6 +2436,9 @@ void FailTuple::MergeFrom(const FailTuple& from) {
     if (from.has_package_name()) {
       set_package_name(from.package_name());
     }
+    if (from.has_app_name()) {
+      set_app_name(from.app_name());
+    }
     if (from.has_adb_message()) {
       set_adb_message(from.adb_message());
     }
@@ -2407,7 +2465,7 @@ void FailTuple::CopyFrom(const FailTuple& from) {
 }
 
 bool FailTuple::IsInitialized() const {
-  if ((_has_bits_[0] & 0x0000000f) != 0x0000000f) return false;
+  if ((_has_bits_[0] & 0x0000001f) != 0x0000001f) return false;
 
   return true;
 }
@@ -2415,6 +2473,7 @@ bool FailTuple::IsInitialized() const {
 void FailTuple::Swap(FailTuple* other) {
   if (other != this) {
     std::swap(package_name_, other->package_name_);
+    std::swap(app_name_, other->app_name_);
     std::swap(adb_message_, other->adb_message_);
     std::swap(user_message_, other->user_message_);
     std::swap(try_times_, other->try_times_);

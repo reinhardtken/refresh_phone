@@ -178,12 +178,7 @@ class CheckUpdateApkList(util.thread_class.ThreadClass):
           self.ProcessRemoveLocalPackageList(msg)
         elif msg.cmd == 'get_local_package_list':
           self.ProcessGetLocalPackageList(msg)
-        elif msg.cmd == consts.COMMAND_INSTALL_APK:
-          self.ProcessInstallApk3(msg)
-        elif msg.cmd == consts.COMMAND_SCAN_DEVICES:
-          self.ProcessScanDevices3(msg)
-        elif msg.cmd == consts.COMMAND_GET_PACKAGE_LIST:
-          self.ProcessGetPackageList(msg)
+
 
 
 
