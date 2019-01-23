@@ -209,6 +209,7 @@ class Proxy(object):
       #   time_max = package_size  - 30
       # else:
       time_max = package_size * 2 + 30
+      self.log.info('BeforeCommand start checkouttime %s %s', self.serial_number, package_name)
       self.StartCheckTimeOut(command, time_max)
       self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number.encode('utf-8'),
                                  stage='开始', adb_message='',
@@ -221,6 +222,7 @@ class Proxy(object):
   
   def AfterCommand(self, command):
     if command.cmd == consts.COMMAND_INSTALL_APK:
+      self.log.info('AfterCommand start checkouttime %s', self.serial_number)
       self.StopCheckTimeOut(command)
   
   

@@ -837,10 +837,22 @@ class CommandInstallApkDigest : public ::google::protobuf::Message {
   inline ::std::string* release_model();
   inline void set_allocated_model(::std::string* model);
 
-  // repeated .apk.FailTuple fail_list = 8;
+  // required string imei = 8;
+  inline bool has_imei() const;
+  inline void clear_imei();
+  static const int kImeiFieldNumber = 8;
+  inline const ::std::string& imei() const;
+  inline void set_imei(const ::std::string& value);
+  inline void set_imei(const char* value);
+  inline void set_imei(const char* value, size_t size);
+  inline ::std::string* mutable_imei();
+  inline ::std::string* release_imei();
+  inline void set_allocated_imei(::std::string* imei);
+
+  // repeated .apk.FailTuple fail_list = 9;
   inline int fail_list_size() const;
   inline void clear_fail_list();
-  static const int kFailListFieldNumber = 8;
+  static const int kFailListFieldNumber = 9;
   inline const ::apk::FailTuple& fail_list(int index) const;
   inline ::apk::FailTuple* mutable_fail_list(int index);
   inline ::apk::FailTuple* add_fail_list();
@@ -865,6 +877,8 @@ class CommandInstallApkDigest : public ::google::protobuf::Message {
   inline void clear_has_serial_number();
   inline void set_has_model();
   inline void clear_has_model();
+  inline void set_has_imei();
+  inline void clear_has_imei();
 
   ::google::protobuf::UnknownFieldSet _unknown_fields_;
 
@@ -875,10 +889,11 @@ class CommandInstallApkDigest : public ::google::protobuf::Message {
   ::google::protobuf::int32 time_cost_;
   ::std::string* serial_number_;
   ::std::string* model_;
+  ::std::string* imei_;
   ::google::protobuf::RepeatedPtrField< ::apk::FailTuple > fail_list_;
 
   mutable int _cached_size_;
-  ::google::protobuf::uint32 _has_bits_[(8 + 31) / 32];
+  ::google::protobuf::uint32 _has_bits_[(9 + 31) / 32];
 
   friend void  protobuf_AddDesc_apk_5fprotomsg_2eproto();
   friend void protobuf_AssignDesc_apk_5fprotomsg_2eproto();
@@ -3126,7 +3141,77 @@ inline void CommandInstallApkDigest::set_allocated_model(::std::string* model) {
   }
 }
 
-// repeated .apk.FailTuple fail_list = 8;
+// required string imei = 8;
+inline bool CommandInstallApkDigest::has_imei() const {
+  return (_has_bits_[0] & 0x00000080u) != 0;
+}
+inline void CommandInstallApkDigest::set_has_imei() {
+  _has_bits_[0] |= 0x00000080u;
+}
+inline void CommandInstallApkDigest::clear_has_imei() {
+  _has_bits_[0] &= ~0x00000080u;
+}
+inline void CommandInstallApkDigest::clear_imei() {
+  if (imei_ != &::google::protobuf::internal::kEmptyString) {
+    imei_->clear();
+  }
+  clear_has_imei();
+}
+inline const ::std::string& CommandInstallApkDigest::imei() const {
+  return *imei_;
+}
+inline void CommandInstallApkDigest::set_imei(const ::std::string& value) {
+  set_has_imei();
+  if (imei_ == &::google::protobuf::internal::kEmptyString) {
+    imei_ = new ::std::string;
+  }
+  imei_->assign(value);
+}
+inline void CommandInstallApkDigest::set_imei(const char* value) {
+  set_has_imei();
+  if (imei_ == &::google::protobuf::internal::kEmptyString) {
+    imei_ = new ::std::string;
+  }
+  imei_->assign(value);
+}
+inline void CommandInstallApkDigest::set_imei(const char* value, size_t size) {
+  set_has_imei();
+  if (imei_ == &::google::protobuf::internal::kEmptyString) {
+    imei_ = new ::std::string;
+  }
+  imei_->assign(reinterpret_cast<const char*>(value), size);
+}
+inline ::std::string* CommandInstallApkDigest::mutable_imei() {
+  set_has_imei();
+  if (imei_ == &::google::protobuf::internal::kEmptyString) {
+    imei_ = new ::std::string;
+  }
+  return imei_;
+}
+inline ::std::string* CommandInstallApkDigest::release_imei() {
+  clear_has_imei();
+  if (imei_ == &::google::protobuf::internal::kEmptyString) {
+    return NULL;
+  } else {
+    ::std::string* temp = imei_;
+    imei_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+    return temp;
+  }
+}
+inline void CommandInstallApkDigest::set_allocated_imei(::std::string* imei) {
+  if (imei_ != &::google::protobuf::internal::kEmptyString) {
+    delete imei_;
+  }
+  if (imei) {
+    set_has_imei();
+    imei_ = imei;
+  } else {
+    clear_has_imei();
+    imei_ = const_cast< ::std::string*>(&::google::protobuf::internal::kEmptyString);
+  }
+}
+
+// repeated .apk.FailTuple fail_list = 9;
 inline int CommandInstallApkDigest::fail_list_size() const {
   return fail_list_.size();
 }

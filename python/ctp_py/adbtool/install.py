@@ -83,6 +83,9 @@ class Command(base.AdbCommandBase):
   签名无法通过
   Failed to install C:\workspace\code\chromium24\src\build\Release\ctp_data\apk\com.taobao.trip.apk:
   Failure [INSTALL_PARSE_FAILED_NO_CERTIFICATES: Failed to collect certificates from /data/app/vmdl617260616.tmp/base.apk using APK Signature Scheme v2: SHA-256 digest of contents did not verify]
+  
+  红米1s
+  Permission denied
     '''
     
     if self.stop_parser == True:

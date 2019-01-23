@@ -574,6 +574,7 @@ struct InstallDigest {
   int time_cost;
   std::wstring serial_number;
   std::wstring model;
+  std::wstring imei;
   std::vector< FailedTuple> failed_list;
 };
 

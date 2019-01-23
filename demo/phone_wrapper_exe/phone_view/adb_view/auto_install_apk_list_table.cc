@@ -117,21 +117,23 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   std::vector<ui::TableColumn> columns2;
   columns2.push_back(ui::TableColumn(0, L"手机",
     ui::TableColumn::LEFT, 150));
-  columns2.push_back(ui::TableColumn(1, L"model",
+  columns2.push_back(ui::TableColumn(1, L"IMEI",
     ui::TableColumn::LEFT, 150));
-  columns2.push_back(ui::TableColumn(2, L"总数",
+  columns2.push_back(ui::TableColumn(2, L"model",
+    ui::TableColumn::LEFT, 150));
+  columns2.push_back(ui::TableColumn(3, L"总数",
     ui::TableColumn::LEFT, 100));
 
-  columns2.push_back(ui::TableColumn(3, L"成功总数",
+  columns2.push_back(ui::TableColumn(4, L"成功总数",
     ui::TableColumn::LEFT, 100));
 
-  columns2.push_back(ui::TableColumn(4, L"失败总数",
+  columns2.push_back(ui::TableColumn(5, L"失败总数",
     ui::TableColumn::LEFT, 100));
 
-  columns2.push_back(ui::TableColumn(5, L"总耗时",
+  columns2.push_back(ui::TableColumn(6, L"总耗时",
     ui::TableColumn::LEFT, 100));
 
-  columns2.push_back(ui::TableColumn(6, L"失败包",
+  columns2.push_back(ui::TableColumn(7, L"失败包",
     ui::TableColumn::LEFT, 600));
   
   
@@ -286,28 +288,32 @@ string16 AutoInstallApkListTable::GetText2(int row, int column_id) {
     break;
   }
   case 1: {
-    return install_digest_data_[row].model;
+    return install_digest_data_[row].imei;
     break;
   }
   case 2: {
-    return base::IntToString16(install_digest_data_[row].total_number);
+    return install_digest_data_[row].model;
     break;
   }
   case 3: {
-    return base::IntToString16(install_digest_data_[row].success_number);
+    return base::IntToString16(install_digest_data_[row].total_number);
     break;
   }
   case 4: {
-    return base::IntToString16(install_digest_data_[row].failed_number);
+    return base::IntToString16(install_digest_data_[row].success_number);
     break;
   }
   case 5: {
+    return base::IntToString16(install_digest_data_[row].failed_number);
+    break;
+  }
+  case 6: {
     std::wstring tmp = base::IntToString16(install_digest_data_[row].time_cost);
     tmp.append(L" 秒");
     return tmp;
     break;
   }
-  case 6: {
+  case 7: {
     std::wstring tmp;
     for (auto it = install_digest_data_[row].failed_list.begin(); it != install_digest_data_[row].failed_list.end(); ++it) {
       if (it->try_times > 0) {

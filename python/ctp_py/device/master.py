@@ -134,15 +134,15 @@ class OneDevice(object):
     return self.sub_command_id
   
   
-  def CopyCommand(self, command):
-    new_one = pb.apk_protomsg_pb2.Command()
-    new_one.cmd = command.cmd
-    new_one.cmd_no = command.cmd_no
-    new_one.sub_cmd_no = self._GenSubCommandID()
-    for one in command.param:
-      new_one.param.append(one)
-      
-    return new_one
+  # def CopyCommand(self, command):
+  #   new_one = pb.apk_protomsg_pb2.Command()
+  #   new_one.cmd = command.cmd
+  #   new_one.cmd_no = command.cmd_no
+  #   new_one.sub_cmd_no = self._GenSubCommandID()
+  #   for one in command.param:
+  #     new_one.param.append(one)
+  #
+  #   return new_one
    
    
   def _Start(self):
@@ -247,6 +247,10 @@ class OneDevice(object):
     out.total_number = len(self.todo_install_apk_map)
     out.success_number = len(self.installed_set)
     out.failed_number = len(self.installed_failed)
+    if self.imei is not None:
+      out.imei = self.imei
+    else:
+      out.imei = u'无法获取'.encode('utf-8')
     #ValueError: Value out of range: 2185000000
     #过大了，反正本来也不准，先不填了
     out.time_cost = 0#self.digest['time_cost']

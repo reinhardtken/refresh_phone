@@ -509,6 +509,7 @@ namespace phone_module {
         out->success_number = digest->success_number();
         out->failed_number = digest->failed_number();
         out->serial_number = UTF8ToWide(digest->serial_number());
+        out->imei = UTF8ToWide(digest->imei());
         out->model = UTF8ToWide(digest->model());
         out->time_cost = (int)base::TimeDelta::FromMicroseconds(digest->time_cost()).InSeconds();
         for (auto i = 0; i < digest->fail_list_size(); ++i) {

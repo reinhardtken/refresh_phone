@@ -58,7 +58,8 @@ message CommandInstallApkDigest {
   required int32 time_cost = 5;
   required string serial_number = 6;
   required string model = 7;
-  repeated FailTuple fail_list = 8;
+  required string imei = 8;
+  repeated FailTuple fail_list = 9;
 };
 
 
