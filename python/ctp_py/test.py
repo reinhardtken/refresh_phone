@@ -15,7 +15,7 @@ import psutil
 import re
 import util.utility
 import adbtool.find_server
-import check_update.master
+#import check_update.master
 
 import requests
 # import progressbar
@@ -112,7 +112,59 @@ def test_defer():
 
 
 
+
+
+#########################################################
+#函数装饰函数
+def wrapFun(func):
+    def inner(a, b):
+        print('function name:', func.__name__)
+        r = func(a, b)
+        return r
+    return inner
+
+@wrapFun
+def myadd(a, b):
+    return a + b
+
+
+class WrappTest(object):
+  def __init__(self):
+    self.head = 'hello world'
+    
+    
+  def wrapFun(self, func):
+    def inner(a, b):
+      print(self.head + ' function name2:', func.__name__)
+      r = func(a, b)
+      return r
+    
+    return inner
+  
+
+tmp = WrappTest()
+
+@tmp.wrapFun
+def myadd2(a, b):
+    return a + b
+
+
+def test():
+  a()
+  def a():
+    b()
+    
+  def b():
+    c()
+    
+  def c():
+    print('hello')
+  
+  a()
+
 if __name__ == '__main__':
+  test()
+  print(myadd2(2, 3))
   import my_token
   import config
   import check_update.master

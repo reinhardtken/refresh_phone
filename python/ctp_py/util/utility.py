@@ -8,6 +8,9 @@ import os
 import os.path
 import hashlib
 import platform
+import traceback
+from collections import OrderedDict
+import functools
 #// The internal representation of Time uses FILETIME, whose epoch is 1601-01-01
 #// 00:00:00 UTC.  ((1970-1601)*365+89)*24*60*60*1000*1000, where 89 is the
 #// number of leap year days between 1601 and 1970: (1970-1601)/4 excluding
@@ -410,6 +413,87 @@ def isXP():
 
 
 XP = isXP()
+#########################################################
+class Task(object):
+  #task支持在各个目标线程，执行futures的callback
+  #当callback各自独立时，task不参与维护任何状态信息
+  #当一批callback作为一个阶段，需要整体完成后才触发后续时，task负责检查整体完成，并触发后续
+  #所有的回调，第一个参数都是task，以便于回调新增后续动作，第二个都是真正的执行结果
+  class CallObject(object):
+    id = 0
+    def __init__(self, task, target, f, *args, **kwargs):
+      self.task = task
+      self.target = target
+      self.f = f
+      self.result = None
+      self.args = args
+      self.kwargs = kwargs
+      self.group = None
+      self.id = Task.CallObject.id
+      Task.CallObject.id += 1
+
+    
+    
+    def CallOnThisThread(self):
+      #此处执行真正的回调
+      try:
+        result = self.f(self.task, self.result)
+        # 检查本阶段是否全部完成，进入下一个阶段
+        if self.group is not None:
+          self.task.GroupCallback(self, result)
+      except Exception as e:
+        exstr = traceback.format_exc()
+        print(exstr)
+        pass
+  
+  
+    def Callback(self, future):
+      #这个函数被futures调用
+      self.SetResult(future.result())
+      self.target.put(self)
+      
+      
+      
+    def SetResult(self, result):
+      self.result = result
+      
+      
+  def __init__(self, pool):
+    self.pool = pool
+    self.groupMap = {}#OrderedDict()
+    
+
+  
+  def GenCallObject(self, target, f, *args, **kwargs):
+    re = Task.CallObject(self, target, f, args, kwargs)
+    return re
+
+
+
+  def GenGroupCallObject(self, target, group, f, *args, **kwargs):
+    re = self.GenCallObject(target, f, args, kwargs)
+    re.group = group
+    if group in self.groupMap:
+      pass
+    else:
+      self.groupMap[group] = [set(), None]
+      
+    self.groupMap[group][0].add(re)
+    return re
+  
+  
+  def AddGroupCallback(self, target, group, f, *args, **kwargs):
+    #re = self.GenCallObject(target, f, args, kwargs)
+    self.groupMap[group][1] = f
+  
+  
+  def GroupCallback(self, callObject, result):
+    if callObject.group in self.groupMap:
+      group = self.groupMap[callObject.group]
+      group[0].remove(callObject)
+      if len(group[0]) == 0:
+        group[1](self, result)
+
 #=======================================================
 if __name__ == '__main__':
   print('<=============(__main__ utility.py)==================>')
