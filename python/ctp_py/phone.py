@@ -74,12 +74,12 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.last_devices_list = None
 
     # 网络拉包
-    self.check_update = net_logic.master.Master(queue_out)
-    self.check_update.Start()
+    self.netLogic = net_logic.master.Master(queue_out)
+    self.netLogic.Start()
     
     
     #设备管理
-    self.master = device.master.Master(queue_out, self.check_update)
+    self.master = device.master.Master(queue_out, self.netLogic)
     self.master.Start()
     
 
@@ -109,11 +109,12 @@ class PhoneLogic(util.thread_class.ThreadClass):
   
   def LoadLocalProp(self):
     try:
-      self.check_update.json_path = self.prop['localPath']
+      self.netLogic.jsonPath = self.prop['localPath']
+      self.netLogic.apkPath = self.prop['apkPath']
       tmp = util.utility.ReadJsonProp(self.prop['localPath'])
-      if self.check_update.ParseJson(tmp):
+      if self.netLogic.ParseJson(tmp):
         self.local_prop = tmp
-        self.check_update.local_prop = tmp
+        self.netLogic.localProp = tmp
         return self.local_prop
     except Exception as e:
       return None
@@ -534,8 +535,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
   
   
   def ProcessCheckUpdatePackageList(self, command, deferred=None):
-    self.check_update.apk_path = self.prop['apkPath']
-    self.check_update.ProcessCheckUpdate(command, deferred)
+    self.netLogic.ProcessCheckUpdate(command, deferred)
   
   
   

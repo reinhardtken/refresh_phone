@@ -11,6 +11,10 @@ import platform
 import traceback
 from collections import OrderedDict
 import functools
+from concurrent import futures
+#########################################################
+import log
+
 #// The internal representation of Time uses FILETIME, whose epoch is 1601-01-01
 #// 00:00:00 UTC.  ((1970-1601)*365+89)*24*60*60*1000*1000, where 89 is the
 #// number of leap year days between 1601 and 1970: (1970-1601)/4 excluding
@@ -414,6 +418,46 @@ def isXP():
 
 XP = isXP()
 #########################################################
+#https://www.cnblogs.com/xieqiankun/p/python_decorate_method.html
+def tryWrapper(func):
+  def inner(*args, **kwargs):
+    try:
+      return func(*args, **kwargs)
+    except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      log.GetCurrentLogger().info(exstr)
+  
+  return inner
+
+
+def tryWrapperExceptionCode(code, func):
+  def inner(*args, **kwargs):
+    try:
+      return func(*args, **kwargs)
+    except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      log.GetCurrentLogger().info(exstr)
+      return code
+  
+  return inner
+
+
+
+def tryWrapperMember(self, func):
+  def inner(self, *args, **kwargs):
+    try:
+      return func(self, *args, **kwargs)
+    except Exception as e:
+      exstr = traceback.format_exc()
+      print(exstr)
+      log.GetCurrentLogger().info(exstr)
+  
+  return inner
+
+  
+#########################################################
 class Task(object):
   #task支持在各个目标线程，执行futures的callback
   #当callback各自独立时，task不参与维护任何状态信息
@@ -431,20 +475,22 @@ class Task(object):
       self.group = None
       self.id = Task.CallObject.id
       Task.CallObject.id += 1
+      
+      #是整个task里面的最后一个callback
+      #self.final = False
+      
+      
 
     
-    
+    @tryWrapper
     def CallOnThisThread(self):
       #此处执行真正的回调
-      try:
-        result = self.f(self.task, self.result)
-        # 检查本阶段是否全部完成，进入下一个阶段
-        if self.group is not None:
-          self.task.GroupCallback(self, result)
-      except Exception as e:
-        exstr = traceback.format_exc()
-        print(exstr)
-        pass
+      result = self.f(self.task, self.result)
+      # 检查本阶段是否全部完成，进入下一个阶段
+      if self.group is not None:
+        self.task.GroupCallback(self, result)
+      # if self.final:
+      #   self.task.TriggerFinal(result)
   
   
     def Callback(self, future):
@@ -461,7 +507,8 @@ class Task(object):
   def __init__(self, pool):
     self.pool = pool
     self.groupMap = {}#OrderedDict()
-    
+    # 可以设置，以便在这个future上等待完成
+    self.finalFuture = None
 
   
   def GenCallObject(self, target, f, *args, **kwargs):
@@ -492,9 +539,23 @@ class Task(object):
       group = self.groupMap[callObject.group]
       group[0].remove(callObject)
       if len(group[0]) == 0:
-        group[1](self, result)
-
-
+        if isinstance(group[1], Task.CallObject):
+          group[1].SetResult(result)
+          group[1].CallOnThisThread()
+        else:
+          group[1](self, result)
+        
+  
+  def TriggerFinal(self, result):
+    if self.finalFuture is not None:
+      self.finalFuture.set_result(result)
+      self.finalFuture = None
+  
+  
+  def GenFinal(self):
+    self.finalFuture = futures.Future()
+    return self.finalFuture
+#########################################################
 class InstallCommandHelp(object):
   
   @staticmethod
@@ -516,6 +577,9 @@ class InstallCommandHelp(object):
     
     return 0
   
+  
+ 
+
 #=======================================================
 if __name__ == '__main__':
   print('<=============(__main__ utility.py)==================>')
