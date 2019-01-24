@@ -123,50 +123,6 @@ class Master(object):
       
       
 #########################################################
-  def DownloadFile(self, command, one, file_path, callback):
-    url = one['downUrl']
-  
-    headers = {
-      'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
-    }
-    ret = False
-    try:
-      timeout = (10, 180)
-      try:
-        response = requests.request("GET", url, stream=True, data=None, headers=headers, timeout=timeout)
-      except requests.exceptions.SSLError as e:
-        response = requests.request("GET", url, stream=True, data=None, headers=headers, verify=False, timeout=timeout)
-    
-      total_length = int(response.headers.get("Content-Length"))
-      now = 0
-      with open(file_path, 'wb') as f:
-        for chunk in response.iter_content(chunk_size=8096):
-          if chunk:
-            f.write(chunk)
-            f.flush()
-            now += len(chunk)
-            callback(now, total_length)
-        else:
-          callback(total_length, total_length)
-          return True
-    except requests.exceptions.Timeout as e:
-      exstr = traceback.format_exc()
-      print(exstr)
-      self.log.info(exstr)
-      self.SendCommandResponse(command, consts.ERROR_CODE_DOWNLOAD_APK_TIMEOUT_FAILED,
-                               ['包更新',
-                                consts.error_string(consts.ERROR_CODE_DOWNLOAD_APK_TIMEOUT_FAILED),
-                                one['packageName']])
-    except Exception as e:
-      exstr = traceback.format_exc()
-      print(exstr)
-      self.log.info(exstr)
-      self.SendCommandResponse(command, consts.ERROR_CODE_DOWNLOAD_APK_FAILED,
-                               ['包更新',
-                                consts.error_string(consts.ERROR_CODE_DOWNLOAD_APK_FAILED),
-                                one['packageName']])
-    return ret
-
   class DownloadCallbck(object):
     def __init__(self, command, one, host):
       self.host = host
@@ -190,7 +146,7 @@ class Master(object):
     if os.path.exists(file_path):
       # 文件存在判断md5是否匹配
       md5 = util.utility.GetFileMD5(file_path)
-      if md5 != one['md5']:
+      if md5.upper() != one['md5'].upper():
         os.remove(file_path)
       else:
         self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['包更新', '存在，无需下载', one['packageName']])
@@ -202,10 +158,10 @@ class Master(object):
   
     try:
       dc = Master.DownloadCallbck(command, one, self)
-      ret = self.DownloadFile(command, one, file_path, dc.callback_progress)
-      if ret:
+      ret = util.network.DownloadFile(one['downUrl'], file_path, dc.callback_progress)
+      if ret[0]:
         md5 = util.utility.GetFileMD5(file_path)
-        if md5 != one['md5']:
+        if md5.upper() != one['md5'].upper():
           # 删除文件
           os.remove(file_path)
           self.SendCommandResponse(command, consts.ERROR_CODE_MD5_APK_FAILED,
@@ -278,39 +234,39 @@ class Master(object):
     return result
   
   
-  @staticmethod
-  def PullJsonFile():
-    #URL = 'https://www.ppndj.com/jc/user/apkinstall?ch=1234'
-    # URL = 'https://www.xppndj.com/jc/user/apkinstall?ch=1234'
-    try:
-      url = config.URL + '/api/applist'
-  
-      headers = {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
-        'X-atoken-Authorization': my_token.token.Get(),
-      }
-  
-      try:
-        timeout = (10, 180)
-        response = requests.request("get", url, stream=True, data=None, headers=headers, timeout=timeout)
-      except requests.exceptions.SSLError as e:
-        response = requests.request("get", url, stream=True, data=None, headers=headers, verify=False, timeout=timeout)
-        
-      if response.status_code == 200:
-        try:
-          json_data = json.loads(response.content)
-          if json_data['code'] == 200:
-            return (consts.ERROR_CODE_OK, json_data)
-        except Exception as e:
-          print(e)
-          return (consts.ERROR_CODE_PARSE_JSON_FAILED, None)
-      else:
-        print('net Error', response.status_code)
-    except requests.ConnectionError as e:
-      print('Error', e.args)
-    except Exception as e:
-      print('Error', e.args)
-    return (consts.ERROR_CODE_PULL_JSON_FAILED, None)
+  # @staticmethod
+  # def PullJsonFile():
+  #   #URL = 'https://www.ppndj.com/jc/user/apkinstall?ch=1234'
+  #   # URL = 'https://www.xppndj.com/jc/user/apkinstall?ch=1234'
+  #   try:
+  #     url = config.URL + '/api/applist'
+  #
+  #     headers = {
+  #       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
+  #       'X-atoken-Authorization': my_token.token.Get(),
+  #     }
+  #
+  #     try:
+  #       timeout = (10, 180)
+  #       response = requests.request("get", url, stream=True, data=None, headers=headers, timeout=timeout)
+  #     except requests.exceptions.SSLError as e:
+  #       response = requests.request("get", url, stream=True, data=None, headers=headers, verify=False, timeout=timeout)
+  #
+  #     if response.status_code == 200:
+  #       try:
+  #         json_data = json.loads(response.content)
+  #         if json_data['code'] == 200:
+  #           return (consts.ERROR_CODE_OK, json_data)
+  #       except Exception as e:
+  #         print(e)
+  #         return (consts.ERROR_CODE_PARSE_JSON_FAILED, None)
+  #     else:
+  #       print('net Error', response.status_code)
+  #   except requests.ConnectionError as e:
+  #     print('Error', e.args)
+  #   except Exception as e:
+  #     print('Error', e.args)
+  #   return (consts.ERROR_CODE_PULL_JSON_FAILED, None)
 
 
 
@@ -329,80 +285,73 @@ class Master(object):
     
   
   def ProcessInnerCheckUpdate(self, command):
-    re, data = self.PullJsonFile()
-    if re == consts.ERROR_CODE_OK:
-      self.CheckUpdate2(data, command)
-    else:
-      # 失败了，通知c++侧
-      self.SendCommandResponse(command, re, [consts.error_string(re), ])
-    
-    self.CallbackDeferred()
+    self.CheckUpdate2(command)
   
   
   
 
-  def CheckUpdate(self, data, command):
-    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
-    try:
-      util.utility.CreateDir(self.apk_path)
-      if self.ParseJson(data):
-        self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '解析网络配置成功', ])
-        need_save_json = False
-        if self.local_prop is not None:
-          # 检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
-          old_package_name_set = set()
-          for old_one in self.local_prop['data']:
-            old_package_name_set.add(old_one['packageName'])
-          new_package_name_set = set()
-          for new_one in data['data']:
-            new_package_name_set.add(new_one['packageName'])
-        
-          diff_set = new_package_name_set - old_package_name_set
-          solved_package_name = set()
-          for new_one in data['data']:
-            for old_one in self.local_prop['data']:
-              # 1 如果包名在差集合，说明是新增，需要下载
-              # 2 如果包名不在差集，说明不是新增，但md5不一致，说明换包了，需要下载
-              # 3 如果包名不在差集，说明不是新增，md5一致，但是本地没文件，需要下载
-              file_path = self.apk_path + '/' + new_one['packageName'] + '.apk'
-            
-              if new_one['packageName'] in diff_set or \
-                  (new_one['packageName'] == old_one['packageName'] and new_one['md5'] != old_one['md5']) or \
-                  (new_one['packageName'] == old_one['packageName'] and os.path.exists(file_path) is False):
-                need_save_json = True
-                if new_one['packageName'] not in solved_package_name and self.DownloadOneApk(new_one, command):
-                  solved_package_name.add(new_one['packageName'])
-      
-      
-        else:
-          # 不存在本地配置
-          need_save_json = True
-          for new_one in data['data']:
-            self.DownloadOneApk(new_one, command)
-      
-        if need_save_json == True:
-          # 保存最新的json文件到本地
-          if util.utility.WriteJsonFile(self.json_path, data):
-            self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
-          else:
-            self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED,
-                                     ['配置更新', '保存配置文件失败', ])
-        else:
-          self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '无需更新配置文件', ])
-          pass
-    
-      else:
-        self.SendCommandResponse(command, consts.ERROR_CODE_PARSE_JSON_FAILED, ['配置更新', '解析网络配置失败', ])
-        return
-  
-    except Exception as e:
-      self.SendCommandResponse(command, consts.ERROR_CODE_UNKNOWN, ['检查更新', ])
-      exstr = traceback.format_exc()
-      print(exstr)
-      self.log.info(exstr)
-  
-    return
-    pass
+  # def CheckUpdate(self, data, command):
+  #   self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
+  #   try:
+  #     util.utility.CreateDir(self.apk_path)
+  #     if self.ParseJson(data):
+  #       self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '解析网络配置成功', ])
+  #       need_save_json = False
+  #       if self.local_prop is not None:
+  #         # 检查两个文件的区别，并下载最新apk，完成md5校验。之后，更新配置文件到本地
+  #         old_package_name_set = set()
+  #         for old_one in self.local_prop['data']:
+  #           old_package_name_set.add(old_one['packageName'])
+  #         new_package_name_set = set()
+  #         for new_one in data['data']:
+  #           new_package_name_set.add(new_one['packageName'])
+  #
+  #         diff_set = new_package_name_set - old_package_name_set
+  #         solved_package_name = set()
+  #         for new_one in data['data']:
+  #           for old_one in self.local_prop['data']:
+  #             # 1 如果包名在差集合，说明是新增，需要下载
+  #             # 2 如果包名不在差集，说明不是新增，但md5不一致，说明换包了，需要下载
+  #             # 3 如果包名不在差集，说明不是新增，md5一致，但是本地没文件，需要下载
+  #             file_path = self.apk_path + '/' + new_one['packageName'] + '.apk'
+  #
+  #             if new_one['packageName'] in diff_set or \
+  #                 (new_one['packageName'] == old_one['packageName'] and new_one['md5'] != old_one['md5']) or \
+  #                 (new_one['packageName'] == old_one['packageName'] and os.path.exists(file_path) is False):
+  #               need_save_json = True
+  #               if new_one['packageName'] not in solved_package_name and self.DownloadOneApk(new_one, command):
+  #                 solved_package_name.add(new_one['packageName'])
+  #
+  #
+  #       else:
+  #         # 不存在本地配置
+  #         need_save_json = True
+  #         for new_one in data['data']:
+  #           self.DownloadOneApk(new_one, command)
+  #
+  #       if need_save_json == True:
+  #         # 保存最新的json文件到本地
+  #         if util.utility.WriteJsonFile(self.json_path, data):
+  #           self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
+  #         else:
+  #           self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED,
+  #                                    ['配置更新', '保存配置文件失败', ])
+  #       else:
+  #         self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '无需更新配置文件', ])
+  #         pass
+  #
+  #     else:
+  #       self.SendCommandResponse(command, consts.ERROR_CODE_PARSE_JSON_FAILED, ['配置更新', '解析网络配置失败', ])
+  #       return
+  #
+  #   except Exception as e:
+  #     self.SendCommandResponse(command, consts.ERROR_CODE_UNKNOWN, ['检查更新', ])
+  #     exstr = traceback.format_exc()
+  #     print(exstr)
+  #     self.log.info(exstr)
+  #
+  #   return
+  #   pass
 
 
   def CheckUpdate2(self, command):
@@ -412,7 +361,7 @@ class Master(object):
     # 1 获取配置文件
     future = self.pool.submit(Master.PullJsonFile2)
     
-    #2
+    #2 解析json，对没有的apk，安排下载任务
     def Step2(apkPath, task, result):
       try:
         util.utility.CreateDir(apkPath)
@@ -440,7 +389,7 @@ class Master(object):
                 file_path = self.apk_path + '/' + new_one['packageName'] + '.apk'
           
                 if new_one['packageName'] in diff_set or \
-                    (new_one['packageName'] == old_one['packageName'] and new_one['md5'] != old_one['md5']) or \
+                    (new_one['packageName'] == old_one['packageName'] and new_one['md5'].upper() != old_one['md5'].upper()) or \
                     (new_one['packageName'] == old_one['packageName'] and os.path.exists(file_path) is False):
                   need_save_json = True
                   if new_one['packageName'] not in solved_package_name:
@@ -449,12 +398,12 @@ class Master(object):
             for new_one in data['data']:
               solved_package_name.add(new_one['packageName'])
     
-          # 添加下载任务到pool
+
           def tmpCallback(task, result):
             print('tmpCallback', result)
     
-          def allDoneCallback(task, result):
-            print('allDoneCallback', result)
+          # def allDoneCallback(task, result):
+          #   print('allDoneCallback', result)
     
           for new_one in data['data']:
             if new_one['packageName'] in solved_package_name:
@@ -462,7 +411,7 @@ class Master(object):
               callback = task.GenGroupCallObject(self.queue_in, 'downloadApk', tmpCallback)
               future.add_done_callback(callback.Callback)
     
-          task.AddGroupCallback(self.queue_in, 'downloadApk', allDoneCallback)
+          task.AddGroupCallback(self.queue_in, 'downloadApk', functools.partial(Step3, self, data))
       except Exception as e:
         exstr = traceback.format_exc()
         print(exstr)
@@ -472,15 +421,17 @@ class Master(object):
     callback = task.GenCallObject(self.queue_in, functools.partial(Step2, self.apk_path))
     future.add_done_callback(callback.Callback)
     #
-    # def Step3(task, result):
-    #   print('all file has download')
-    #   #所有文件下载完成，存储配置文件
-    #   # 保存最新的json文件到本地
-    #   if util.utility.WriteJsonFile(self.json_path, data):
-    #     self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
-    #   else:
-    #     self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED,
-    #                              ['配置更新', '保存配置文件失败', ])
+    def Step3(self, data, task, result):
+      print('all file has download')
+      #所有文件下载完成，存储配置文件
+      # 保存最新的json文件到本地
+      if util.utility.WriteJsonFile(self.json_path, data):
+        self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '保存配置文件成功', ])
+      else:
+        self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED,
+                                 ['配置更新', '保存配置文件失败', ])
+
+      self.CallbackDeferred()
         
             
         
@@ -646,6 +597,8 @@ class Master(object):
         json_data = json.loads(result[1])
         if json_data['code'] == 200:
           return (consts.ERROR_CODE_OK, json_data)
+        else:
+          return (consts.ERROR_CODE_PARSE_JSON_FAILED, None)
       except Exception as e:
         print(e)
         return (consts.ERROR_CODE_PARSE_JSON_FAILED, None)
@@ -668,6 +621,7 @@ if __name__ == '__main__':
   master = Master(Queue.Queue())
   master.apk_path = r'C:\workspace\code\chromium24\src\build\release\ctp_data\apk'
   config.URL = r'http://es.kdndj.com'
+  config.URL = r'https://apkins.yfbro.com'
   check = pb.apk_protomsg_pb2.Command()
   check.cmd = consts.COMMAND_CHECK_UPDATE
   check.cmd_no = -1

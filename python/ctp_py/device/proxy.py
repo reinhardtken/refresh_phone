@@ -81,16 +81,18 @@ class Proxy(object):
   
   
   def Start(self):
+    self.log.info('device proxy start , %s', self.serial_number)
     self.thread.start()
     
   
   def Stop(self):
+    self.log.info('device proxy stop , %s', self.serial_number)
     self._continue = False
     
   
   def ForceStop(self):
     #从日志看，这个方法并不能结束线程。。。
-    self.log.info('ForceStop')
+    self.log.info('ForceStop %s', self.serial_number)
     self.log.info(self)
     # stop_thread(self.thread.ident)
     self.log.info('ForceStop over')
@@ -139,6 +141,8 @@ class Proxy(object):
       # self.last_command['command'] = None
       # self.last_command['timestamp'] = time.time()
       time.sleep(1)
+
+    self.log.info('device proxy Work exit , %s', self.serial_number)
   
   
   def Join(self):

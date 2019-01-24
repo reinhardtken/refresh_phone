@@ -16,11 +16,15 @@ class Command(base.AdbCommandBase):
   def __init__(self, serial_no, callback_exit):
     super(Command, self).__init__(None, None, self._callback_wrapper)
     self.log = util.log.GetLogger(self.__class__.__name__)
-
+    
     self.serial_no = serial_no
     self.step = 0
     self.package_list = []
     self.my_callback_exit = callback_exit
+
+    self.log.info('adb list_package %s ', self.serial_no)
+    
+    
   
   def _callback_wrapper(self, code):
     if self.my_callback_exit is not None:

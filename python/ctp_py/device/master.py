@@ -111,6 +111,8 @@ class OneDevice(object):
 
     self.package_list = []
     self.package_set = set()
+    #只存第一次拿到包列表的数据
+    self.first_package_set = set()
     
     
     self.current_installapk_response = {}
@@ -292,7 +294,7 @@ class OneDevice(object):
         my_globals.queue_network.put(notify)
         
         #打点
-        if command.package_name in self.package_set:
+        if command.package_name in self.first_package_set:
           self.log.info('ProcessInstallApkResponse package_name already exist  %s', command.package_name)
           if status == 0:
             status = 1
@@ -319,6 +321,9 @@ class OneDevice(object):
   def ProcessPackageListResponse(self, command):
     self.package_list = command['package_list']
     self.package_set = set(self.package_list)
+    if len(self.first_package_set) == 0:
+      self.first_package_set = self.package_set.copy()
+      
     self.log.info(self.serial_number + ' package list:')
     for one in self.package_list:
       self.log.info(one)
@@ -329,13 +334,13 @@ class OneDevice(object):
 
       
       
-  def IsInPackageList(self, package):
-    return package in self.package_set
+  # def IsInPackageList(self, package):
+  #   return package in self.package_set
   
   
   
-  def TriggerProcessPackageList(self):
-    pass
+  # def TriggerProcessPackageList(self):
+  #   pass
 
 
 

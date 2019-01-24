@@ -167,10 +167,10 @@ if __name__ == '__main__':
   print(myadd2(2, 3))
   import my_token
   import config
-  import check_update.master
+  import net_logic.master
   my_token.token.Init(r'C:\workspace\code\chromium24\src\build\Release\ctp_data\token')
   config.URL = 'https://apkins.yfbro.com'
-  check_update.master.Master.PullJsonFile()
+  net_logic.master.Master.PullJsonFile()
   
   from HTMLParser import HTMLParser
   xx = unichr(20013)

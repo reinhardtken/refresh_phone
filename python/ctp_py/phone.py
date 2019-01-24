@@ -34,7 +34,7 @@ import adbtool.find_server
 import device.master
 import device.callback
 import my_globals
-import check_update.master
+import net_logic.master
 import defer
 import my_token
 # =======================================================
@@ -74,7 +74,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.last_devices_list = None
 
     # 网络拉包
-    self.check_update = check_update.master.Master(queue_out)
+    self.check_update = net_logic.master.Master(queue_out)
     self.check_update.Start()
     
     
