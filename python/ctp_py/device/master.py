@@ -408,7 +408,7 @@ class Master(object):
     self.last_devices_list = []
     self.last_devices_map = {}
     
-    self.pending_task_list = deque()
+    # self.pending_task_list = deque()
     
     
     # self.apk_map = {}
@@ -428,8 +428,13 @@ class Master(object):
 
     self.auto_install_mode = False
 
+    self.timer = threading.Timer(5, self.TimerCheck)
+    
 
 
+
+  def TimerCheck(self):
+    pass
 
   def EnterAutoInstall(self, command):
     if int(command.param[0]) == 1:
@@ -672,6 +677,7 @@ class Master(object):
         
 
   def Start(self):
+    self.timer.start()
     self.thread.start()
   
   
@@ -688,7 +694,7 @@ class Master(object):
       self.DealWithIncomeQueue()
       self.CheckTimeout()
       self.TriggerAutoInstall()
-      self.CheckPendingTask()
+      # self.CheckPendingTask()
       time.sleep(1)
   
   
@@ -697,10 +703,10 @@ class Master(object):
     
     
   
-  def CheckPendingTask(self):
-    while len(self.pending_task_list):
-      if self.pending_task_list[0][0] < time.time():
-        pass
+  # def CheckPendingTask(self):
+  #   while len(self.pending_task_list):
+  #     if self.pending_task_list[0][0] < time.time():
+  #       pass
 
 # ======================================
 if __name__ == '__main__':

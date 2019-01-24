@@ -81,12 +81,12 @@ class Proxy(object):
   
   
   def Start(self):
-    self.log.info('device proxy start , %s', self.serial_number)
+    self.log.info('device proxy start %s', self.serial_number)
     self.thread.start()
     
   
   def Stop(self):
-    self.log.info('device proxy stop , %s', self.serial_number)
+    self.log.info('device proxy stop %s', self.serial_number)
     self._continue = False
     
   
@@ -226,7 +226,7 @@ class Proxy(object):
   
   def AfterCommand(self, command):
     if command.cmd == consts.COMMAND_INSTALL_APK:
-      self.log.info('AfterCommand start checkouttime %s', self.serial_number)
+      self.log.info('AfterCommand stop checkouttime %s', self.serial_number)
       self.StopCheckTimeOut(command)
   
   

@@ -40,6 +40,16 @@ class Command(base.AdbCommandBase):
     '''
     letv##################################################
     Success
+    
+      第一步:先把原来已经存在的相同包名的APK删除,如:adb shell rm system/app/OutdoorMeter/OutdoorMeter.apk
+      第二步:将data/data/目录下该应用的包名的目录删除掉,如:adb shell rm -rf data/data/com.runbo.outdoormeter/
+      第三步:重启android手机  adb reboot
+      第四步:再重新安装该APK
+      
+      
+      在红米中又出现了这个问题，但是手机并没有root
+      最终解决方案
+      在MIUI 开发者选项中最下面关闭 MIUI优化
     Failure [DELETE_FAILED_INTERNAL_ERROR]
     '''
 

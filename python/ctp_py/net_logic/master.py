@@ -404,14 +404,21 @@ class Master(object):
     
           # def allDoneCallback(task, result):
           #   print('allDoneCallback', result)
-    
-          for new_one in data['data']:
-            if new_one['packageName'] in solved_package_name:
-              future = task.pool.submit(Master.DownloadOneApk, self, new_one, command)
-              callback = task.GenGroupCallObject(self.queue_in, 'downloadApk', tmpCallback)
-              future.add_done_callback(callback.Callback)
-    
-          task.AddGroupCallback(self.queue_in, 'downloadApk', functools.partial(Step3, self, data))
+          if len(solved_package_name):
+            for new_one in data['data']:
+              if new_one['packageName'] in solved_package_name:
+                future = task.pool.submit(Master.DownloadOneApk, self, new_one, command)
+                callback = task.GenGroupCallObject(self.queue_in, 'downloadApk', tmpCallback)
+                future.add_done_callback(callback.Callback)
+      
+            task.AddGroupCallback(self.queue_in, 'downloadApk', functools.partial(Step3, self, data))
+          else:
+            #不需要下载包
+            Step3(self, data, None, None)
+        else:
+          #没有成功解析网络配置
+          self.CallbackDeferred()
+          
       except Exception as e:
         exstr = traceback.format_exc()
         print(exstr)
