@@ -222,13 +222,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
       'X-atoken-Authorization': my_token.token.Get(),
     }
-    # params = {
-    #   'mobile': command.param[0].encode('utf-8')
-    # }
-    # data = {
-    #   'mobile': command.param[0].encode('utf-8'),
-    #   'vcode': command.param[1].encode('utf-8'),
-    # }
+
 
     try:
       timeout = (10, 180)
@@ -258,9 +252,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     headers = {
       'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
     }
-    # params = {
-    #   'mobile': command.param[0].encode('utf-8')
-    # }
+
     data = {
       'mobile': command.param[0].encode('utf-8'),
       'vcode': command.param[1].encode('utf-8'),

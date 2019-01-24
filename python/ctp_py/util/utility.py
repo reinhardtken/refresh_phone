@@ -494,6 +494,28 @@ class Task(object):
       if len(group[0]) == 0:
         group[1](self, result)
 
+
+class InstallCommandHelp(object):
+  
+  @staticmethod
+  def GetType(command):
+    return command.param[0].encode('utf-8')
+
+  @staticmethod
+  def GetApk(command):
+    return command.param[1].encode('utf-8')
+
+  @staticmethod
+  def GetOP(command):
+    return command.param[3].encode('utf-8')
+
+  @staticmethod
+  def GetAddTime(command):
+    if len(command.param) > 4:
+      return int(command.param[5])
+    
+    return 0
+  
 #=======================================================
 if __name__ == '__main__':
   print('<=============(__main__ utility.py)==================>')

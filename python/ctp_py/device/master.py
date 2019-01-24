@@ -9,6 +9,7 @@ import logging
 import socket
 import time
 from collections import deque
+import traceback
 # ====================================
 
 import proxy
@@ -298,14 +299,19 @@ class OneDevice(object):
           self.log.info('ProcessInstallApkResponse package_name already exist  %s', command.package_name)
           if status == 0:
             status = 1
-            
+         
+        reason = command.progress
+        if not isinstance(command.progress, unicode):
+           reason = command.progress.decode('utf-8')
+
+          
         new_command = {
           'c': consts.COMMAND_NET_REPORT_INSTALL_APK,
           'serial_number': self.serial_number,
           'id': int(self.todo_install_apk_map[command.package_name]['id']),
           'imei': self.imei,
           'status': status,
-          'reason': command.progress.decode('utf-8'),
+          'reason': reason,
         }
         net_report.ProcessReport(new_command)
       
@@ -347,7 +353,7 @@ class OneDevice(object):
   def ProcessInstallApk(self, command):
     # 添加sub_command_id
     command.sub_cmd_no = self._GenSubCommandID()
-    type = command.param[0].encode('utf-8')
+    type = util.utility.InstallCommandHelp.GetType(command)
     apk_path = command.param[1].encode('utf-8')
     package_name = util.utility.GetPackageNameNoApkExt(apk_path)
     self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number, package_name=package_name,
@@ -612,24 +618,31 @@ class Master(object):
   
     
   def ProcessIncome(self, command):
-    forword = True
-    if isinstance(command, pb.apk_protomsg_pb2.DevicesList):
-      forword = self.ProcessScanDevicesResponse(command)
-    elif isinstance(command, dict):
-      if command['c'] == consts.COMMAND_INNER_START_CHECKOUT_TIMEOUT:
-        forword = self.ProcessStartCheckTimeOut(command)
-      elif command['c'] == consts.COMMAND_INNER_STOP_CHECKOUT_TIMEOUT:
-        forword = self.ProcessStopCheckTimeOut(command)
-      elif command['c'] == consts.COMMAND_INNER_PACKAGE_LIST:
-        forword = self.ProcessPackageListResponse(command)
-      elif command['c'] == consts.COMMAND_INNER_GET_IMEI:
-        forword = self.ProcessIMEIResponse(command)
-    elif command.cmd == consts.COMMAND_INSTALL_APK:
-      forword = self.ProcessInstallApkResponse(command)
-    
+    self.log.info('ProcessIncome enter')
+    try:
+      forword = True
+      if isinstance(command, pb.apk_protomsg_pb2.DevicesList):
+        forword = self.ProcessScanDevicesResponse(command)
+      elif isinstance(command, dict):
+        if command['c'] == consts.COMMAND_INNER_START_CHECKOUT_TIMEOUT:
+          forword = self.ProcessStartCheckTimeOut(command)
+        elif command['c'] == consts.COMMAND_INNER_STOP_CHECKOUT_TIMEOUT:
+          forword = self.ProcessStopCheckTimeOut(command)
+        elif command['c'] == consts.COMMAND_INNER_PACKAGE_LIST:
+          forword = self.ProcessPackageListResponse(command)
+        elif command['c'] == consts.COMMAND_INNER_GET_IMEI:
+          forword = self.ProcessIMEIResponse(command)
+      elif command.cmd == consts.COMMAND_INSTALL_APK:
+        forword = self.ProcessInstallApkResponse(command)
       
-    if forword is not None and forword == True:
-      self.queue_out.put(command)
+        
+      if forword is not None and forword == True:
+        self.queue_out.put(command)
+    except Exception as e:
+      exstr = traceback.format_exc()
+      self.log.info(exstr)
+      
+    self.log.info('ProcessIncome leave')
       
       
   

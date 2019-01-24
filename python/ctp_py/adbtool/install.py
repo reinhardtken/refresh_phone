@@ -86,6 +86,9 @@ class Command(base.AdbCommandBase):
   
   红米1s
   Permission denied
+  
+  
+  Invalid APK file
     '''
     
     if self.stop_parser == True:
