@@ -354,7 +354,7 @@ class OneDevice(object):
     # 添加sub_command_id
     command.sub_cmd_no = self._GenSubCommandID()
     type = util.utility.InstallCommandHelp.GetType(command)
-    apk_path = command.param[1].encode('utf-8')
+    apk_path = util.utility.InstallCommandHelp.GetApk(command)
     package_name = util.utility.GetPackageNameNoApkExt(apk_path)
     self.GenInstallApkResponse(target=self.queue_master, command=command, serial_number=self.serial_number, package_name=package_name,
                                time_max=0, package_size=0, type=type)

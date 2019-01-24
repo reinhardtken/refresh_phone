@@ -203,10 +203,10 @@ class Proxy(object):
       # cmd->add_param(WideToUTF8(it->package_name));
       # cmd->add_param(WideToUTF8(it->id));
       
-      apk_path = command.param[1].encode('utf-8')
+      apk_path = util.utility.InstallCommandHelp.GetApk(command)
       package_size = util.utility.GetFileSize(apk_path)
       package_name = util.utility.GetPackageNameNoApkExt(apk_path)
-      op = command.param[3].encode('utf-8')
+      op = util.utility.InstallCommandHelp.GetOP(command)
       #目前看，最慢速度是0.5mb/s，所以按这个数值+30s作为超时时长
       # if 'air.tv.douyu' in package_name and self.debug_once and package_size > 30:
       #   self.debug_once = False
@@ -279,9 +279,9 @@ class Proxy(object):
       # cmd->add_param(WideToUTF8(it->package_name));
       # cmd->add_param(WideToUTF8(it->id));
       
-      apk_path = command.param[1].encode('utf-8')
+      apk_path = util.utility.InstallCommandHelp.GetApk(command)
       package_name = util.utility.GetPackageNameNoApkExt(apk_path)
-      op = command.param[3].encode('utf-8')
+      op = util.utility.InstallCommandHelp.GetOP(command)
       if op == consts.INSTALL_TYPE_DELTE_FIRST:
         #先要做删除操作
         self.ProcessUninstallApk(command)
@@ -345,7 +345,7 @@ class Proxy(object):
   def ProcessUninstallApk(self, command):
     try:
   
-      apk_path = command.param[1].encode('utf-8')
+      apk_path = util.utility.InstallCommandHelp.GetApk(command)
       package_name = util.utility.GetPackageNameNoApkExt(apk_path)
       # self.last_command['package_name'] = package_name
       self.log.info(self)
