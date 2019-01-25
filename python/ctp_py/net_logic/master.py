@@ -251,9 +251,9 @@ class Master(object):
 #########################################################
   #检查网络配置，更新apk文件
   # 1 获取配置文件
-  def CheckUpdateStep1(self):
+  def CheckUpdateStep1(self, task, command):
     future = self.pool.submit(Master.PullJsonFile)
-    return future
+    task.AddDoneCallbackHelper(future, self.queue_in, functools.partial(self.CheckUpdateStep2, command))
 
   # 2 解析json，对没有的apk，安排下载任务
   @util.utility.tryWrapper
@@ -302,8 +302,8 @@ class Master(object):
         for new_one in data['data']:
           if new_one['packageName'] in solved_package_name:
             future = task.pool.submit(Master.DownloadOneApk, self, new_one, command)
-            callback = task.GenGroupCallObject(self.queue_in, 'downloadApk', tmpCallback)
-            future.add_done_callback(callback.Callback)
+            task.AddDoneCallbackGroupHelper(future, self.queue_in, 'downloadApk', tmpCallback)
+ 
       
         task.AddGroupCallback(self.queue_in, 'downloadApk', functools.partial(self.CheckUpdateStep3, command, data))
       else:
@@ -319,8 +319,8 @@ class Master(object):
     print('all file has download')
     
     step4 = self.pool.submit(functools.partial(util.utility.WriteJsonFile, self.jsonPath, data))
-    callback = task.GenCallObject(self.queue_in, functools.partial(Master.CheckUpdateStepFinal, self, command))
-    step4.add_done_callback(callback.Callback)
+    task.AddDoneCallbackHelper(step4, self.queue_in, functools.partial(Master.CheckUpdateStepFinal, self, command))
+
 
 
 
@@ -337,9 +337,9 @@ class Master(object):
   def CheckUpdate(self, command, wait=False):
     self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
     task = util.utility.Task(self.pool)
-    step1 = self.CheckUpdateStep1()
-    callback = task.GenCallObject(self.queue_in, functools.partial(self.CheckUpdateStep2, command))
-    step1.add_done_callback(callback.Callback)
+    self.CheckUpdateStep1(task, command)
+    
+    
     
     if wait:
       final = task.GenFinal()

@@ -555,6 +555,15 @@ class Task(object):
   def GenFinal(self):
     self.finalFuture = futures.Future()
     return self.finalFuture
+
+  def AddDoneCallbackHelper(self, future, target, f):
+    callback = self.GenCallObject(target, f)
+    future.add_done_callback(callback.Callback)
+    
+  
+  def AddDoneCallbackGroupHelper(self, future, target, group ,f):
+    callback = self.GenGroupCallObject(target, group, f)
+    future.add_done_callback(callback.Callback)
 #########################################################
 class InstallCommandHelp(object):
   
