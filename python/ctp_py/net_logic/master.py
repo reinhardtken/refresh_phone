@@ -78,16 +78,21 @@ class Master(object):
   
     
   def ProcessIncome(self, command):
-    if isinstance(command, util.utility.Task.CallObject):
-      command.CallOnThisThread()
-    elif isinstance(command, dict):
-      if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
-        self.ProcessReportDeviceInfo(command)
-      elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
-        self.ProcessReportInstallApk(command)
-    elif command[0].cmd == consts.COMMAND_CHECK_UPDATE:
-      self.tmp_defferd = command[1]
-      self.ProcessInnerCheckUpdate(command[0])
+    try:
+      if isinstance(command, util.utility.Task.CallObject):
+        command.CallOnThisThread()
+      elif isinstance(command, dict):
+        if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
+          self.ProcessReportDeviceInfo(command)
+        elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
+          self.ProcessReportInstallApk(command)
+      elif command[0].cmd == consts.COMMAND_CHECK_UPDATE:
+        self.tmp_defferd = command[1]
+        self.ProcessInnerCheckUpdate(command[0])
+    except Exception as e:
+      exstr = traceback.format_exc()
+      self.log.warning('device.master.ProcessIncome Exception Happend!!!')
+      self.log.warning(exstr)
     
         
 
@@ -509,11 +514,11 @@ class Master(object):
       if response.status_code == 200:
         json_data = json.loads(response.content)
         if json_data['code'] == 200:
-          log.info('success')
+          #log.info('success')
           return
         else:
           #my_token.token.Set(None)
-          log.warning('failed code not 200: %d', json_data['code'])
+          #log.warning('failed code not 200: %d', json_data['code'])
           return
       else:
         log.warning('status code not 200: %d', response.status_code)
@@ -550,7 +555,7 @@ class Master(object):
     
       timeout = (10, 180)
       log = util.log.GetCurrentLogger()
-      log.info('ProcessReportInstallApk')
+      log.info('ProcessReportInstallApk : %s', command['package_name'])
       log.info(url)
       log.info(data)
       try:
@@ -573,11 +578,11 @@ class Master(object):
       if response.status_code == 200:
         json_data = json.loads(response.content)
         if json_data['code'] == 200:
-          log.info('success')
+          #log.info('success')
           return
         else:
           #my_token.token.Set(None)
-          log.warning('failed code not 200: %d', json_data['code'])
+          #log.warning('failed code not 200: %d', json_data['code'])
           return
       else:
         log.warning('status code not 200: %d', response.status_code)

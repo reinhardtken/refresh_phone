@@ -312,6 +312,7 @@ class OneDevice(object):
           'imei': self.imei,
           'status': status,
           'reason': reason,
+          'package_name': command.package_name,
         }
         net_report.ProcessReport(new_command)
       
@@ -640,7 +641,8 @@ class Master(object):
         self.queue_out.put(command)
     except Exception as e:
       exstr = traceback.format_exc()
-      self.log.info(exstr)
+      self.log.warning('device.master.ProcessIncome Exception Happend!!!')
+      self.log.warning(exstr)
       
     self.log.info('ProcessIncome leave')
       
