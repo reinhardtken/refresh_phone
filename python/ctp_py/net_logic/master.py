@@ -110,13 +110,9 @@ class Master(object):
     if isinstance(command, util.utility.Task.CallObject):
       command.CallOnThisThread()
     elif isinstance(command, dict):
-      if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
-        self.ProcessReportDeviceInfo(command)
-      elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
-        self.ProcessReportInstallApk(command)
-    elif command[0].cmd == consts.COMMAND_CHECK_UPDATE:
-      self.tmpDefferd = command[1]
-      self.ProcessInnerCheckUpdate(command[0])
+      if command[0].cmd == consts.COMMAND_CHECK_UPDATE:
+        self.tmpDefferd = command[1]
+        self.ProcessInnerCheckUpdate(command[0])
       
       
       
@@ -233,7 +229,20 @@ class Master(object):
     
     
   def ProcessReport(self, command):
-    self.queue_in.put(command)
+    if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
+      util.utility.Task.CallObject(None, self.queue_in,
+                                   functools.partial(
+                                     lambda command, task, result: self.pool.submit(
+                                       Master.ProcessReportDeviceInfo, command),
+                                     command)).Callback(None)
+    elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
+      util.utility.Task.CallObject(None, self.queue_in,
+                                   functools.partial(
+                                     lambda command, task, result: self.pool.submit(
+                                       Master.ProcessReportInstallApk, command),
+                                     command)).Callback(None)
+      
+    
     
   
   def CallbackDeferred(self):
@@ -522,6 +531,7 @@ class Master(object):
 
 # ======================================
 if __name__ == '__main__':
+  
   command = {}
   command['product'] = '123'
   command['model'] = '123'
@@ -532,6 +542,12 @@ if __name__ == '__main__':
   #Master.ProcessReportDeviceInfo(command)
   import Queue
   master = Master(Queue.Queue())
+
+  command = {}
+  command['c'] = consts.COMMAND_NET_REPORT_DEVICE_INFO
+  master.ProcessReport(command)
+  
+  
   master.apkPath = r'C:\workspace\code\chromium24\src\build\release\ctp_data\apk'
   master.jsonPath = r'C:\workspace\code\chromium24\src\build\release\ctp_data\apk_local'
   config.URL = r'http://es.kdndj.com'

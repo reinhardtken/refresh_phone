@@ -493,9 +493,10 @@ class Task(object):
       #   self.task.TriggerFinal(result)
   
   
-    def Callback(self, future):
+    def Callback(self, future=None):
       #这个函数被futures调用
-      self.SetResult(future.result())
+      if future is not None:
+        self.SetResult(future.result())
       self.target.put(self)
       
       
@@ -512,13 +513,13 @@ class Task(object):
 
   
   def GenCallObject(self, target, f, *args, **kwargs):
-    re = Task.CallObject(self, target, f, args, kwargs)
+    re = Task.CallObject(self, target, f, *args, **kwargs)
     return re
 
 
 
   def GenGroupCallObject(self, target, group, f, *args, **kwargs):
-    re = self.GenCallObject(target, f, args, kwargs)
+    re = self.GenCallObject(target, f, *args, **kwargs)
     re.group = group
     if group in self.groupMap:
       pass
