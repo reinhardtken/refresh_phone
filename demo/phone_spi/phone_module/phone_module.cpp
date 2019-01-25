@@ -511,7 +511,8 @@ namespace phone_module {
         out->serial_number = UTF8ToWide(digest->serial_number());
         out->imei = UTF8ToWide(digest->imei());
         out->model = UTF8ToWide(digest->model());
-        out->time_cost = (int)base::TimeDelta::FromMicroseconds(digest->time_cost()).InSeconds();
+        /*out->time_cost = (int)base::TimeDelta::FromMicroseconds(digest->time_cost()).InSeconds();*/
+        out->time_cost = (int)digest->time_cost();
         for (auto i = 0; i < digest->fail_list_size(); ++i) {
           FailedTuple tmp;
           tmp.app_name = UTF8ToWide(digest->fail_list(i).app_name());

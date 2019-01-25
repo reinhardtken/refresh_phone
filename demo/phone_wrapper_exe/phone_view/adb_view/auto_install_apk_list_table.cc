@@ -130,7 +130,7 @@ void AutoInstallApkListTable::CreateExampleView(View* container) {
   columns2.push_back(ui::TableColumn(5, L"失败总数",
     ui::TableColumn::LEFT, 100));
 
-  columns2.push_back(ui::TableColumn(6, L"总耗时",
+  columns2.push_back(ui::TableColumn(6, L"进度",
     ui::TableColumn::LEFT, 100));
 
   columns2.push_back(ui::TableColumn(7, L"失败包",
@@ -308,9 +308,16 @@ string16 AutoInstallApkListTable::GetText2(int row, int column_id) {
     break;
   }
   case 6: {
-    std::wstring tmp = base::IntToString16(install_digest_data_[row].time_cost);
-    tmp.append(L" 秒");
-    return tmp;
+    //std::wstring tmp = base::IntToString16(install_digest_data_[row].time_cost);
+    //tmp.append(L" 秒");
+    if (install_digest_data_[row].time_cost == 0) {
+      return L"开始";
+    } else if (install_digest_data_[row].time_cost == 1) {
+      return L"进行中";
+    } else if (install_digest_data_[row].time_cost == 2) {
+      return L"完成";
+    } 
+    return L"";
     break;
   }
   case 7: {

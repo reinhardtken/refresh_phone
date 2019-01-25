@@ -124,6 +124,20 @@ class OneDevice(object):
     self.todo_install_apk_map = {}
     
     
+
+    
+    
+  @property
+  def stage(self):
+    # 统计需要安装的数量，如果没有要装的，认为完成了
+    todoInstallNumber = len(self.todo_install_apk_map)
+    installedOrFailedNumber = len(self.installed_failed) + len(self.installed_set)
+    if installedOrFailedNumber == 0:
+      return 0
+    elif installedOrFailedNumber == todoInstallNumber:
+      return 2
+    else:
+      return 1
   
   
   def UpdateProduct(self, info):
@@ -256,7 +270,8 @@ class OneDevice(object):
       out.imei = u'无法获取'.encode('utf-8')
     #ValueError: Value out of range: 2185000000
     #过大了，反正本来也不准，先不填了
-    out.time_cost = 0#self.digest['time_cost']
+    out.time_cost = self.stage
+      
     out.serial_number = self.serial_number
     out.model = self.model
     for one in self.installed_failed.values():
@@ -286,6 +301,10 @@ class OneDevice(object):
       if command.stage == '完成'.decode('utf-8'):
         if command.progress == 'Success'.decode('utf-8'):
           self.AddInstalled(command)
+          #如果之前失败现在成功，要从失败中删除
+          if self.IsInstallFailed(command.package_name):
+            self.log.info('ProcessInstallApkResponse failed to success %s', command.package_name)
+            self.installed_failed.pop(command.package_name)
           status = 0
         else:
           self.AddInstallFailed(command.package_name, FailedItem.ERROR_ADB, command.progress, command.time_cost)
@@ -486,15 +505,16 @@ class Master(object):
         device = self._Add(one['serial_no'])
         if device.Empty():
           self.log.info('TriggerAutoInstall  begin')
-          # 发送装包摘要
-          notify = device.NotifyInstallApkDigest()
-          self.queue_out.put(notify)
+          
           for k, v in device.todo_install_apk_map.items():
             # 没有安装成功
             if not device.IsInstalled(k):
               self.log.info('TriggerAutoInstall  one ' + k)
               self.MayTryAgain(device, k)
-      
+          else:
+            notify = device.NotifyInstallApkDigest()
+            self.queue_out.put(notify)
+            
     
     
   
