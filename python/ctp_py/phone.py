@@ -10,6 +10,8 @@ import sys
 import traceback
 import requests
 import requests.exceptions
+from concurrent import futures
+import functools
 # HTTPSConnectionPool(host='s0qrdt.kdndj.com', port=443):
 # Max retries exceeded with url: /files/0eccc965d5d8693b2e0cbc9fda97104c.apk
 # (Caused by SSLError(CertificateError("hostname 's0qrdt.kdndj.com' doesn't match either of 'img.ucdl.pp.uc.cn', 'api.flash.cn', 'cdn.osupdateservice.yunos.com', 'static.flash.cn', 'www.flash.cn', 'dl6.ztems.com', 'slient.ucdl.pp.uc.cn', 'apimini.flash.2144.com', 'dl1.ztems.com', 'alissl.ucdl.pp.uc.cn', 'iscsi.ucdl.pp.uc.cn', 'stage.admin.flash.cn', 'mini.flash.2144.com', 'tongji.flash.cn', 'test.flash.cn', 'oss.ucdl.pp.uc.cn', 'stage-api.flash.cn', 'admin.flash.cn', 'tool.flash.cn', 'tongji.flash.2144.com', 'static-stage.flash.cn', 'stage.flash.cn'",),))
@@ -37,6 +39,7 @@ import my_globals
 import net_logic.master
 import defer
 import my_token
+import util.utility
 # =======================================================
 
 # ======================================================================
@@ -73,8 +76,10 @@ class PhoneLogic(util.thread_class.ThreadClass):
     # self.device2 = adb_wrapper2.AdbInstall()
     self.last_devices_list = None
 
+    self.pool = futures.ThreadPoolExecutor(5, 'net')
+
     # 网络拉包
-    self.netLogic = net_logic.master.Master(queue_out)
+    self.netLogic = net_logic.master.Master(queue_out, self.pool)
     self.netLogic.Start()
     
     
@@ -86,9 +91,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.sub_command_id = 0
     
     self.package_map = {}
-    
-    
-    self.total_auto_defer = None
+
 
 
 
@@ -371,50 +374,52 @@ class PhoneLogic(util.thread_class.ThreadClass):
     self.master.ProcessCommand('-', command)
     
     
-  
+
   def ProcessAutoInstall(self, command):
     self.master.EnterAutoInstall(command)
     pass
+
+
+#########################################################
+  def CheckUpdate(self, command, wait=False):
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
+    task = util.utility.Task(self.pool)
+    self.CheckUpdateStep1(task, command)
   
-  
+    if wait:
+      final = task.GenFinal()
+      futures.wait([final], return_when=futures.ALL_COMPLETED)
+      print('CheckUpdate finished....')
   
   
   def ProcessTotalAutoInstall(self, command):
     if int(command.param[0]) == 1:
-      self.log.info('ProcessTotalAutoInstall enter total auto')
-      if self.total_auto_defer is None:
-        self.log.info('ProcessTotalAutoInstall begin total auto')
-        self.total_auto_defer = defer.Deferred()
-        
-        def step1(result, phone):
-          #获取本地列表
-          phone.log.info('ProcessTotalAutoInstall step1')
-          get_local = pb.apk_protomsg_pb2.Command()
-          get_local.cmd = consts.COMMAND_GET_LOCAL_PACKAGELIST
-          get_local.cmd_no = -1
-          phone.ProcessGetLocalPackageList(get_local)
+      
+      relay = futures.Future()
+      # 检查网络更新
+      check = pb.apk_protomsg_pb2.Command()
+      check.cmd = consts.COMMAND_CHECK_UPDATE
+      check.cmd_no = -1
+      self.netLogic.ProcessCheckUpdate(check, relay)
 
-          
-        def step2(result, phone, command):
-          #进入自动模式
-          phone.log.info('ProcessTotalAutoInstall step2')
-          phone.ProcessAutoInstall(command)
-          #这是最后一步了，defer没事情做了，要把自己设置成None
-          phone.total_auto_defer = None
-        
-        self.total_auto_defer.add_callback(step1, self)
-        self.total_auto_defer.add_callback(step2, self, command)
 
-        # 检查网络更新
-        check = pb.apk_protomsg_pb2.Command()
-        check.cmd = consts.COMMAND_CHECK_UPDATE
-        check.cmd_no = -1
-        self.ProcessCheckUpdatePackageList(check, self.total_auto_defer)
-      else:
-        self.log.info('ProcessTotalAutoInstall total_auto_defer not None, just wait')
-    else:
-      self.log.info('ProcessTotalAutoInstall leave total auto')
+      #等待网络更新返回
+      futures.wait([relay], return_when=futures.ALL_COMPLETED)
+      print('ProcessTotalAutoInstall CheckUpdate callbacked')
+
+      # 获取本地列表
+      self.log.info('ProcessTotalAutoInstall step1')
+      get_local = pb.apk_protomsg_pb2.Command()
+      get_local.cmd = consts.COMMAND_GET_LOCAL_PACKAGELIST
+      get_local.cmd_no = -1
+      self.ProcessGetLocalPackageList(get_local)
+      #进入自动模式
       self.ProcessAutoInstall(command)
+    else:
+      pass
+      #这个逻辑没啥需求，不再处理了
+      # self.log.info('ProcessTotalAutoInstall leave total auto')
+      # self.ProcessAutoInstall(command)
   
   
   def ProcessRefresh(self, command):
@@ -432,19 +437,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
     for one in self.master.last_devices_list:
       self.master.ProcessCommand(one['serial_no'], command)
   
-  # def ProcessScanDevices(self, command):
-  #   succ, device_list = self.device.ListDevices()
-  #   if succ:
-  #     out = []
-  #     for one in device_list:
-  #       device = {}
-  #       device['serial_no'] = one
-  #       out.append(device)
-  #
-  #     self.SendDevicesList(command, consts.ERROR_CODE_OK, out)
-  #   else:
-  #     #self.SendDevicesList(command, PhoneLogic.ERROR_CODE_PYADB_SCAN_DEVICES_FAILED, None, str(device_list))
-  #     pass
+
   
   def ProcessInstallApk3(self, command):
     #将包名换成路径

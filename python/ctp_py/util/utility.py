@@ -12,6 +12,7 @@ import traceback
 from collections import OrderedDict
 import functools
 from concurrent import futures
+import threading
 #########################################################
 import log
 
@@ -512,6 +513,11 @@ class Task(object):
     self.finalFuture = None
 
   
+  @staticmethod
+  def Post(target, f):
+    Task.CallObject(None, target, f).Callback(None)
+    
+  
   def GenCallObject(self, target, f, *args, **kwargs):
     re = Task.CallObject(self, target, f, *args, **kwargs)
     return re
@@ -558,13 +564,20 @@ class Task(object):
     return self.finalFuture
 
   def AddDoneCallbackHelper(self, future, target, f):
+    # future 在拿到的时候就可能已经是完成的
     callback = self.GenCallObject(target, f)
-    future.add_done_callback(callback.Callback)
+    if future.done():
+      callback.Callback(future.result())
+    else:
+      future.add_done_callback(callback.Callback)
     
   
   def AddDoneCallbackGroupHelper(self, future, target, group ,f):
     callback = self.GenGroupCallObject(target, group, f)
-    future.add_done_callback(callback.Callback)
+    if future.done():
+      callback.Callback(future.result())
+    else:
+      future.add_done_callback(callback.Callback)
 #########################################################
 class InstallCommandHelp(object):
   
@@ -588,8 +601,12 @@ class InstallCommandHelp(object):
     return 0
   
   
- 
-
+  
+class CheckThread(object):
+   
+   @staticmethod
+   def Valid(thread):
+     return threading.currentThread() == thread
 #=======================================================
 if __name__ == '__main__':
   print('<=============(__main__ utility.py)==================>')

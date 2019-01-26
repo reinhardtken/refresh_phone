@@ -12,12 +12,12 @@ __version__ = "$Id$"
 import asyncore
 # import logging
 import socket
-from cStringIO import StringIO
+from io import BytesIO
 import struct
 # import urlparse
 import util.log
 import config
-import util.log
+# ========================================
 
 
 # =============================================
@@ -38,7 +38,7 @@ class ProtobufServer(asyncore.dispatcher):
     self.logger.setLevel(util.log.WARN)
     asyncore.dispatcher.__init__(self)
     self.write_buffer = ''
-    self.read_buffer = StringIO()
+    self.read_buffer = BytesIO()
     self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
     self.address = (self.params['address'], self.params['port'])
     self.logger.debug('connecting to %s', self.address)
@@ -62,6 +62,8 @@ class ProtobufServer(asyncore.dispatcher):
     self.handlerFactory.Create(conn_sock, client_address)
   
   # def handle_connect(self):
+  #   # 这个是服务器模式才到的。所以客户端模式永远到不了，所以guard那里的pid始终不对====
+  #   # 以上说法不对，如果writable返回true，就会到一次？？==
   #   self.logger.debug('handle_connect()===============================')
   #   print('handle_connect()===============================')
   #   # self.SendShakehand()
@@ -97,7 +99,59 @@ class ProtobufServer(asyncore.dispatcher):
     data = self.recv(8192)
     self.codec.OnMessage(data)
   
+  # def send_test(self):
+  #   self.has_send = True
+  #   c2c = pb.cc_comunication_pb2.Command()
+  #   c2c.cmd = "hello"
+  #   c2c.params = "world"
+  #   out = self.codec.PackMessage(c2c)
+  #   self.send(out)
   
+  # def Send_cp_comunication_pb2_Command_Msg(self, msg):
+  #   cp = pb.cp_comunication_pb2.Command()
+  #   cp.cmd = msg['c']
+  #   for v in msg['p']:
+  #     cp.params.append(v)
+  #   # c2c.params = msg['p'][0]
+  #   out = self.codec.PackMessage(cp)
+  #   self.send(out)
+  
+  # def SendMsg(self, msg):
+  #   out = self.codec.PackMessage(msg)
+  #   # sent = self.send(out)
+  #   # 20140120 先发后进buf存在问题，如果这个时候buf里面有数据，buf的数据其实是要先于这个数据发送的，结果变成了比这个数据晚发送==
+  #   # 改成统一进buf，再发送buf。效率低就低吧==
+  #   self.write_buffer = self.write_buffer + out
+  #   sent = self.send(self.write_buffer)
+  #   # print('sent number================', sent)
+  #   if sent < len(self.write_buffer):
+  #     # print('new self.write_buffer len ================================ ', len(self.write_buffer) - sent)
+  #     pass
+  #
+  #   self.write_buffer = self.write_buffer[sent:]
+  
+  # def SendShakehand(self):
+  #   shakehand_string = self.params['shakehand']
+  #
+  #   # shakehand_string = 'protobuf://python/cmd+mysql'
+  #   # shakehand_string = 'protobuf://python/mysql'
+  #   shakehand_len = len(shakehand_string)
+  #   format_string = 'I ' + str(shakehand_len) + 's '
+  #   print(format_string)
+  #   in_data = (shakehand_len, shakehand_string)
+  #   codec = struct.Struct(format_string)
+  #   out_data = codec.pack(*in_data)
+  #   self.write_buffer = self.write_buffer + (out_data)
+  #   # self.send(out_data)
+  #
+  # def RegisterMessageHandler(self, handler):
+  #   self.codec.RegisterMessageHandler(handler)
+  #
+  # def RegisterMessageHandlerWithName(self, handler, name):
+  #   self.codec.RegisterMessageHandlerWithName(handler, name)
+  #
+  # def RegisterModuleHandler(self, handler):
+  #   self.codec.RegisterModuleHandler(handler)
 
 
 # ======================================================================

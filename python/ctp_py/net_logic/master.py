@@ -37,7 +37,7 @@ import config
 
 #########################################################
 class Master(object):
-  def __init__(self, queue_out):
+  def __init__(self, queue_out, pool):
     self.queue_out = queue_out
     self.queue_in = Queue.Queue()
 
@@ -47,13 +47,14 @@ class Master(object):
     self._continue = True
     self.thread.setDaemon(True)
 
-    self.pool = futures.ThreadPoolExecutor(5, 'net')
+    # self.pool = futures.ThreadPoolExecutor(5, 'net')
+    self.pool = pool
     
     
     self._apkPath = None
     self._jsonPath = None
     self._localProp = None
-    self.tmpDefferd = None
+
 
   @property
   def apkPath(self):
@@ -101,18 +102,34 @@ class Master(object):
   
   def Join(self):
     self.thread.join()
-  
-      
-      
+
+#########################################################
+  def ProcessCheckUpdate(self, command, relay=None):
+    util.utility.Task.Post(self.queue_in,
+                           functools.partial(
+                             self.CheckUpdate, command, relay))
+
+
+  def ProcessReport(self, command):
+    if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
+      util.utility.Task.Post(self.queue_in,
+                             functools.partial(
+                               lambda command, task, result: self.pool.submit(
+                                 Master.ProcessReportDeviceInfo, command),
+                               command))
+    elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
+      util.utility.Task.Post(self.queue_in,
+                             functools.partial(
+                               lambda command, task, result: self.pool.submit(
+                                 Master.ProcessReportInstallApk, command),
+                               command))
 #########################################################
   @util.utility.tryWrapper
   def ProcessIncome(self, command):
     if isinstance(command, util.utility.Task.CallObject):
       command.CallOnThisThread()
     elif isinstance(command, dict):
-      if command[0].cmd == consts.COMMAND_CHECK_UPDATE:
-        self.tmpDefferd = command[1]
-        self.ProcessInnerCheckUpdate(command[0])
+      pass
       
       
       
@@ -221,40 +238,7 @@ class Master(object):
       print(e)
   
     return result
-
-
-
-  def ProcessCheckUpdate(self, command, deferred=None):
-    self.queue_in.put((command, deferred))
-    
-    
-  def ProcessReport(self, command):
-    if command['c'] == consts.COMMAND_NET_REPORT_DEVICE_INFO:
-      util.utility.Task.CallObject(None, self.queue_in,
-                                   functools.partial(
-                                     lambda command, task, result: self.pool.submit(
-                                       Master.ProcessReportDeviceInfo, command),
-                                     command)).Callback(None)
-    elif command['c'] == consts.COMMAND_NET_REPORT_INSTALL_APK:
-      util.utility.Task.CallObject(None, self.queue_in,
-                                   functools.partial(
-                                     lambda command, task, result: self.pool.submit(
-                                       Master.ProcessReportInstallApk, command),
-                                     command)).Callback(None)
       
-    
-    
-  
-  def CallbackDeferred(self):
-    if self.tmpDefferd is not None:
-      self.tmpDefferd.callback()
-      self.tmpDefferd = None
-    
-  
-  def ProcessInnerCheckUpdate(self, command):
-    self.CheckUpdate(command)
-  
-  
 
 
 #########################################################
@@ -339,21 +323,23 @@ class Master(object):
     else:
       self.SendCommandResponse(command, consts.ERROR_CODE_SAVE_JSON_FILE_FAILED,
                                ['配置更新', '保存配置文件失败', ])
-    self.CallbackDeferred()
+
     task.TriggerFinal(result)
     
     
-  def CheckUpdate(self, command, wait=False):
-    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '获取网络配置成功', ])
+  def CheckUpdate(self, command, future=None, task=None, result=None):
+    assert util.utility.CheckThread.Valid(self.thread)
+    self.SendCommandResponse(command, consts.ERROR_CODE_OK, ['配置更新', '开始获取网络配置', ])
     task = util.utility.Task(self.pool)
     self.CheckUpdateStep1(task, command)
     
     
     
-    if wait:
+    if future is not None:
       final = task.GenFinal()
       futures.wait([final], return_when=futures.ALL_COMPLETED)
-      print('CheckUpdate finished....')
+      print('CheckUpdate finished...., call future now')
+      future.set_result(final.result())
     
           
 
@@ -452,9 +438,7 @@ class Master(object):
         'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/63.0.3239.132 Safari/537.36',
         'X-atoken-Authorization': my_token.token.Get(),
       }
-      # params = {
-      #   'mobile': command.param[0].encode('utf-8')
-      # }
+
       data = {
         'id': command['id'],
         'status': command['status'],
@@ -541,7 +525,9 @@ if __name__ == '__main__':
   my_token.token.Init(r'C:\workspace\code\chromium24\src\build\release\ctp_data\token')
   #Master.ProcessReportDeviceInfo(command)
   import Queue
-  master = Master(Queue.Queue())
+
+  pool = futures.ThreadPoolExecutor(5, 'net')
+  master = Master(Queue.Queue(), pool)
 
   command = {}
   command['c'] = consts.COMMAND_NET_REPORT_DEVICE_INFO
@@ -556,6 +542,6 @@ if __name__ == '__main__':
   check.cmd = consts.COMMAND_CHECK_UPDATE
   check.cmd_no = -1
   master.Start()
-  master.CheckUpdate(check, True)
+  master.CheckUpdate(check, futures.Future())
   master.Join()
   pass

@@ -160,15 +160,7 @@ class ProtobufClient(asyncore.dispatcher):
         self.codec.RegisterModuleHandler(handler)
 #======================================================================
 if __name__ == '__main__':
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(name)s: %(message)s',
-                        )
+  pc = ProtobufClient(params=config.params)
+  asyncore.loop()
 
-    pc = ProtobufClient(config.params)
-
-    logging.debug('LOOP STARTING')
-
-    asyncore.loop()
-
-    logging.debug('LOOP DONE')
 

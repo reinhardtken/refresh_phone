@@ -107,7 +107,7 @@ __releaseURL = r'https://apkins.yfbro.com'
 
 def ServerTest():
   params = {}
-  params["port"] = 7788
+  params["port"] = 7789
   params["shakehand"] = __KEEPALIVE_TU_SHAKEHAND
   params['address'] = '127.0.0.1'
   return params
