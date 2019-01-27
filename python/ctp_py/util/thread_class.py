@@ -11,6 +11,7 @@ class ThreadClass:
 
   def Run(self):
     self.thread = threading.Thread(target = self.WorkProxy)
+    self.thread.name = self.__class__.__name__
     self.thread.start()
     print('after start')
 

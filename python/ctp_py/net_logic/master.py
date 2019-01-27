@@ -44,6 +44,7 @@ class Master(object):
     self.log = util.log.GetLogger(self.__class__.__name__)
 
     self.thread = threading.Thread(target=self.Work)
+    self.thread.name = self.__class__.__name__
     self._continue = True
     self.thread.setDaemon(True)
 
@@ -87,7 +88,8 @@ class Master(object):
   
   
   def DealWithIncomeQueue(self):
-    while not self.queue_in.empty():
+    # while not self.queue_in.empty():
+    while True:
       msg = self.queue_in.get()
       self.ProcessIncome(msg)
       self.queue_in.task_done()
@@ -97,7 +99,7 @@ class Master(object):
   def Work(self):
     while self._continue:
       self.DealWithIncomeQueue()
-      time.sleep(1)
+      #time.sleep(1)
   
   
   def Join(self):
@@ -337,9 +339,13 @@ class Master(object):
     
     if future is not None:
       final = task.GenFinal()
-      futures.wait([final], return_when=futures.ALL_COMPLETED)
-      print('CheckUpdate finished...., call future now')
-      future.set_result(final.result())
+      # def tmp(f):
+      #   future.set_result(f)
+      
+      final.add_done_callback(lambda f: future.set_result(f))
+      # futures.wait([final], return_when=futures.ALL_COMPLETED)
+      # print('CheckUpdate finished...., call future now')
+      # future.set_result(final.result())
     
           
 

@@ -28,6 +28,7 @@ class Network:
       self.asyn_pb_client_keepalive = asyn_pb_client_keepalive.KeepAliveProtobufClient(p2)
 
     self.thread = threading.Thread(target=self.Work)
+    self.thread.name = 'network'
 
   def Run(self):
     

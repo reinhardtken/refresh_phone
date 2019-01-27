@@ -566,18 +566,20 @@ class Task(object):
   def AddDoneCallbackHelper(self, future, target, f):
     # future 在拿到的时候就可能已经是完成的
     callback = self.GenCallObject(target, f)
-    if future.done():
-      callback.Callback(future.result())
-    else:
-      future.add_done_callback(callback.Callback)
+    future.add_done_callback(callback.Callback)
+    # if future.done():
+    #   callback.Callback(future)
+    # else:
+    #   future.add_done_callback(callback.Callback)
     
   
   def AddDoneCallbackGroupHelper(self, future, target, group ,f):
     callback = self.GenGroupCallObject(target, group, f)
-    if future.done():
-      callback.Callback(future.result())
-    else:
-      future.add_done_callback(callback.Callback)
+    future.add_done_callback(callback.Callback)
+    # if future.done():
+    #   callback.Callback(future.result())
+    # else:
+    #   future.add_done_callback(callback.Callback)
 #########################################################
 class InstallCommandHelp(object):
   

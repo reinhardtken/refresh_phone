@@ -9,8 +9,10 @@ import time
 import traceback
 import asyncore
 import logging
+import cmd
 #########################################################
 import config
+import consts
 import util.log
 import bussiness_unit.asyn_pb_server
 import bussiness_unit.network2
@@ -29,6 +31,7 @@ _b = (lambda x:x)
 _s = (lambda x:x)
 #########################################################
 # 主要是用来处理业务逻辑的，理论上是会有多个的
+gOne = None
 class PyProxyOne(bussiness_unit.base.Base):
   data_map = {
     'apk.CommandResponse': pb.apk_protomsg_pb2.CommandResponse,
@@ -37,6 +40,8 @@ class PyProxyOne(bussiness_unit.base.Base):
   
   def __init__(self, queue):
     super(PyProxyOne, self).__init__(queue)
+    global gOne
+    gOne = self
     self.handler_list.extend(PyProxyOne.data_map.keys())
     self.parser_list.extend(PyProxyOne.data_map.keys())
     
@@ -57,6 +62,15 @@ class PyProxyOne(bussiness_unit.base.Base):
       msg.ParseFromString(data)
       return msg
   
+  
+  def ProcessEnterAuto(self, b):
+    command = pb.apk_protomsg_pb2.Command()
+    command.cmd = consts.COMMAND_TOTAL_AUTO_INSTALL
+    command.cmd_no = -1
+    command.timestamp = 0
+    command.param.append(b)
+    self.SendMessage(command)
+    
   
   def ProcessMessage(self, data):
     # msg[0] socket, msg[1] real data
@@ -119,8 +133,13 @@ class PyProxyMaster(object):
       print(exstr)
 
 
-
-    
+#########################################################
+class Client(cmd.Cmd):
+  def __init(self):
+    cmd.Cmd.__init__(self)
+  
+  def do_enterauto(self, line):
+    gOne.ProcessEnterAuto(line)
     
 
 #########################################################
@@ -134,3 +153,5 @@ if __name__ == '__main__':
   # # msg.head.serial_number = 1
   exh = util.exception_handler.ExceptHookHandler()
   master = PyProxyMaster()
+  client = Client()
+  client.cmdloop()
