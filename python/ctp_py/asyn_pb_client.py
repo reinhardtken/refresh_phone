@@ -21,7 +21,7 @@ import sys
 #========================================
 import pb.cc_comunication_pb2
 import pb.cp_comunication_pb2
-import protobuf_codec
+import bussiness_unit.protobuf_codec
 import config
 import util.log
 #=============================================
@@ -33,11 +33,11 @@ class ProtobufClient(asyncore.dispatcher):
     def __init__(self, params):
         #self.url = url
         self.params = params
-        self.codec = protobuf_codec.ProtobufCodec()
+        self.codec = bussiness_unit.protobuf_codec.ProtobufCodec()
         #handle = protobuf_codec.PrintHandler('ctp.c2c.Command')
         #self.codec.RegisterMessageHandler(handle)
-        handle = protobuf_codec.PrintHandler('ctp.cp')
-        self.codec.RegisterModuleHandler(handle)
+        # handle = protobuf_codec.PrintHandler('ctp.cp')
+        # self.codec.RegisterModuleHandler(handle)
 
         self.has_send = False
         self.logger = util.log.GetLogger('ProtobufClient')

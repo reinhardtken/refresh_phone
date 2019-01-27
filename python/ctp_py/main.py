@@ -30,8 +30,10 @@ def CheckUpdateMode(param):
   msg_queue = Queue.Queue()
   # used from network to mysql
   msg_queue2 = Queue.Queue()
-
-  network_object = network.Network(msg_queue, config.CheckUpdateParams(param), None)
+  
+  network_param = config.CheckUpdateParams(param)
+  network_param['serverClient'] = False
+  network_object = network.Network(msg_queue, network_param, None)
   pl = phone.PhoneLogic(param, msg_queue2, msg_queue)
   pl.Init()
   pl.RegisterHandler(network_object.asyn_pb_client)
@@ -52,7 +54,7 @@ if __name__ == '__main__':
   print(sys.argv)
   if len(sys.argv) >= 2:
     param = sys.argv[1]
-    exh = util.exception_handler.ExceptHookHandler()
+    #exh = util.exception_handler.ExceptHookHandler()
 
     CheckUpdateMode(param)
     

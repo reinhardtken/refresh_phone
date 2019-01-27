@@ -33,7 +33,10 @@ import config
 class ProtobufClient(asyncore.dispatcher):
   
   def __init__(self, **kwargs):
-    self.codec = bussiness_unit.protobuf_codec.ProtobufCodec()
+    if 'serverClient' in kwargs:
+      self.codec = bussiness_unit.protobuf_codec.ProtobufCodec(True)
+    else:
+      self.codec = bussiness_unit.protobuf_codec.ProtobufCodec()
     
     
     self.has_send = False

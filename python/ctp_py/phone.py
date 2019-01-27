@@ -62,7 +62,7 @@ class PhoneLogic(util.thread_class.ThreadClass):
       prop = util.utility.ReadJsonProp(prop_file)
       self.prop = prop
     else:
-      # prop是none，说明启动参水里面只有一个port，要等c++把配置信息通过socket传过来
+      # prop是none，说明启动参数里面只有一个port，要等c++把配置信息通过socket传过来
       self.prop = None
     
     util.thread_class.ThreadClass.__init__(self, queue_in)
@@ -154,7 +154,8 @@ class PhoneLogic(util.thread_class.ThreadClass):
   def Name(self):
     return 'ctp.mq.QueryLevelMQ'
   
-  def DealMsg(self, msg):
+  def DealMsg(self, msg2):
+    msg = msg2[1]
     if self.log:
       self.log.info('DealMsg  ' + msg.DESCRIPTOR.full_name)
       self.log.info(msg.cmd)

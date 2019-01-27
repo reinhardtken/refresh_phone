@@ -3,7 +3,10 @@
 
 
 import threading
-import queue
+#py3
+# import queue
+#py2
+import Queue
 import asyncore
 import logging
 import socket
@@ -18,7 +21,10 @@ class Network(object):
   def __init__(self):
     print("Network.init=======================================")
     #send queue ,所有send sock共用这个queue
-    self.queue_ = queue.Queue()
+    #py3
+    # self.queue_ = queue.Queue()
+    #py2
+    self.queue_ = Queue.Queue()
     self.work_list = set()
     self.to_work_list = set()
     self.thread = threading.Thread(target=self.Work)
@@ -40,10 +46,12 @@ class Network(object):
       msg = self.queue_.get()
       #self.socket_wrapper.SendMsg(msg)
       #msg[0]是套接字对象，[1]是数据
-      if msg[0] in self.work_list:
-        msg[0].SendMessage(msg[1])
-      else:
-        print('error!!!! unknown target')
+      msg[0].SendMessage(msg[1])
+      
+      # if msg[0] in self.work_list:
+      #   msg[0].SendMessage(msg[1])
+      # else:
+      #   print('error!!!! unknown target')
       self.queue_.task_done()
   
   

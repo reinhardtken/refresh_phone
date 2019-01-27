@@ -18,15 +18,13 @@ class Base(object):
     #二选一
     self.socket = None
     self.socket_multiple = set()
+    self.pendingMsg = []
     
     
     self.handler_list = []
     self.parser_list = []
 
-  # #注册自己感兴趣的消息
-  # def RegisterHandler(self):
-  #   #handler_list.append('apk.Command')
-  #   pass
+
 
 
   def Start(self):
@@ -40,11 +38,13 @@ class Base(object):
   def SendMessage(self, data):
     if self.socket is not None:
       self.queue_out.put((self.socket, data, ))
-    else:
+    elif len(self.socket_multiple) > 0:
       #广播
       for one in self.socket_multiple:
         self.queue_out.put((one, data,))
-    
+    else:
+      #还没有关联，缓存
+      self.pendingMsg.append(data)
     
 
   #建立socket和logic的关联，此关联为一个socket对应一个logic
@@ -55,6 +55,12 @@ class Base(object):
       socket.RegisterParserHandler(self, one)
     self.socket = socket
     
+    if len(self.pendingMsg) > 0:
+      for data in self.pendingMsg:
+        self.SendMessage(data)
+      else:
+        self.pendingMsg = []
+    
   
   #多个socket对应一个logic
   def ConnectMultiple(self, socket):
@@ -63,6 +69,12 @@ class Base(object):
     for one in self.parser_list:
       socket.RegisterParserHandler(one, self.ParserMessage)
     self.socket_multiple.add(socket)
+    
+    if len(self.pendingMsg) > 0:
+      for data in self.pendingMsg:
+        self.SendMessage(data)
+      else:
+        self.pendingMsg = []
  
   
   #数据发送到queue_in，在network线程被调用

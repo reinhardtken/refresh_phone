@@ -22,8 +22,9 @@ _b = (lambda x:x)
 _s = (lambda x:x)
 #begin================================================
 class ProtobufCodec:
-
-  def __init__(self, token=None):
+  STAGE_SHAKEHAND = 0
+  STAGE_WORKING = 1
+  def __init__(self, server=False, token=None):
     #当调用回调的时候，会把token带上，让logic知道数据来自哪个socket
     self.token = token
     #py3
@@ -37,6 +38,11 @@ class ProtobufCodec:
     #因为py不支持解析嵌套的pb消息，目前又没有找到好的方案
     #先简单粗暴的解决
     self.parser_handler = {}
+    
+    if server:
+      self.stage = ProtobufCodec.STAGE_SHAKEHAND
+    else:
+      self.stage = ProtobufCodec.STAGE_WORKING
 
 
   def InitProtobufDescriptors(self):
@@ -47,10 +53,34 @@ class ProtobufCodec:
     self.pool.Add(id)
 
 
+  
+  
+  def ProcessShakehand(self):
+    buffer_size = len(self.data)
+    if buffer_size > 4:
+      unpack_head = struct.Struct('I')
+      size = unpack_head.unpack(self.data[:4])[0]
+      if buffer_size - 4 >= size:
+        format_string = str(size) + 's'
+        unpack_name_string = struct.Struct(format_string)
+        name = unpack_name_string.unpack(self.data[4:4+size])[0]
+        self.data = self.data[size + 4:]
+        self.stage = ProtobufCodec.STAGE_WORKING
+        print(name)
+        return True
+    
+    return False
+  
+
   def OnMessage(self, data):
     self.data = self.data[:] + data
-    #self.data.write(data)
 
+    
+    #如果是握手阶段，把握手信息提取出来，切换状态
+    if self.stage == ProtobufCodec.STAGE_SHAKEHAND:
+      #握手没有完成
+      if not self.ProcessShakehand():
+        return
 
     while(True):
       buffer_size = len(self.data)

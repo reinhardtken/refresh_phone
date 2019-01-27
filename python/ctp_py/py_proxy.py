@@ -2,7 +2,7 @@
 # encoding: utf-8
 
 
-import queue
+import Queue
 import sys
 import util
 import time
@@ -13,6 +13,8 @@ import logging
 import config
 import util.log
 import bussiness_unit.asyn_pb_server
+import bussiness_unit.network2
+import bussiness_unit.asyn_pb_client
 import bussiness_unit.base
 import util.exception_handler
 #https://pypi.org/project/python3-protobuf/#description
@@ -37,6 +39,15 @@ class PyProxyOne(bussiness_unit.base.Base):
     super(PyProxyOne, self).__init__(queue)
     self.handler_list.extend(PyProxyOne.data_map.keys())
     self.parser_list.extend(PyProxyOne.data_map.keys())
+    
+    #发送配置信息
+    command = pb.apk_protomsg_pb2.Command()
+    command.cmd = 'py_config'
+    command.cmd_no = -1
+    command.timestamp = 0
+    command.param.append(r'C:\workspace\code\chromium24\src\build\Release')
+    command.param.append('1')
+    self.SendMessage(command)
 
 
   
@@ -74,7 +85,7 @@ class PyProxyOne(bussiness_unit.base.Base):
 
     
     
- ########################################################
+#########################################################
 class PyProxyMaster(object):
   
   def __init__(self, handle=PyProxyOne):
@@ -84,6 +95,7 @@ class PyProxyMaster(object):
     params = {}
     params["port"] = 7789
     params['address'] = '127.0.0.1'
+    
     # params = config.PyProxyParams()
     server = bussiness_unit.asyn_pb_server.ProtobufServer(params, self)
     
@@ -99,7 +111,7 @@ class PyProxyMaster(object):
         self.py_proxy_one = self.handle(self.network.queue())
         self.py_proxy_one.Start()
 
-      socket_wrapper = bussiness_unit.asyn_pb_client2.ProtobufClient(socket=socket)
+      socket_wrapper = bussiness_unit.asyn_pb_client.ProtobufClient(serverClient=True, socket=socket)
       self.py_proxy_one.ConnectMultiple(socket_wrapper)
       self.network.Add(socket_wrapper)
     except Exception as e:

@@ -1,12 +1,18 @@
 import threading
-import queue
+#py3
+#import queue
+#py2
+import Queue
 import asyncore
 import logging
 import time
 #================================================================
 class ThreadClass(object):
   def __init__(self, processMessage, work=None):
-    self.queue_ = queue.Queue()
+    #py3
+    #self.queue_ = queue.Queue()
+    #py2
+    self.queue_ = Queue.Queue()
     self.processMessage = processMessage
     self.work = work
     if self.work is None:
